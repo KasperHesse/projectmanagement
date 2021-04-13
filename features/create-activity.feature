@@ -25,5 +25,5 @@ Scenario: User cannot create activities with duplicate names
 
 Scenario: A developer cannot create new activities
 	Given that the user with initials "abcd" is a developer of project "xyz"
-   When they create an activity named "research" under the current project
-   Then the error message "Developers cannot create new activities" is shown
+	When they create an activity named "research" under the current project
+	Then the error message "Developers cannot create new activities" is shown

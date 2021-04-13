@@ -50,22 +50,6 @@ public class Project {
 	}
 	
 	/**
-	 * Creates an activity under the current project with a given name
-	 * @param name The name of the activity to be created
-	 * @throws IllegalArgumentException if an activity with the same name already exists
-	 */
-	public void createActivity(String name) throws IllegalArgumentException {
-		if(this.hasActivityNamed(name)) {
-			throw new IllegalArgumentException("Activities must have a unique name");
-		} else if(this.projectManager == null) {
-			throw new IllegalArgumentException("Developers cannot create new activities");
-		} else if(!schedulingApp.getCurrentUser().equals(this.projectManager)) {
-			throw new IllegalArgumentException("Developers cannot create new activities");
-		}
-		activityList.add(new Activity(name, 0, null, null));
-	}
-	
-	/**
 	 * Returns the TimeSheet for this project
 	 */
 	public TimeSheet getTimeReport() {
@@ -82,10 +66,10 @@ public class Project {
 	/**
 	 * Checks whether the given developer is the project manager of this project
 	 * @param dev The developer in question
-	 * @return If this developer is the project manager of this project, false otherwise
+	 * @return True if this developer is the project manager of this project, false otherwise
 	 */
 	public boolean isProjectManager(Developer dev) {
-		return true;
+		return dev.equals(this.projectManager);
 	}
 	
 	/**
@@ -111,6 +95,7 @@ public class Project {
 	public void setProjectManager(Developer dev) {
 		this.projectManager = dev;
 	}
+	
 
 	/**
 	 * Creates an activity with a given name, starting and end date under the current project
@@ -119,7 +104,24 @@ public class Project {
 	 * @param end The end date of the activity
 	 */
 	public void createActivity(String name, Calendar startDate, Calendar stopDate) {
-		activityList.add(new Activity(name,0, startDate, stopDate));
+		if(this.hasActivityNamed(name)) {
+			throw new IllegalArgumentException("Activities must have a unique name");
+		} else if(this.projectManager == null) {
+			throw new IllegalArgumentException("Developers cannot create new activities");
+		} else if(!schedulingApp.getCurrentUser().equals(this.projectManager)) {
+			throw new IllegalArgumentException("Developers cannot create new activities");
+		}
+		activityList.add(new Activity(name, 0, startDate, stopDate, this));
+	}
+	
+	/**
+	 * Creates an activity under the current project with a given name
+	 * @param name The name of the activity to be created
+	 * @throws IllegalArgumentException if an activity with the same name already exists
+	 */
+	public void createActivity(String name) throws IllegalArgumentException {
+		Calendar cal = null;
+		createActivity(name, cal, cal); //Must use cal as argument to ensure we call method with signature (string, calendar, calendar)
 	}
 
 	/**
@@ -161,6 +163,13 @@ public class Project {
 	 */
 	public void setApp(SchedulingApp schedulingApp) {
 		this.schedulingApp = schedulingApp;
+	}
+	
+	/**
+	 * Returns a handle to the current user of the system
+	 */
+	public Developer getCurrentUser() {
+		return this.schedulingApp.getCurrentUser();
 	}
 
 

@@ -1,13 +1,14 @@
 package schedulingapp.unit_tests;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.CoreMatchers.*;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.NoSuchElementException;
 
-import static org.hamcrest.CoreMatchers.*;
+
 
 import io.cucumber.java.en.*;
 import schedulingapp.*;
@@ -16,14 +17,17 @@ public class CreateActivitySteps {
 	
 	SchedulingApp schedulingApp;
 	ProjectHelper projHelper;
+	ActivityHelper actHelper;
 	DeveloperHelper devHelper;
 	ErrorMessageHolder errorMessageHolder;
 	
-	public CreateActivitySteps(SchedulingApp schedulingApp, ProjectHelper projHelper, DeveloperHelper devHelper, ErrorMessageHolder errorMessageHolder) {
+	public CreateActivitySteps(SchedulingApp schedulingApp, ProjectHelper projHelper, DeveloperHelper devHelper, 
+			ErrorMessageHolder errorMessageHolder, ActivityHelper actHelper) {
 		this.schedulingApp = schedulingApp;
 		this.projHelper = projHelper;
 		this.devHelper = devHelper;
 		this.errorMessageHolder = errorMessageHolder;
+		this.actHelper = actHelper;
 	}
 	
 	@Given("that the user with initials {string} is the project manager of project {string}")
@@ -84,7 +88,7 @@ public class CreateActivitySteps {
 
 	@Given("that an activity named {string} exists under the current project")
 	public void that_an_activity_named_exists_under_the_current_project(String name) {
-		projHelper.getProject().createActivity(name);
+		actHelper.getActivity(projHelper.getProject(), name);
 	}
 
 	@Given("that the user with initials {string} is a developer of project {string}")
