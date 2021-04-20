@@ -37,6 +37,16 @@ public class SchedulingApp {
 	public boolean hasProjectNamed(String name) {
 		return projectList.stream().anyMatch(p -> p.getName().equals(name));
 	}
+	
+	
+	
+	public boolean hasProjectWithProjectNumber(String name) {
+		return projectList.stream().anyMatch(p -> p.getProjectNumber().equals(name));
+	}
+	
+
+	
+	
 
 	/**
 	 * Returns a handle to the project with a given name 

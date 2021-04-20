@@ -4,17 +4,20 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.time.LocalDate;
 
 public class Project {
 	private Developer projectManager;
-	private Calendar startDate;
-	private Calendar stopDate;
+//	private Calendar startDate;
+//	private Calendar stopDate;
 	private String projectNumber;
 	private String projectName;
 	private List<Activity> activityList;
 	private SchedulingApp schedulingApp;
+	private LocalDate startDate;
+	private LocalDate stopDate;
 	
-	public Project(String projectName, Calendar startDate, Calendar stopDate, Developer projectManager) {
+	public Project(String projectName, LocalDate startDate, LocalDate stopDate, Developer projectManager) {
 		//Auto-generate projectNumber
 		this.projectName = projectName;
 		this.startDate = startDate;
@@ -79,6 +82,34 @@ public class Project {
 	 */
 	public boolean hasActivityNamed(String name) {
 		return activityList.stream().anyMatch(a -> a.getName().equals(name));
+	}
+	
+	/**
+	 * Checks whether this project has a project manager
+	 * @return True/False Returns true if a project manager exists for the current project and returns false if no project manager exists for the current project.
+	 */
+	public boolean hasProjectManager() {
+		if (projectManager != null) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	/**
+	 * Adds number of weeks to start time of the current project.
+	 * @param weeks
+	 */
+	public void addWeeksToStartTime(int weeks) {
+		this.startDate.plusWeeks(weeks);
+	}
+	
+	/**
+	 * Returns the ProjectManager of the current project.
+	 */
+	
+	public Developer getProjectManager() {
+		return this.projectManager;
 	}
 
 	/**
@@ -170,6 +201,11 @@ public class Project {
 	 */
 	public Developer getCurrentUser() {
 		return this.schedulingApp.getCurrentUser();
+	}
+
+	public String getProjectNumber() {
+		// TODO Auto-generated method stub
+		return this.projectNumber;
 	}
 
 
