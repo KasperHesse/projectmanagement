@@ -8,10 +8,12 @@ public class SchedulingApp {
 	private List<Developer> developerList;
 	private List<Project> projectList;
 	public Object getCurrentUser;
+//	private Calendar currentDate;
 
 	public SchedulingApp() {
 		this.developerList = new ArrayList<Developer>();
 		this.projectList = new ArrayList<Project>();
+//		this.currentDate = new GregorianCalendar();
 	}
 	
 	public void setCurrentUser(Developer currentUser) {
@@ -19,10 +21,9 @@ public class SchedulingApp {
 	}
 
 	public void createProject(String name) {
-		Project p = new Project(name);
-		p.setApp(this);
+		Project p = new Project(name, this);
+//		p.setApp(this);
 		projectList.add(p);
-		
 	}
 	
 	public List<Developer> getDevelopers() {
@@ -36,6 +37,10 @@ public class SchedulingApp {
 	 */
 	public boolean hasProjectNamed(String name) {
 		return projectList.stream().anyMatch(p -> p.getName().equals(name));
+	}
+	
+	public boolean hasProjectWithNumber(String projectNumber) {
+		return projectList.stream().anyMatch(p -> p.getProjectNumber().equals(projectNumber));
 	}
 
 	/**
@@ -98,6 +103,19 @@ public class SchedulingApp {
 	 */
 	public Developer getCurrentUser() {
 		return this.currentUser;
+	}
+	
+//	public void setCurrentDate(int year, int month, int date) {
+//		this.currentDate = new GregorianCalendar(year, month, date);
+//	}
+
+//	public Calendar getCurrentDate() {
+//		return this.currentDate;
+//	}
+
+	public int getAmountOfProjectsCreatedYear(int year) {
+		List<Project> matches =  projectList.stream().filter(p -> p.getCreationDate().get(1) == year).collect(Collectors.toList());
+		return matches.size();
 	}
 
 }

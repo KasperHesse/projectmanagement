@@ -13,13 +13,17 @@ public class Project {
 	private String projectName;
 	private List<Activity> activityList;
 	private SchedulingApp schedulingApp;
+	private Calendar creationDate;
 	
-	public Project(String projectName, Calendar startDate, Calendar stopDate, Developer projectManager) {
+	
+	public Project(String projectName, Calendar startDate, Calendar stopDate, Developer projectManager, SchedulingApp schedulingApp) {
 		//Auto-generate projectNumber
 		this.projectName = projectName;
 		this.startDate = startDate;
 		this.stopDate = stopDate;
 		this.projectManager = projectManager;
+		this.schedulingApp = schedulingApp;
+		this.creationDate = new GregorianCalendar();
 		this.activityList = new ArrayList<Activity>();
 		this.projectNumber = generateProjectNumber();
 	}
@@ -29,17 +33,38 @@ public class Project {
 	 * @return
 	 */
 	private String generateProjectNumber() {
-		// TODO Auto-generated method stub
-		return null;
+		
+		int year = creationDate.get(Calendar.YEAR);
+		String serialNumber = "" + schedulingApp.getAmountOfProjectsCreatedYear(year);
+		int stop = serialNumber.length();
+		for (int i = 0; i < (4-stop); i++) {
+			serialNumber = 0 + serialNumber;
+		}
+		
+		return year%100 + serialNumber;
 	}
+	
+/*******************OLD GENERATENUMBER****************/
+//	private String generateProjectNumber() {
+//		this.creationDate = this.schedulingApp.getCurrentDate();
+//		int year = creationDate.get(1)%100;
+//		String serialNumber = "" + schedulingApp.getAmountOfProjectsCreatedYear(year);
+//		int stop = serialNumber.length();
+//		for (int i = 0; i < (4-stop); i++) {
+//			serialNumber = 0 + serialNumber;
+//		}
+//		
+//		return year + serialNumber;
+//	}
 
 	/**
 	 * Creates a new Project with a given name. startDate, stopDate and projectManager are set to null
 	 * @param projectName
 	 */
-	public Project(String projectName) {
-		this(projectName, null, null, null);
+	public Project(String projectName, SchedulingApp schedulingApp) {
+		this(projectName, null, null, null, schedulingApp);
 	}
+	
 
 	/**
 	 * Removes an activtiy from the project
@@ -172,5 +197,12 @@ public class Project {
 		return this.schedulingApp.getCurrentUser();
 	}
 
+	public Calendar getCreationDate() {
+		return this.creationDate;
+	}
+
+	public String getProjectNumber() {
+		return this.projectNumber;
+	}
 
 }
