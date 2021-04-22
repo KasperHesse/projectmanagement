@@ -44,9 +44,9 @@ public class SchedulingApp {
 		return projectList.stream().anyMatch(p -> p.getProjectNumber().equals(name));
 	}
 	
+	
+	
 
-	
-	
 
 	/**
 	 * Returns a handle to the project with a given name 

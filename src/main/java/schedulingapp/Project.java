@@ -8,16 +8,16 @@ import java.time.LocalDate;
 
 public class Project {
 	private Developer projectManager;
-//	private Calendar startDate;
-//	private Calendar stopDate;
+	private Calendar startDate;
+	private Calendar stopDate;
 	private String projectNumber;
 	private String projectName;
 	private List<Activity> activityList;
 	private SchedulingApp schedulingApp;
-	private LocalDate startDate;
-	private LocalDate stopDate;
+//	private LocalDate startDate;
+//	private LocalDate stopDate;
 	
-	public Project(String projectName, LocalDate startDate, LocalDate stopDate, Developer projectManager) {
+	public Project(String projectName, Calendar startDate, Calendar stopDate, Developer projectManager) {
 		//Auto-generate projectNumber
 		this.projectName = projectName;
 		this.startDate = startDate;
@@ -46,10 +46,14 @@ public class Project {
 
 	/**
 	 * Removes an activtiy from the project
-	 * @param activity the activity to be removed
+	 * @param activity the activity to be removed - Jonathan changed from Activity to String
 	 */
-	public void removeActivity(Activity activity) {
-		
+	public void removeActivity(String name) {
+		if (activityList.contains(name)) {
+		activityList.remove(name);
+		} else {
+			throw new IllegalArgumentException("No activity with this name exists in this project");
+		}
 	}
 	
 	/**
@@ -100,8 +104,13 @@ public class Project {
 	 * Adds number of weeks to start time of the current project.
 	 * @param weeks
 	 */
-	public void addWeeksToStartTime(int weeks) {
-		this.startDate.plusWeeks(weeks);
+	public void addWeeksToStartDate(int weeks) {
+		if (startDate != null) {
+		this.startDate.add(Calendar.WEEK_OF_YEAR, weeks);
+		} else {
+		throw new IllegalArgumentException("A date for a project must be given before adding.");
+		}
+		
 	}
 	
 	/**
@@ -208,5 +217,49 @@ public class Project {
 		return this.projectNumber;
 	}
 
+	/**
+	 * Returns a *copy* of the start date for this activity. Modifications on that copy will not modify the start date of the activity
+	 */
+	public Calendar getStartDate() {
+		return (Calendar) this.startDate.clone();
+	}
 
+		/**
+	 * Returns a *copy* of the end date for this activity. Modifications on that copy will not modify the end date of the activity
+	 */
+	public Calendar getStopDate() {
+		return (Calendar) this.stopDate.clone();
+	}
+	
+	public boolean hasStartDateChanged() {
+		if (startDate != null) {
+			return true;
+			} else {
+			return false;
+			}
+	}
+	
+	public boolean hasStopDateChanged() {
+		if (startDate != null) {
+			return true;
+			} else {
+			return false;
+			}
+	}
+
+	public void addWeeksToStopDate(Integer weeks) {
+		if (stopDate != null) {
+			this.stopDate.add(Calendar.WEEK_OF_YEAR, weeks);
+			} else {
+			throw new IllegalArgumentException("A date for a project must be given before adding.");
+			}
+		
+	}
+
+	
+
+	
 }
+
+
+

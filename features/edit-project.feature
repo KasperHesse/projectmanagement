@@ -12,26 +12,23 @@ Scenario: User adds themselves as project manager to a project with no project m
 Scenario: User changes Start time of project
 	Given that the user with initials "abcd" is the project manager of project "xyz"
 	When the user changes the start time by 2 weeks for the current project
-#	Then the start time of the current project is changed by 2 weeks
+	Then the start time of the current project is changed by 2 weeks
 	
 	
-#Scenario: User changes End time of project
-#	Given that a project exists with project number "0123452"
-#	And the user is bound as a project manager to the current project
-#	When the user changes the end time by 2 weeks for the current project
-#	Then the end time of the current project is changed by 2 weeks
-#	
-#	
-#Scenario: User removes an activity from a project
-#	Given that a project exists with project number "012345"
-#	And the user is bound as a project manager to the current project
-#	And the project contains an activity named "design"
-#	When the user removes the current activity from the current project
-#	Then the current activity is removed from the current project
-#	
-#Scenario: Add developer to project
-#	Given that a project exists with project number "012345"
-#	And the user is bound as a project manager to the current project
+Scenario: User changes End time of project
+	Given that the user with initials "abcd" is the project manager of project "xyz"
+	When the user changes the end time by 2 weeks for the current project
+	Then the end time of the current project is changed by 2 weeks
+	
+	
+Scenario: User removes an activity from a project
+	Given that the user with initials "abcd" is the project manager of project "xyz"
+	And that an activity named "research" exists under the current project
+	When the user removes the activity named "research" from the project "xyz"
+	Then the activity named "research" is removed from the project "xyz"
+	
+Scenario: Add developer to project
+	Given that the user with initials "abcd" is the project manager of project "xyz"
 #	And a developer "EPR" exists in the current project
 #	When the user adds the current developer to the current project
 #	Then the current developer is added to the current project
