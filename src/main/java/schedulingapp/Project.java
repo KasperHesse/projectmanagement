@@ -17,7 +17,6 @@ public class Project {
 	
 	
 	public Project(String projectName, Calendar startDate, Calendar stopDate, Developer projectManager, SchedulingApp schedulingApp) {
-		//Auto-generate projectNumber
 		this.projectName = projectName;
 		this.startDate = startDate;
 		this.stopDate = stopDate;
@@ -26,6 +25,25 @@ public class Project {
 		this.creationDate = new GregorianCalendar();
 		this.activityList = new ArrayList<Activity>();
 		this.projectNumber = generateProjectNumber();
+	}
+	
+	/**
+	 * Creates a new Project with a given name. startDate, stopDate and projectManager are set to null
+	 * @param projectName
+	 * @param schedulingApp
+	 */
+	public Project(String projectName, SchedulingApp schedulingApp) {
+		this(projectName, null, null, null, schedulingApp);
+	}
+	
+	/**
+	 * Creates a new Project with a given name and projectManager. startDate and stopDate are set to null
+	 * @param projectName
+	 * @param projectManager
+	 * @param schedulingApp
+	 */
+	public Project(String projectName, Developer projectManager, SchedulingApp schedulingApp) {
+		this(projectName, null, null, projectManager, schedulingApp);
 	}
 	
 	/**
@@ -57,13 +75,6 @@ public class Project {
 //		return year + serialNumber;
 //	}
 
-	/**
-	 * Creates a new Project with a given name. startDate, stopDate and projectManager are set to null
-	 * @param projectName
-	 */
-	public Project(String projectName, SchedulingApp schedulingApp) {
-		this(projectName, null, null, null, schedulingApp);
-	}
 	
 
 	/**
@@ -197,12 +208,34 @@ public class Project {
 		return this.schedulingApp.getCurrentUser();
 	}
 
+	/**
+	 * @return the date of creation for the project
+	 */
 	public Calendar getCreationDate() {
 		return this.creationDate;
 	}
 
+	/**
+	 * @return the project number of the project
+	 */
 	public String getProjectNumber() {
 		return this.projectNumber;
+	}
+
+	/**
+	 * 
+	 * @return the start date of the project
+	 */
+	public Calendar getStartDate() {
+		return startDate;
+	}
+
+	/**
+	 * 
+	 * @return the stop date of the project
+	 */
+	public Calendar getStopDate() {
+		return stopDate;
 	}
 
 }

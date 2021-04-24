@@ -1,5 +1,7 @@
 package schedulingapp;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -20,10 +22,40 @@ public class SchedulingApp {
 		this.currentUser = currentUser;
 	}
 
-	public void createProject(String name) {
-		Project p = new Project(name, this);
+	public void createProject(String projectName, Calendar startDate, Calendar stopDate, Developer projectManager) {
+		Project p = new Project(projectName, startDate, stopDate, projectManager, this);
 //		p.setApp(this);
 		projectList.add(p);
+	}
+	
+	public void createProject(String projectName, Calendar startDate, Calendar stopDate) {
+		createProject(projectName, startDate, stopDate, null);
+	}
+	
+	public void createProject(String projectName, String startDate, String stopDate) throws ParseException {
+		//TODO Catch this exception
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+	
+		Calendar startCal = Calendar.getInstance();
+		Calendar stopCal = Calendar.getInstance();
+		startCal.setTime(formatter.parse(startDate));
+		stopCal.setTime(formatter.parse(stopDate));
+		createProject(projectName, startCal, stopCal,null);
+	}
+
+	
+	public void createProject(String projectName, Developer projectManager) {
+		createProject(projectName, null, null, projectManager);
+//		Project p = new Project(projectName, projectManager, this);
+////		p.setApp(this);
+//		projectList.add(p);
+	}
+	
+	public void createProject(String projectName) {
+		createProject(projectName, null, null, null);
+//		Project p = new Project(projectName, this);
+////		p.setApp(this);
+//		projectList.add(p);
 	}
 	
 	public List<Developer> getDevelopers() {
@@ -117,5 +149,11 @@ public class SchedulingApp {
 		List<Project> matches =  projectList.stream().filter(p -> p.getCreationDate().get(1) == year).collect(Collectors.toList());
 		return matches.size();
 	}
+
+	public List<Developer> getAvailableDevelopers() {
+		return developerList.stream().filter(d -> d.isAvailable()).collect(Collectors.toList());
+	}
+	
+	
 
 }

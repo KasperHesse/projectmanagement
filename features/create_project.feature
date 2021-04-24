@@ -8,16 +8,18 @@ Scenario: User successfully creates a new project
 	Then the project named "Test Project" has a correct, unique project number
 #	And "lomo" is a member of that project
 
-#Scenario: User creates a new project and adds a project manager
-#	Given a user with initials "lomo" exists
-#	When a user creates a project named "xyz" and appoints "lomo" project manager
-#	Then a project with the project name "xyz" exists
-#	And "lomo" is the project manager of the project named "xyz"
+Scenario: User creates a new project and adds a project manager
+	Given a user with initials "lomo" exists
+	When the user creates a project with name "Test Project" and appoints "lomo" project manager
+	Then a project with the project name "Test Project" exists
+	And "lomo" is the project manager of the project named "Test Project"
 
-#Scenario: User creates a new project with start/stop date
-#	When a user creates a project with a start date and a stop date
-#	Then a project with that project number exists
-#	And the start date and stop date of the project is set
+Scenario: User creates a new project with start/stop date
+	Given a user with initials "lomo" exists
+	When the user creates a project with name "Test Project", start date "2021-01-01" and stop date "2021-05-01"
+	Then a project with the project name "Test Project" exists
+	And the start date of the project "Test Project" is "2021-01-01" 
+	And the stop date of the project "Test Project" is "2021-05-01"
 #	And the user is a member of the project
 
 

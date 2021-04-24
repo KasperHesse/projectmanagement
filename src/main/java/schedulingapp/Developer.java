@@ -1,5 +1,6 @@
 package schedulingapp;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Developer {
@@ -17,6 +18,8 @@ public class Developer {
 	public Developer(String initials, String name) {
 		this.name = name;
 		this.initials = initials;
+		this.activityList = new ArrayList<Activity>(); 
+		this.projectList = new ArrayList<Project>();
 	}
 	
 	public boolean isProjectManager() {
@@ -24,7 +27,10 @@ public class Developer {
 	}
 	
 	public boolean isAvailable() {
-		return true;
+		if (activityList.size() <=10) {
+			return true;
+		}
+		return false;
 	}
 
 	public String getInitials() {
