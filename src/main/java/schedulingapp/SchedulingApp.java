@@ -45,6 +45,16 @@ public class SchedulingApp {
 	}
 	
 	
+	/**
+	 * Checks whether the scheduling app contains any developer with the given initials.
+	 * @param initials The initials of a developer being checked against
+	 * @return True if a developer with the current initials exists, otherwise false
+	 */
+	public boolean hasDeveloperWithInitials(String initials) {
+		return developerList.stream().anyMatch(d -> d.getInitials().equals(initials));
+	}
+	
+	
 	
 
 
@@ -109,5 +119,8 @@ public class SchedulingApp {
 	public Developer getCurrentUser() {
 		return this.currentUser;
 	}
-
+	
+	
+	
+	
 }

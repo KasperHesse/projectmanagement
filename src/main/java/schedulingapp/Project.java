@@ -10,10 +10,13 @@ public class Project {
 	private Developer projectManager;
 	private Calendar startDate;
 	private Calendar stopDate;
+	private Calendar startDatePast;
+	private Calendar stopDatePast;
 	private String projectNumber;
 	private String projectName;
 	private List<Activity> activityList;
 	private SchedulingApp schedulingApp;
+	private List<Developer> developerList;
 //	private LocalDate startDate;
 //	private LocalDate stopDate;
 	
@@ -22,9 +25,12 @@ public class Project {
 		this.projectName = projectName;
 		this.startDate = startDate;
 		this.stopDate = stopDate;
+		this.startDatePast = startDatePast;
+		this.stopDatePast = startDatePast;
 		this.projectManager = projectManager;
 		this.activityList = new ArrayList<Activity>();
 		this.projectNumber = generateProjectNumber();
+		this.developerList = new ArrayList<Developer>();
 	}
 	
 	/**
@@ -34,6 +40,26 @@ public class Project {
 	private String generateProjectNumber() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	
+	
+	public void addDeveloper(Developer dev) {
+		if(doesDeveloperExistInProject(dev)) {
+			throw new IllegalArgumentException("This developer is already a part of this project");
+		} else if(!this.isProjectManager(this.getCurrentUser())) {
+			throw new IllegalArgumentException("Developers cannot add other developers to projects");
+		}
+		this.developerList.add(dev);
+	}
+	
+	
+	/**
+	 * Returns a list of developers working on this project. Any modifications to that list will not affect the project.
+	 * @return
+	 */
+	public List<Developer> getDevelopers() {
+		return List.copyOf(this.developerList);
 	}
 
 	/**
@@ -70,6 +96,17 @@ public class Project {
 		return null;
 	}
 	
+	
+	/**
+	 * Checks if the current developer exists in the project
+	 * @param dev The developer in question
+	 * @return True if this developer is a part of the current project, false otherwise
+	 */
+	public boolean doesDeveloperExistInProject(Developer dev){
+		return activityList.stream().anyMatch(a -> a.getDevelopers().contains(dev));
+	}
+	
+	
 	/**
 	 * Checks whether the given developer is the project manager of this project
 	 * @param dev The developer in question
@@ -100,18 +137,7 @@ public class Project {
 		}
 	}
 	
-	/**
-	 * Adds number of weeks to start time of the current project.
-	 * @param weeks
-	 */
-	public void addWeeksToStartDate(int weeks) {
-		if (startDate != null) {
-		this.startDate.add(Calendar.WEEK_OF_YEAR, weeks);
-		} else {
-		throw new IllegalArgumentException("A date for a project must be given before adding.");
-		}
-		
-	}
+	
 	
 	/**
 	 * Returns the ProjectManager of the current project.
@@ -231,35 +257,67 @@ public class Project {
 		return (Calendar) this.stopDate.clone();
 	}
 	
+	/**
+	 * Adds number of weeks to start date of the current project.
+	 * @param weeks number of weeks being added
+	 */
+	public void addWeeksToStartDate(int weeks) {
+		this.startDatePast = this.stopDate;
+		if (this.startDate != null) {
+		this.startDate.add(Calendar.WEEK_OF_YEAR, weeks);
+		} else {
+		throw new IllegalArgumentException("A date for a project must be given before adding.");
+		}
+		
+	}
+	
+	/**
+	 * Checks whether the start date has been changed
+	 * @return Returns true if start date has been changed and false otherwise
+	 */
 	public boolean hasStartDateChanged() {
-		if (startDate != null) {
+		if (this.startDatePast != this.startDate) {
 			return true;
 			} else {
 			return false;
 			}
 	}
 	
-	public boolean hasStopDateChanged() {
-		if (startDate != null) {
-			return true;
-			} else {
-			return false;
-			}
-	}
-
+	/**
+	 * Adds number of weeks to stop date of the current project.
+	 * @param weeks number of weeks being added
+	 */
 	public void addWeeksToStopDate(Integer weeks) {
-		if (stopDate != null) {
+		this.stopDatePast = this.stopDate;
+		if (this.stopDate != null) {
 			this.stopDate.add(Calendar.WEEK_OF_YEAR, weeks);
 			} else {
 			throw new IllegalArgumentException("A date for a project must be given before adding.");
 			}
 		
 	}
-
 	
+	/**
+	 * Checks whether the stop date has been changed
+	 * @return Returns true if start date has been changed and false otherwise
+	 */
+	public boolean hasStopDateChanged() {
+		if (this.stopDatePast != this.stopDate) {
+			return true;
+			} else {
+			return false;
+			}
+	}
 
-	
+	/**
+	 * Removes an activity from the project
+	 * @param activity the activity to be removed
+	 */
+	public void removeDeveloper(Developer dev) {
+		if (developerList.contains(dev)) {
+		developerList.remove(dev);
+		} else {
+			throw new IllegalArgumentException("No activity with this name exists in this project");
+		}
+	}
 }
-
-
-
