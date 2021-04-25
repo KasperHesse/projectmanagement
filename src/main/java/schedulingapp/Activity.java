@@ -7,7 +7,7 @@ public class Activity {
 	private Calendar startDate;
 	private Calendar stopDate;
 	private int hoursBudgetted;
-	private List<Developer> developerList;
+	private static List<Developer> developerList;
 	private List<Developer> assistingDeveloperList;
 	private TimeSheet timeSheet;
 	private String activityName;
@@ -23,6 +23,18 @@ public class Activity {
 		
 	}
 	
+<<<<<<< Updated upstream
+=======
+	/**
+	 * Checks whether a developer with the given initials is already working on this project
+	 * @param initials The initials to check against
+	 * @return True if a developer has this set of initials, false otherwise
+	 */
+	public static boolean hasDeveloperWithInitials(String initials) {
+		return developerList.stream().anyMatch(d -> d.getInitials().equals(initials));
+	}
+
+>>>>>>> Stashed changes
 	public void removeDeveloper(Developer dev) {
 		
 	}
