@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import io.cucumber.java.en.*;
 import schedulingapp.*;
@@ -50,8 +51,13 @@ public class ViewAvailableDevelopersSteps {
 	}
 
 	@When("{string} views the list of available developers")
-	public void views_the_list_of_available_developers(String initials) {
-	    availableDevelopers = schedulingApp.getAvailableDevelopers();
+	public void views_the_list_of_available_developers(String initials) throws Exception {
+		try {
+			availableDevelopers = schedulingApp.getAvailableDevelopers();
+		} catch (IllegalArgumentException e) {
+			errorMessageHolder.setErrorMessage(e.getMessage());
+		}
+	    
 	}
 
 	@Then("developers {string} , {string} , {string} are shown to the user")
@@ -61,8 +67,8 @@ public class ViewAvailableDevelopersSteps {
 		assertTrue(availableDevelopers.contains(devHelper.getDeveloper(dev3Initials)));
 	}
 	
-	
-	
-	
-	
+	@Then("Error message {string} is thrown")
+	public void error_message_is_thrown(String errorMsg) {
+		assertThat(errorMessageHolder.getErrorMessage(), is(errorMsg));
+	}
 }

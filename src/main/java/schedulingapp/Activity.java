@@ -29,6 +29,7 @@ public class Activity {
 			throw new IllegalArgumentException("Developers cannot add other developers to activities");
 		}
 		this.developerList.add(dev);
+		dev.addProject(project);
 	}
 	
 	/**

@@ -96,22 +96,8 @@ public class CreateProjectSteps {
 		assertThat(stopCal.compareTo(project.getStopDate()), is(0));
 	}
 	
-	//    OLD STEPS
-//	@When("the user creates the first project of year {int}")
-//	public void the_user_creates_the_first_project_of_year(Integer year) {
-//		schedulingApp.setCurrentDate(year, 0, 0);
-//		schedulingApp.createProject("Test Project");
-////		schedulingApp.getProjectByName("Test Project").setApp(schedulingApp);
-//	}
-//
-//	@Then("a project with the project number {string} exists")
-//	public void a_project_with_the_project_number_exists(String expectedProjectNumber) {
-//	    assertTrue(expectedProjectNumber.equals(schedulingApp.getProjectByName("Test Project").getProjectNumber()));
-//	}
-//
-//	@Then("{string} is a member of that project")
-//	public void is_a_member_of_that_project(String string) {
-//	    // Write code here that turns the phrase above into concrete actions
-//	    throw new io.cucumber.java.PendingException();
-//	}
+	@Then("{string} is a member of the project {string}")
+	public void is_a_member_of_the_project(String initials, String projectName) {
+		assertTrue(schedulingApp.getProjectByName(projectName).getDevelopers().contains(devHelper.getDeveloper(initials)));
+	}
 }

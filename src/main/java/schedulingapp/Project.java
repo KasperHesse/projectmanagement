@@ -14,6 +14,7 @@ public class Project {
 	private List<Activity> activityList;
 	private SchedulingApp schedulingApp;
 	private Calendar creationDate;
+	private List<Developer> unassignedDevelopers;
 	
 	
 	public Project(String projectName, Calendar startDate, Calendar stopDate, Developer projectManager, SchedulingApp schedulingApp) {
@@ -25,6 +26,16 @@ public class Project {
 		this.creationDate = new GregorianCalendar();
 		this.activityList = new ArrayList<Activity>();
 		this.projectNumber = generateProjectNumber();
+		
+		unassignedDevelopers = new ArrayList<Developer>();
+		if (projectManager != null) {
+			unassignedDevelopers.add(projectManager);
+			projectManager.addProject(this);			
+		}
+		if (schedulingApp.getCurrentUser() != null) {
+			unassignedDevelopers.add(schedulingApp.getCurrentUser());
+			schedulingApp.getCurrentUser().addProject(this);			
+		}
 	}
 	
 	/**
@@ -48,37 +59,20 @@ public class Project {
 	
 	/**
 	 * Generates a project number for a newly created project. The project number must be unique
-	 * @return
+	 * @return projectNumber
 	 */
 	private String generateProjectNumber() {
-		
 		int year = creationDate.get(Calendar.YEAR);
 		String serialNumber = "" + schedulingApp.getAmountOfProjectsCreatedYear(year);
 		int stop = serialNumber.length();
 		for (int i = 0; i < (4-stop); i++) {
 			serialNumber = 0 + serialNumber;
 		}
-		
 		return year%100 + serialNumber;
 	}
-	
-/*******************OLD GENERATENUMBER****************/
-//	private String generateProjectNumber() {
-//		this.creationDate = this.schedulingApp.getCurrentDate();
-//		int year = creationDate.get(1)%100;
-//		String serialNumber = "" + schedulingApp.getAmountOfProjectsCreatedYear(year);
-//		int stop = serialNumber.length();
-//		for (int i = 0; i < (4-stop); i++) {
-//			serialNumber = 0 + serialNumber;
-//		}
-//		
-//		return year + serialNumber;
-//	}
-
-	
 
 	/**
-	 * Removes an activtiy from the project
+	 * Removes an activity from the project
 	 * @param activity the activity to be removed
 	 */
 	public void removeActivity(Activity activity) {
@@ -95,8 +89,20 @@ public class Project {
 	/**
 	 * Gets a list of all developers assigned to work on this project
 	 */
-	public List<Developer> getAssignedDevelopers(){
+	public List<Developer> getAssignedDevelopers() {
 		return null;
+	}
+	
+	//Does this work as intended? Same as above?
+	public List<Developer> getDevelopers() {
+		List<Developer> allDevs = unassignedDevelopers;
+		
+		for (Activity activity : activityList) {
+			allDevs.addAll(activity.getDevelopers());
+		}
+		
+		return allDevs.stream().distinct().collect(Collectors.toList());
+		
 	}
 	
 	/**
@@ -130,6 +136,7 @@ public class Project {
 	 */
 	public void setProjectManager(Developer dev) {
 		this.projectManager = dev;
+		dev.addProject(this);
 	}
 	
 
@@ -237,5 +244,4 @@ public class Project {
 	public Calendar getStopDate() {
 		return stopDate;
 	}
-
 }
