@@ -27,9 +27,9 @@ public class AddDeveloperToActivitySteps {
 
 	@When("they add the developer with initials {string} to the activity")
 	public void they_add_the_developer_with_initials_to_the_activity(String initials) {
-		Developer dev = devHelper.getDeveloper(initials);
+		Developer d = devHelper.getDeveloper(initials);
 		try {
-			actHelper.getActivity().addDeveloper(dev);
+			actHelper.getActivity().addDeveloper(d);
 		} catch (Exception e) {
 			errorMessageHolder.setErrorMessage(e.getMessage());
 		}
