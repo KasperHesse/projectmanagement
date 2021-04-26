@@ -16,32 +16,45 @@ public class Project {
 	private String projectName;
 	private List<Activity> activityList;
 	private SchedulingApp schedulingApp;
-	private List<Developer> developerList;
-//	private LocalDate startDate;
-//	private LocalDate stopDate;
+	private Calendar creationDate;
+	private List<Developer> unassignedDevelopers;
+
 	
-	public Project(String projectName, Calendar startDate, Calendar stopDate, Developer projectManager) {
-		//Auto-generate projectNumber
+	
+	public Project(String projectName, Calendar startDate, Calendar stopDate, Developer projectManager, SchedulingApp schedulingApp) {
 		this.projectName = projectName;
 		this.startDate = startDate;
 		this.stopDate = stopDate;
 		this.startDatePast = startDatePast;
 		this.stopDatePast = startDatePast;
 		this.projectManager = projectManager;
+		this.schedulingApp = schedulingApp;
+		this.creationDate = new GregorianCalendar();
 		this.activityList = new ArrayList<Activity>();
 		this.projectNumber = generateProjectNumber();
-		this.developerList = new ArrayList<Developer>();
+		
+		unassignedDevelopers = new ArrayList<Developer>();
+		if (projectManager != null) {
+			unassignedDevelopers.add(projectManager);
+			projectManager.addProject(this);			
+		}
+		if (schedulingApp.getCurrentUser() != null) {
+			unassignedDevelopers.add(schedulingApp.getCurrentUser());
+			schedulingApp.getCurrentUser().addProject(this);			
+		}
+
 	}
 	
 	/**
-	 * Generates a project number for a newly created project. The project number must be unique
-	 * @return
+	 * Creates a new Project with a given name. startDate, stopDate and projectManager are set to null
+	 * @param projectName
+	 * @param schedulingApp
 	 */
-	private String generateProjectNumber() {
-		// TODO Auto-generated method stub
-		return null;
+	public Project(String projectName, SchedulingApp schedulingApp) {
+		this(projectName, null, null, null, schedulingApp);
 	}
 	
+
 	
 	
 	public void addDeveloper(Developer dev) {
@@ -50,29 +63,39 @@ public class Project {
 		} else if(!this.isProjectManager(this.getCurrentUser())) {
 			throw new IllegalArgumentException("Developers cannot add other developers to projects");
 		}
-		this.developerList.add(dev);
+		this.unassigneDevelopers.add(dev);
 	}
 	
 	
 	/**
-	 * Returns a list of developers working on this project. Any modifications to that list will not affect the project.
-	 * @return
-	 */
-	public List<Developer> getDevelopers() {
-		return List.copyOf(this.developerList);
-	}
-
-	/**
-	 * Creates a new Project with a given name. startDate, stopDate and projectManager are set to null
+	 * Creates a new Project with a given name and projectManager. startDate and stopDate are set to null
 	 * @param projectName
+	 * @param projectManager
+	 * @param schedulingApp
 	 */
-	public Project(String projectName) {
-		this(projectName, null, null, null);
+	public Project(String projectName, Developer projectManager, SchedulingApp schedulingApp) {
+		this(projectName, null, null, projectManager, schedulingApp);
+	}
+	
+	/**
+	 * Generates a project number for a newly created project. The project number must be unique
+	 * @return projectNumber
+	 */
+	private String generateProjectNumber() {
+		int year = creationDate.get(Calendar.YEAR);
+		String serialNumber = "" + schedulingApp.getAmountOfProjectsCreatedYear(year);
+		int stop = serialNumber.length();
+		for (int i = 0; i < (4-stop); i++) {
+			serialNumber = 0 + serialNumber;
+		}
+		return year%100 + serialNumber;
 	}
 
 	/**
-	 * Removes an activtiy from the project
-	 * @param activity the activity to be removed - Jonathan changed from Activity to String
+
+	 * Removes an activity from the project
+	 * @param activity the activity to be removed
+
 	 */
 	public void removeActivity(String name) {
 		if (activityList.contains(name)) {
@@ -89,11 +112,17 @@ public class Project {
 		return null;
 	}
 	
-	/**
-	 * Gets a list of all developers assigned to work on this project
-	 */
-	public List<Developer> getAssignedDevelopers(){
-		return null;
+	
+	//Does this work as intended? Same as above?
+	public List<Developer> getDevelopers() {
+		List<Developer> allDevs = unassignedDevelopers;
+		
+		for (Activity activity : activityList) {
+			allDevs.addAll(activity.getDevelopers());
+		}
+		
+		return allDevs.stream().distinct().collect(Collectors.toList());
+		
 	}
 	
 	
@@ -160,6 +189,7 @@ public class Project {
 	 */
 	public void setProjectManager(Developer dev) {
 		this.projectManager = dev;
+		dev.addProject(this);
 	}
 	
 
@@ -238,10 +268,6 @@ public class Project {
 		return this.schedulingApp.getCurrentUser();
 	}
 
-	public String getProjectNumber() {
-		// TODO Auto-generated method stub
-		return this.projectNumber;
-	}
 
 	/**
 	 * Returns a *copy* of the start date for this activity. Modifications on that copy will not modify the start date of the activity
@@ -314,10 +340,26 @@ public class Project {
 	 * @param activity the activity to be removed
 	 */
 	public void removeDeveloper(Developer dev) {
-		if (developerList.contains(dev)) {
-		developerList.remove(dev);
+		if (unassignedDevelopers.contains(dev)) {
+		unassignedDevelopers.remove(dev);
 		} else {
-			throw new IllegalArgumentException("No activity with this name exists in this project");
+			throw new IllegalArgumentException("No developer with this initials exists in this project");
 		}
 	}
+}
+
+	/**
+	 * @return the date of creation for the project
+	 */
+	public Calendar getCreationDate() {
+		return this.creationDate;
+	}
+
+	/**
+	 * @return the project number of the project
+	 */
+	public String getProjectNumber() {
+		return this.projectNumber;
+	}
+
 }
