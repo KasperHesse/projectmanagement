@@ -63,10 +63,8 @@ public class RegisterTimeSteps {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 		
 		Calendar timeRegisterDate = Calendar.getInstance();
-		Calendar timeRegisterDate1 = Calendar.getInstance();
 		
 		timeRegisterDate.setTime(formatter.parse(date));
-		timeRegisterDate1.setTime(formatter.parse(date));
 		
 		try {
 			act.registerTime(dev1, hours, timeRegisterDate);
