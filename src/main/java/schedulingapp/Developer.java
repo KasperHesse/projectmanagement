@@ -18,32 +18,37 @@ public class Developer {
 	public Developer(String initials, String name) {
 		this.name = name;
 		this.initials = initials;
-		this.activityList = new ArrayList<Activity>();
+
+		this.activityList = new ArrayList<Activity>(); 
 		this.projectList = new ArrayList<Project>();
-		
-//		Project misc = new Project("misc");
-//		misc.createActivity("holiday");
-//		misc.createActivity("course");
-//		
-//		misc.getActivityByName("holiday");
-//		misc.getActivityByName("course");
-		
-		
-		//Hvordan tilgår man et objekt der ikke er blev instansieret endnu? 
-		
+
 	}
 	
+	/**
+	 * Checks whether the developer is project manager on any project
+	 * @return true, if developer is project manager of a project
+	 */
 	public boolean isProjectManager() {
-		return true;
+		return projectList.stream().anyMatch(p -> p.isProjectManager(this) == true);
 	}
 	
+	/**
+	 * Checks if the developer is available, defined as working on less than 10 projects
+	 * @return true, if developer is available
+	 */
 	public boolean isAvailable() {
-		if(activityList.size() <= 10) {
+
+		if (activityList.size() <= 10) {
+
 			return true;
 		}
-		return false; 
+		return false;
+
 	}
 
+	/**
+	 * @return initials of the developer
+	 */
 	public String getInitials() {
 		return this.initials;
 	}
@@ -62,6 +67,7 @@ public class Developer {
 			return otherDev.getInitials().equals(this.initials);
 		}
 	}
+
 	
 	public List<Activity> getActivtyList() {
 		return activityList; 
@@ -69,5 +75,15 @@ public class Developer {
 	
 	public void addDeveloperToActivity(Activity activity) {
 		activityList.add(activity);
+
+
+	/**
+	 * Adds a project to the developers list of projects
+	 * @param project The project to be added to the project list
+	 */
+	public void addProject(Project project) {
+		projectList.add(project);
+		
+
 	}
 }

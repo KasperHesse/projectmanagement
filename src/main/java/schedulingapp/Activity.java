@@ -1,11 +1,14 @@
 package schedulingapp;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class Activity {
 	private Calendar startDate;
 	private Calendar stopDate;
 	private int hoursBudgetted;
+	private int hoursBudgettedPast;
 	private List<Developer> developerList;
 	private List<Developer> assistingDeveloperList;
 	private TimeSheet timeSheet = new TimeSheet();
@@ -31,6 +34,7 @@ public class Activity {
 			throw new IllegalArgumentException("Developers cannot add other developers to activities");
 		}
 		this.developerList.add(dev);
+		dev.addProject(project);
 	}
 	
 	/**
@@ -43,7 +47,11 @@ public class Activity {
 	}
 
 	public void removeDeveloper(Developer dev) {
-		
+		if (developerList.contains(dev)) {
+		developerList.remove(dev);
+		} else {
+			throw new IllegalArgumentException("No developer with this name exists in this project");
+		}
 	}
 	
 	public boolean isDeveloper(Developer dev) {
@@ -154,4 +162,101 @@ public class Activity {
 		return project;
 	}
 	
+	/**
+	 * Adds number of weeks to the start date for the current activity
+	 * @param weeks The amount of weeks
+	 */
+	
+	public void addWeeksToStartDate(Integer weeks) {
+		if (startDate != null) {
+			this.startDate.add(Calendar.WEEK_OF_YEAR, weeks);
+			} else {
+			throw new IllegalArgumentException("A date for an activity must be given before adding.");
+			}
+	}
+	
+	/**
+	 * Checks whether the start date has been changed
+	 * @return Returns true if start date has been changed and false otherwise
+	 */
+	public boolean hasStartDateChanged() {
+		if (startDate != null) {
+			return true;
+			} else {
+			return false;
+			}
+	}
+
+	/**
+	 * Adds number of weeks to the start date for the current activity
+	 * @param weeks The amount of weeks
+	 */
+	public void addWeeksToStopDate(Integer weeks) {
+		if (stopDate != null) {
+			this.stopDate.add(Calendar.WEEK_OF_YEAR, weeks);
+			} else {
+			throw new IllegalArgumentException("A date for an activity must be given before adding.");
+			}
+	}
+	
+	/**
+	 * Checks whether the stop date has been changed
+	 * @return Returns true if start date has been changed and false otherwise
+	 */
+	public boolean hasStopDateChanged() {
+		if (stopDate != null) {
+			return true;
+			} else {
+			return false;
+			}
+	}
+
+	/**
+	 * Adds number hours to the hours budgeted for the activity
+	 * @param hours the amount of hours
+	 */
+	public void addHours(Integer hours) {
+		this.hoursBudgettedPast = this.hoursBudgetted;
+		this.hoursBudgetted += hours;
+		
+	}
+	
+	/**
+	 * Checks whether the budgeted hours for the activity has been changed
+	 * @param hours the amount of hours
+	 * @return Returns true if budgeted hours has been changed false otherwise
+	 */
+	public boolean hoursHasChanged(Integer hours) {
+		if(this.hoursBudgettedPast == this.hoursBudgetted-hours) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public void setStartDate(String startDate) throws ParseException {
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+
+		Calendar startCal = Calendar.getInstance();
+		
+		startCal.setTime(formatter.parse(startDate));
+
+		this.startDate = startCal;
+
+	}
+	
+	public void setStopDate(String stopDate) throws ParseException {
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+
+		Calendar stopCal = Calendar.getInstance();
+		
+		stopCal.setTime(formatter.parse(stopDate));
+
+		this.stopDate = stopCal;
+		
+	}
+	
+	
+	
+
 }
