@@ -1,17 +1,25 @@
 package schedulingapp;
 
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Map;
 
 public class TimeSheet {
-	private Map<Calendar, Map<Developer, Integer>> timeUsage;
+	private Map<Calendar, Map<Developer, Integer>> dateTimeUsage = new HashMap<Calendar, Map<Developer, Integer>>();
+	private Map<Developer, Integer> personTimeUsage = new HashMap<Developer, Integer>();
+	Developer developer;
 
+	
 	public TimeSheet() {
-		
 	}
-		
+	
 	public void registerTime(Developer dev, int hours, Calendar date) {
+		if(tooManyHours(hours)) {
+			throw new IllegalArgumentException("You can't register more than 24 hours on one day");
+		}
 		
+		personTimeUsage.put(dev, hours);
+		dateTimeUsage.put(date, personTimeUsage);
 	}
 	
 	public void editRegisteredTime(Developer dev, Calendar date, int change) {
@@ -35,11 +43,21 @@ public class TimeSheet {
 		
 	}
 	
+	/**
+	 * Boolean to detect if person is registering more than 24 hours on one day
+	 * @param The amount of hours you want to check
+	 * @return
+	 */
 	public boolean tooManyHours(int hours) {
+		if(hours > 24) {
 		return true;
+		}
+		return false; 
 	}
 	
-	public void viewTime() {
-		
+	
+	
+	public int viewTime(Calendar date, Developer dev) {
+		return dateTimeUsage.get(date).get(dev);
 	}
 }

@@ -171,6 +171,8 @@ public class Project {
 	public Developer getCurrentUser() {
 		return this.schedulingApp.getCurrentUser();
 	}
-
-
+	
+	public SchedulingApp getSchedulingApp() {
+		return schedulingApp;
+	}
 }

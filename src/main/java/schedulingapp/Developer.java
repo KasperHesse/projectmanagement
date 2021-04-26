@@ -1,5 +1,6 @@
 package schedulingapp;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Developer {
@@ -9,7 +10,7 @@ public class Developer {
 	private String initials;
 	
 	/**
-	 * Creates a new developer with the given data. 
+	 * Creates a new developer with the given data. And adds the person to the activitys "holiday" and "course" under the project "misc"
 	 * @param initials The initials of the developer
 	 * @param name The full name of the developer
 	 * @note The initials *must* be a string exactly 4 characters long.
@@ -17,6 +18,19 @@ public class Developer {
 	public Developer(String initials, String name) {
 		this.name = name;
 		this.initials = initials;
+		this.activityList = new ArrayList<Activity>();
+		this.projectList = new ArrayList<Project>();
+		
+//		Project misc = new Project("misc");
+//		misc.createActivity("holiday");
+//		misc.createActivity("course");
+//		
+//		misc.getActivityByName("holiday");
+//		misc.getActivityByName("course");
+		
+		
+		//Hvordan tilgår man et objekt der ikke er blev instansieret endnu? 
+		
 	}
 	
 	public boolean isProjectManager() {
@@ -24,7 +38,10 @@ public class Developer {
 	}
 	
 	public boolean isAvailable() {
-		return true;
+		if(activityList.size() <= 10) {
+			return true;
+		}
+		return false; 
 	}
 
 	public String getInitials() {
@@ -44,5 +61,13 @@ public class Developer {
 			Developer otherDev = (Developer) obj;
 			return otherDev.getInitials().equals(this.initials);
 		}
+	}
+	
+	public List<Activity> getActivtyList() {
+		return activityList; 
+	}
+	
+	public void addDeveloperToActivity(Activity activity) {
+		activityList.add(activity);
 	}
 }
