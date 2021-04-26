@@ -1,13 +1,20 @@
 package schedulingapp;
 
-import java.util.*;
+import static ui.ControllerState.*;
+
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
+
 public class SchedulingApp {
+	private PropertyChangeSupport support = new PropertyChangeSupport(this);
 	private Developer currentUser;
 	private List<Developer> developerList;
 	private List<Project> projectList;
-	public Object getCurrentUser;
 
 	public SchedulingApp() {
 		this.developerList = new ArrayList<Developer>();
@@ -98,6 +105,38 @@ public class SchedulingApp {
 	 */
 	public Developer getCurrentUser() {
 		return this.currentUser;
+	}
+	
+	/**
+	 * Logs a user into the system, setting them as the current user
+	 * @param initials The initials of the user to be logged in
+	 * @return true if the login was succesful, false otherwise
+	 */
+	public boolean login(String initials) {
+		Developer dev = getDeveloperByInitials(initials);
+		if(dev == null) {
+			return false;
+		}
+		this.setCurrentUser(dev);
+		support.firePropertyChange("user", null, dev);
+		return true;
+	}
+	
+	public void logout() {
+		support.firePropertyChange("user", currentUser, null);
+		this.setCurrentUser(null);
+		
+	}
+	
+	public void addObserver(PropertyChangeListener listener) {
+		support.addPropertyChangeListener(listener);
+	}
+
+
+
+	public Developer[] getAvailableDevelopers() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

@@ -45,4 +45,8 @@ public class Developer {
 			return otherDev.getInitials().equals(this.initials);
 		}
 	}
+
+	public String getName() {
+		return this.name;
+	}
 }
