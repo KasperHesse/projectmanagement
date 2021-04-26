@@ -86,12 +86,6 @@ public class Project {
 		return null;
 	}
 	
-	/**
-	 * Gets a list of all developers assigned to work on this project
-	 */
-	public List<Developer> getAssignedDevelopers() {
-		return null;
-	}
 	
 	//Does this work as intended? Same as above?
 	public List<Developer> getDevelopers() {
