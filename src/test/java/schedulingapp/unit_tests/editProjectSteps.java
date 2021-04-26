@@ -11,8 +11,10 @@ import schedulingapp.Project;
 import schedulingapp.ProjectHelper;
 import schedulingapp.SchedulingApp;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
 import static org.hamcrest.CoreMatchers.*;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -27,6 +29,8 @@ public class editProjectSteps {
 	ActivityHelper actHelper;
 	Calendar oldstartDate;
 	Calendar oldstopDate;
+	private Calendar initialStartDate;
+	private Calendar initialStopDate;
 
 	public editProjectSteps(SchedulingApp schedulingApp, ProjectHelper projHelper, DeveloperHelper devHelper,
 			ErrorMessageHolder errorMessageHolder, ActivityHelper actHelper, ActivityHelper actHelper1) {
@@ -42,10 +46,45 @@ public class editProjectSteps {
 	@Given("that a project exists with project number {string}")
 	public void that_a_project_exists_with_project_number(String projectName) {
 		Project project = projHelper.getProject(projectName);
+		
 		assertThat(schedulingApp.hasProjectNamed(projectName), is(true));
 
 	}
+	
+	@Given("the project {string} has a startdate {string}")
+	public void the_project_has_a_startdate(String projectName, String startDate) throws ParseException {
+		Project project = projHelper.getProject(projectName);
+		project.setStartDate(startDate);
+		initialStartDate = project.getStartDate();
+		
+		
+		
+	}
+	
+	@When("the user changes the start time by {int} weeks for the project {string}")
+	public void the_user_changes_the_start_time_by_weeks_for_the_project(Integer weeks, String projectName) {
+			
+		try {
+			projHelper.getProject(projectName).addWeeksToStartDate(weeks);
+		} catch (IllegalArgumentException e) {
+			errorMessageHolder.setErrorMessage(e.getMessage());
+		}
+	}
 
+	@Then("the start time of the project {string} is {string}")
+	public void the_start_time_of_the_project_is(String projectName, String startDate) throws ParseException {
+		Project project = projHelper.getProject(projectName);
+		
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+
+		Calendar startCal = Calendar.getInstance();
+		
+		startCal.setTime(formatter.parse(startDate));
+		
+		assertEquals(project.getStartDate() , startCal);
+		
+	}
+	
 	@Given("no project manager is bound to the current project")
 	public void no_project_manager_is_bound_to_the_current_project() {
 		assertThat(projHelper.getProject().hasProjectManager(), is(false));
@@ -179,5 +218,37 @@ public class editProjectSteps {
 	public void the_developer_is_removed_from_the_current_project(String initials) {
 		List<Developer> dList = projHelper.getProject().getDevelopers();
 		assertThat(dList.stream().anyMatch(p -> p.getInitials().equals(initials)), is(false));
+	}
+	
+	
+	
+	@Given("the project {string} has a enddate {string}")
+	public void the_project_has_a_enddate(String projectName, String stopDate) throws ParseException {
+		Project project = projHelper.getProject(projectName);
+		project.setStopDate(stopDate);
+		initialStopDate = project.getStopDate();
+		
+	}
+
+	@When("the user changes the end time by {int} weeks for the project {string}")
+	public void the_user_changes_the_end_time_by_weeks_for_the_project(Integer weeks, String projectName) {
+		try {
+			projHelper.getProject(projectName).addWeeksToStopDate(weeks);
+		} catch (IllegalArgumentException e) {
+			errorMessageHolder.setErrorMessage(e.getMessage());
+		}
+	}
+
+	@Then("the end time of the project {string} is {string}")
+	public void the_end_time_of_the_project_is(String projectName, String stopDate) throws ParseException {
+		Project project = projHelper.getProject(projectName);
+		
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+
+		Calendar stopCal = Calendar.getInstance();
+		
+		stopCal.setTime(formatter.parse(stopDate));
+		
+		assertEquals(project.getStopDate() , stopCal);
 	}
 }

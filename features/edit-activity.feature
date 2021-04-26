@@ -5,14 +5,16 @@ Actors: Developer
 Scenario: User changes start time of activity
 	Given that the user with initials "abcd" is the project manager of project "xyz"
 	And that an activity named "research" exists under the current project
-	When the user moves the start time by 2 weeks for the current activity
-	Then the start time of the current activity is moved
+	And the activity "research" has a startdate "2021-04-06"
+	When the user moves the start time by 2 weeks for the activity the "research"
+	Then the start time of the activity "research" is "2021-04-20" 
 	
 Scenario: User changes End time of activity
 	Given that the user with initials "abcd" is the project manager of project "xyz"
 	And that an activity named "research" exists under the current project
-	When the user moves the end time by 2 weeks for the current activity
-	Then the end time of the current activity is moved
+	And the activity "research" has a stopdate "2021-05-06"
+	When the user moves the end time by 2 weeks for the activity the "research"
+	Then the end time of the activity "research" is "2021-05-20" 
 
 Scenario: User removes a developer from an activity
 	Given that the user with initials "abcd" is the project manager of project "xyz"

@@ -1,5 +1,7 @@
 package schedulingapp;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class Activity {
@@ -170,6 +172,29 @@ public class Activity {
 			return false;
 		}
 	}
+
+	public void setStartDate(String startDate) throws ParseException {
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+
+		Calendar startCal = Calendar.getInstance();
+		
+		startCal.setTime(formatter.parse(startDate));
+
+		this.startDate = startCal;
+
+	}
+	
+	public void setStopDate(String stopDate) throws ParseException {
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+
+		Calendar stopCal = Calendar.getInstance();
+		
+		stopCal.setTime(formatter.parse(stopDate));
+
+		this.stopDate = stopCal;
+		
+	}
+	
 	
 	
 }

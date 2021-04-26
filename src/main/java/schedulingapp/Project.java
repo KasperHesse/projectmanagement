@@ -63,7 +63,7 @@ public class Project {
 		} else if(!this.isProjectManager(this.getCurrentUser())) {
 			throw new IllegalArgumentException("Developers cannot add other developers to projects");
 		}
-		this.unassigneDevelopers.add(dev);
+		this.unassignedDevelopers.add(dev);
 	}
 	
 	
@@ -346,7 +346,7 @@ public class Project {
 			throw new IllegalArgumentException("No developer with this initials exists in this project");
 		}
 	}
-}
+
 
 	/**
 	 * @return the date of creation for the project
@@ -360,6 +360,28 @@ public class Project {
 	 */
 	public String getProjectNumber() {
 		return this.projectNumber;
+	}
+
+	public void setStartDate(String startDate) throws ParseException {
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+
+		Calendar startCal = Calendar.getInstance();
+		
+		startCal.setTime(formatter.parse(startDate));
+
+		this.startDate = startCal;
+
+	}
+	
+	public void setStopDate(String stopDate) throws ParseException {
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+
+		Calendar stopCal = Calendar.getInstance();
+		
+		stopCal.setTime(formatter.parse(stopDate));
+
+		this.stopDate = stopCal;
+		
 	}
 
 }

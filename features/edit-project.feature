@@ -3,7 +3,7 @@ Description: User edits a project
 Actors: Developer
 
 Scenario: User adds themselves as project manager to a project with no project manager
-	Given that a project exists with project number "012345"
+	Given that a project exists with project number "012345" 
 	And no project manager is bound to the current project
 	When the user "EPR" adds themselves as project manager to the project
 	Then the current user is added as project manager to the current project
@@ -11,14 +11,16 @@ Scenario: User adds themselves as project manager to a project with no project m
 	
 Scenario: User changes Start time of project
 	Given that the user with initials "abcd" is the project manager of project "xyz"
-	When the user changes the start time by 2 weeks for the current project
-	Then the start time of the current project is changed
+	Given the project "xyz" has a startdate "2021-04-06"
+	When the user changes the start time by 2 weeks for the project "xyz"
+	Then the start time of the project "xyz" is "2021-04-20"
 	
 	
 Scenario: User changes End time of project
-	Given that the user with initials "abcd" is the project manager of project "xyz"
-	When the user changes the end time by 2 weeks for the current project
-	Then the end time of the current project is changed
+	Given that the user with initials "abcd" is the project manager of project "xyz"	
+	Given the project "xyz" has a enddate "2021-05-06"
+	When the user changes the end time by 2 weeks for the project "xyz"
+	Then the end time of the project "xyz" is "2021-05-20"
 	
 	
 Scenario: User removes an activity from a project

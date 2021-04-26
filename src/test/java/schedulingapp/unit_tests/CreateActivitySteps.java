@@ -89,6 +89,7 @@ public class CreateActivitySteps {
 	@Given("that an activity named {string} exists under the current project")
 	public void that_an_activity_named_exists_under_the_current_project(String name) {
 		actHelper.getActivity(projHelper.getProject(), name);
+		
 	}
 
 	@Given("that the user with initials {string} is a developer of project {string}")
