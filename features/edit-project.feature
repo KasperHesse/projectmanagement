@@ -44,7 +44,7 @@ Scenario: User removes a developer from the project
 #Scenario: User changes hours budgeted for the project
 #	Given that the user with initials "abcd" is the project manager of project "xyz"
 #	When the user changes hours budgeted by 100000 for the current project
-##	Then the hours budgeted is changed by 100000 for the current project
+#	Then the hours budgeted is changed by 100000 for the current project
 
 
 

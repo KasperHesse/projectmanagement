@@ -123,15 +123,19 @@ public class editProjectSteps {
 	@Given("a developer {string} exists")
 	public void a_developer_exists(String initials) {
 		Developer dev = devHelper.getDeveloper(initials);
-
+		
 		assertThat(schedulingApp.hasDeveloperWithInitials(initials), is(true));
-
+		
+		
 	}
 
 	@When("the user adds the developer {string} to the current project")
 	public void the_user_adds_the_developer_to_the_current_project(String initials) {
 
 		Developer dev = devHelper.getDeveloper(initials);
+		
+		assertThat(devHelper.getDeveloper(initials).isAvailable(), is(true));
+		
 		try {
 			projHelper.getProject().addDeveloper(dev);
 		} catch (Exception e) {
