@@ -75,6 +75,7 @@ public class Developer {
 	
 	public void addDeveloperToActivity(Activity activity) {
 		activityList.add(activity);
+	}
 
 
 	/**
