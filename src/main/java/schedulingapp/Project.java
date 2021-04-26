@@ -98,8 +98,8 @@ public class Project {
 
 	 */
 	public void removeActivity(String name) {
-		if (activityList.contains(name)) {
-		activityList.remove(name);
+		if (hasActivityNamed(name)) {
+		activityList.remove(getActivityByName(name));
 		} else {
 			throw new IllegalArgumentException("No activity with this name exists in this project");
 		}
