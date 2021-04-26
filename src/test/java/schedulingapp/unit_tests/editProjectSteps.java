@@ -25,6 +25,8 @@ public class editProjectSteps {
 	DeveloperHelper devHelper;
 	ErrorMessageHolder errorMessageHolder;
 	ActivityHelper actHelper;
+	Calendar oldstartDate;
+	Calendar oldstopDate;
 
 	public editProjectSteps(SchedulingApp schedulingApp, ProjectHelper projHelper, DeveloperHelper devHelper,
 			ErrorMessageHolder errorMessageHolder, ActivityHelper actHelper, ActivityHelper actHelper1) {
@@ -74,7 +76,7 @@ public class editProjectSteps {
 
 	@Then("the start time of the current project is changed")
 	public void the_start_time_of_the_current_project_is_changed_by_weeks() {
-
+		
 		try {
 			assertThat(projHelper.getProject().hasStartDateChanged(), is(true));
 
@@ -85,7 +87,7 @@ public class editProjectSteps {
 
 	@When("the user changes the end time by {int} weeks for the current project")
 	public void the_user_changes_the_end_time_by_weeks_for_the_current_project(Integer weeks) {
-
+		
 		try {
 			projHelper.getProject().addWeeksToStopDate(weeks);
 		} catch (IllegalArgumentException e) {
@@ -95,7 +97,7 @@ public class editProjectSteps {
 
 	@Then("the end time of the current project is changed")
 	public void the_end_time_of_the_current_project_is_changed_by_weeks() {
-
+		
 		try {
 			assertThat(projHelper.getProject().hasStopDateChanged(), is(true));
 
