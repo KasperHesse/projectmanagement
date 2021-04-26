@@ -85,9 +85,9 @@ public class Activity {
 	 * @param On what date he wants register said hours
 	 */
 	public void registerTime(Developer dev, int hours, Calendar date) {
-		if(!(startDate == null && stopDate == null)) {
+		if(startDate != null && stopDate != null) {
 			
-			if(startDate.after(date) || stopDate.before(date)) {
+			if(startDate.before(date) || stopDate.after(date)) {
 				throw new IllegalArgumentException("You cannot register time outside the active status dates");
 			}
 		}
@@ -132,6 +132,14 @@ public class Activity {
 	 */
 	public Calendar getStopDate() {
 		return (Calendar) this.stopDate.clone();
+	}
+	
+	public void setStartDate(Calendar startDate) {
+		this.startDate = startDate;
+	}
+	
+	public void setStopDate(Calendar stopDate) {
+		this.stopDate = stopDate;
 	}
 
 	/**

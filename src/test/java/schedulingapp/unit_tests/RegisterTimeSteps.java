@@ -61,8 +61,12 @@ public class RegisterTimeSteps {
 		Project proj = projHelper.getProject("project");
 		Activity act = actHelper.getActivity(proj,"activity");
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+		
 		Calendar timeRegisterDate = Calendar.getInstance();
+		Calendar timeRegisterDate1 = Calendar.getInstance();
+		
 		timeRegisterDate.setTime(formatter.parse(date));
+		timeRegisterDate1.setTime(formatter.parse(date));
 		
 		try {
 			act.registerTime(dev1, hours, timeRegisterDate);
@@ -93,8 +97,18 @@ public class RegisterTimeSteps {
 
 	@Given("an activity with start date {string}  and end date {string} exists under a project")
 	public void an_activity_with_start_date_and_end_date_exists_under_a_project(String startDate, String stopDate)throws Exception {
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+		Calendar startDate1 = Calendar.getInstance();
+		Calendar stopDate1 = Calendar.getInstance();
+		
+		startDate1.setTime(formatter.parse(startDate));
+		stopDate1.setTime(formatter.parse(stopDate));
+		
+		
 	    Project proj = projHelper.getProject("project");
 	    Activity act = actHelper.getActivity(proj,"activity");
+	    act.setStartDate(startDate1);
+	    act.setStopDate(stopDate1);
 	}
 }
 

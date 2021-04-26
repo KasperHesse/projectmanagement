@@ -21,12 +21,12 @@ Scenario: User cannot register time for an activity they are not added to
     When "PETE" registers 24 hours on that activity on "2021-12-24"
     Then the error message "You are not associated with chosen activity" is given
 
-#Scenario: User cannot register time on a project that is not active
-#	Given A user with the name "PETE" is logged in
-#	And "PETE" is associated with the activity he wants to register time usage on
-#	And an activity with start date "2021-12-24"  and end date "2021-12-31" exists under a project
-#	When "PETE" registers 24 hours on that activity on "2021-12-24"
-#	Then the error message "You cannot register time outside the active status dates" is given
+Scenario: User cannot register time on a project that is not active
+	Given A user with the name "PETE" is logged in
+	And "PETE" is associated with the activity he wants to register time usage on
+	And an activity with start date "2021-12-24"  and end date "2021-12-31" exists under a project
+	When "PETE" registers 24 hours on that activity on "2021-12-23"
+	Then the error message "You cannot register time outside the active status dates" is given
 
 
 #Given the constructor these scenraios are the same as the first one. I dont think theres any need for implementing them :) 

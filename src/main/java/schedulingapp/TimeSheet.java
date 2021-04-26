@@ -6,11 +6,13 @@ import java.util.Map;
 
 public class TimeSheet {
 	private Map<Calendar, Map<Developer, Integer>> dateTimeUsage = new HashMap<Calendar, Map<Developer, Integer>>();
-	private Map<Developer, Integer> personTimeUsage = new HashMap<Developer, Integer>();
+	//private Map<Developer, Integer> personTimeUsage = new HashMap<Developer, Integer>();
 	Developer developer;
 
 	
 	public TimeSheet() {
+		
+		
 	}
 	
 	public void registerTime(Developer dev, int hours, Calendar date) {
@@ -18,8 +20,13 @@ public class TimeSheet {
 			throw new IllegalArgumentException("You can't register more than 24 hours on one day");
 		}
 		
-		personTimeUsage.put(dev, hours);
-		dateTimeUsage.put(date, personTimeUsage);
+		Map<Developer, Integer> var = dateTimeUsage.get(date);
+		
+		if(var == null) {
+			var = new HashMap<Developer, Integer>();
+			dateTimeUsage.put(date, var);
+		}
+		var.put(dev, hours);
 	}
 	
 	public void editRegisteredTime(Developer dev, Calendar date, int change) {
@@ -61,3 +68,15 @@ public class TimeSheet {
 		return dateTimeUsage.get(date).get(dev);
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
