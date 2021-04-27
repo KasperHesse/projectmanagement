@@ -92,5 +92,10 @@ public class Activity {
 	public List<Developer> getDevelopers() {
 		return List.copyOf(this.developerList);
 	}
+
+	public void registerTime(Developer currentUser, Double hours, String date) {
+		// TODO Auto-generated method stub
+		
+	}
 	
 }

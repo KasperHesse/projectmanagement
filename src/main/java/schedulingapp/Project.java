@@ -30,7 +30,7 @@ public class Project {
 	 */
 	private String generateProjectNumber() {
 		// TODO Auto-generated method stub
-		return null;
+		return "123456";
 	}
 
 	/**
@@ -170,6 +170,15 @@ public class Project {
 	 */
 	public Developer getCurrentUser() {
 		return this.schedulingApp.getCurrentUser();
+	}
+
+	public String getProjectNumber() {
+		return this.projectNumber;
+	}
+
+	List<Activity> getActivityList() {
+		return this.activityList;
+		
 	}
 
 

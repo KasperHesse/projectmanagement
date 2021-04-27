@@ -1,4 +1,4 @@
-package schedulingapp.unit_tests;
+package schedulingapp;
 
 public class ErrorMessageHolder {
 	private String errorMessage = "";

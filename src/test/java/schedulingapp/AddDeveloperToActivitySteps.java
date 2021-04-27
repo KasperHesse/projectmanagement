@@ -1,7 +1,6 @@
-package schedulingapp.unit_tests;
+package schedulingapp;
 
 import java.util.*;
-import schedulingapp.*;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.CoreMatchers.*;

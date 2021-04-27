@@ -1,4 +1,4 @@
-package schedulingapp.unit_tests;
+package schedulingapp;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.CoreMatchers.*;
@@ -11,7 +11,6 @@ import java.util.NoSuchElementException;
 
 
 import io.cucumber.java.en.*;
-import schedulingapp.*;
 
 public class CreateActivitySteps {
 	
