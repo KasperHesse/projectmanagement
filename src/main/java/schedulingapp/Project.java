@@ -290,55 +290,42 @@ public class Project {
 	}
 	
 	/**
-	 * Adds number of weeks to start date of the current project.
-	 * @param weeks number of weeks being added
+	 * changing number of weeks to start date of the current project.
+	 * 
+	 * @param weeks number of weeks being changed
 	 */
-	public void addWeeksToStartDate(int weeks) {
-		this.startDatePast = this.stopDate;
+	public void changeStartDate(int weeks) {
 		if (this.startDate != null) {
-		this.startDate.add(Calendar.WEEK_OF_YEAR, weeks);
+			this.startDate.add(Calendar.WEEK_OF_YEAR, weeks);
+			assert startDate != null : "PreCondition changeStartDate";
+
 		} else {
-		throw new IllegalArgumentException("A date for a project must be given before adding.");
+			throw new IllegalArgumentException("A date for a project must be given before changing");
 		}
-		
+		if (startDate.before(creationDate)) {
+			throw new IllegalArgumentException("The startdate cannot be before the creationdate");
+		}
+		if (stopDate.before(startDate)) {
+			throw new IllegalArgumentException("The startdate cannot be after the stopdate");
+		}
+		assert startDate.before(creationDate) : "PostCondition changeStartDate";
+		assert stopDate.before(startDate) : "PostCondition changeStartDate";
 	}
 	
 	/**
-	 * Checks whether the start date has been changed
-	 * @return Returns true if start date has been changed and false otherwise
+	 * changing number of weeks to stop date of the current project.
+	 * @param weeks number of weeks being changed
 	 */
-	public boolean hasStartDateChanged() {
-		if (this.startDatePast != this.startDate) {
-			return true;
-			} else {
-			return false;
-			}
-	}
-	
-	/**
-	 * Adds number of weeks to stop date of the current project.
-	 * @param weeks number of weeks being added
-	 */
-	public void addWeeksToStopDate(Integer weeks) {
+	public void changeStopDate(int weeks) {
 		this.stopDatePast = this.stopDate;
 		if (this.stopDate != null) {
 			this.stopDate.add(Calendar.WEEK_OF_YEAR, weeks);
 			} else {
 			throw new IllegalArgumentException("A date for a project must be given before adding.");
 			}
-		
-	}
-	
-	/**
-	 * Checks whether the stop date has been changed
-	 * @return Returns true if start date has been changed and false otherwise
-	 */
-	public boolean hasStopDateChanged() {
-		if (this.stopDatePast != this.stopDate) {
-			return true;
-			} else {
-			return false;
-			}
+			if (stopDate.before(creationDate)) {
+			throw new IllegalArgumentException("The startdate cannot be before the creationdate");
+		}
 	}
 
 	/**
@@ -387,6 +374,17 @@ public class Project {
 		stopCal.setTime(formatter.parse(stopDate));
 
 		this.stopDate = stopCal;
+		
+	}
+	
+	public void setCreationDate(String creationDate) throws ParseException {
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+
+		Calendar creationCal = Calendar.getInstance();
+		
+		creationCal.setTime(formatter.parse(creationDate));
+
+		this.stopDate = creationCal;
 		
 	}
 

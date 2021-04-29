@@ -31,6 +31,7 @@ public class editProjectSteps {
 	Calendar oldstopDate;
 	private Calendar initialStartDate;
 	private Calendar initialStopDate;
+	private Calendar initialCreationDate;
 
 	public editProjectSteps(SchedulingApp schedulingApp, ProjectHelper projHelper, DeveloperHelper devHelper,
 			ErrorMessageHolder errorMessageHolder, ActivityHelper actHelper, ActivityHelper actHelper1) {
@@ -65,7 +66,7 @@ public class editProjectSteps {
 	public void the_user_changes_the_start_time_by_weeks_for_the_project(Integer weeks, String projectName) {
 			
 		try {
-			projHelper.getProject(projectName).addWeeksToStartDate(weeks);
+			projHelper.getProject(projectName).changeStartDate(weeks);
 		} catch (IllegalArgumentException e) {
 			errorMessageHolder.setErrorMessage(e.getMessage());
 		}
@@ -107,43 +108,23 @@ public class editProjectSteps {
 	public void the_user_changes_the_start_time_by_weeks_for_the_project(Integer weeks) {
 
 		try {
-			projHelper.getProject().addWeeksToStartDate(weeks);
+			projHelper.getProject().changeStartDate(weeks);
 		} catch (IllegalArgumentException e) {
 			errorMessageHolder.setErrorMessage(e.getMessage());
 		}
 	}
 
-	@Then("the start time of the current project is changed")
-	public void the_start_time_of_the_current_project_is_changed_by_weeks() {
-		
-		try {
-			assertThat(projHelper.getProject().hasStartDateChanged(), is(true));
-
-		} catch (AssertionError e) {
-			errorMessageHolder.setErrorMessage(e.getMessage());
-		}
-	}
 
 	@When("the user changes the end time by {int} weeks for the current project")
 	public void the_user_changes_the_end_time_by_weeks_for_the_current_project(Integer weeks) {
 		
 		try {
-			projHelper.getProject().addWeeksToStopDate(weeks);
+			projHelper.getProject().changeStopDate(weeks);
 		} catch (IllegalArgumentException e) {
 			errorMessageHolder.setErrorMessage(e.getMessage());
 		}
 	}
 
-	@Then("the end time of the current project is changed")
-	public void the_end_time_of_the_current_project_is_changed_by_weeks() {
-		
-		try {
-			assertThat(projHelper.getProject().hasStopDateChanged(), is(true));
-
-		} catch (AssertionError e) {
-			errorMessageHolder.setErrorMessage(e.getMessage());
-		}
-	}
 
 	@When("the user removes the activity named {string} from the project {string}")
 	public void the_user_removes_the_activity_named_from_the_project(String projectName, String name) {
@@ -233,7 +214,7 @@ public class editProjectSteps {
 	@When("the user changes the end time by {int} weeks for the project {string}")
 	public void the_user_changes_the_end_time_by_weeks_for_the_project(Integer weeks, String projectName) {
 		try {
-			projHelper.getProject(projectName).addWeeksToStopDate(weeks);
+			projHelper.getProject(projectName).changeStopDate(weeks);
 		} catch (IllegalArgumentException e) {
 			errorMessageHolder.setErrorMessage(e.getMessage());
 		}
@@ -251,4 +232,32 @@ public class editProjectSteps {
 		
 		assertEquals(project.getStopDate() , stopCal);
 	}
+	
+	
+	
+	@Given("the project {string} has no startdate")
+	public void the_project_has_no_startdate(String projectName) {
+		Project project = projHelper.getProject(projectName);
+		
+	}
+	
+	@Given("the project {string} has a startdate {string} and the creationDate is {string}")
+	public void the_project_has_a_startdate_and_the_creation_date_is(String projectName, String startDate, String creationDate) throws ParseException {
+		Project project = projHelper.getProject(projectName);
+		project.setStartDate(startDate);
+		project.setCreationDate(creationDate);
+		initialStartDate = project.getStartDate();
+		initialCreationDate = project.getCreationDate();
+	}
+	
+	@Given("the project {string} has a startdate {string} and a stopdate {string}")
+	public void the_project_has_a_startdate_and_a_stopdate(String projectName, String startDate, String stopDate) throws ParseException {
+		Project project = projHelper.getProject(projectName);
+		project.setStartDate(startDate);
+		project.setStopDate(stopDate);
+		initialStartDate = project.getStartDate();
+		initialStopDate = project.getStopDate();
+	}
+	
+	
 }

@@ -14,6 +14,7 @@ public class Activity {
 	private TimeSheet timeSheet = new TimeSheet();
 	private String activityName;
 	private Project project;
+	private Calendar creationDate;
 	//private SchedulingApp schedulingApp;
 	
 	public Activity(String activityName, int hoursBudgetted, Calendar startDate, Calendar stopDate, Project project) {
@@ -22,6 +23,7 @@ public class Activity {
 		this.startDate = startDate;
 		this.stopDate = stopDate;
 		this.project = project;
+		this.creationDate = new GregorianCalendar();
 		this.developerList = new ArrayList<Developer>();
 		this.assistingDeveloperList = new ArrayList<Developer>();
 		//this.schedulingApp = schedulingApp;
@@ -167,26 +169,20 @@ public class Activity {
 	 * @param weeks The amount of weeks
 	 */
 	
-	public void addWeeksToStartDate(Integer weeks) {
+	public void changeStartDate(Integer weeks) {
 		if (startDate != null) {
 			this.startDate.add(Calendar.WEEK_OF_YEAR, weeks);
 			} else {
 			throw new IllegalArgumentException("A date for an activity must be given before adding.");
 			}
+		if (startDate.before(creationDate)) {
+			throw new IllegalArgumentException("The startdate cannot be before the creationdate");
+		}
+		if (stopDate.before(startDate)) {
+			throw new IllegalArgumentException("The startdate cannot be after the stopdate");
+		}
 	}
 	
-	/**
-	 * Checks whether the start date has been changed
-	 * @return Returns true if start date has been changed and false otherwise
-	 */
-	public boolean hasStartDateChanged() {
-		if (startDate != null) {
-			return true;
-			} else {
-			return false;
-			}
-	}
-
 	/**
 	 * Adds number of weeks to the start date for the current activity
 	 * @param weeks The amount of weeks
@@ -197,20 +193,11 @@ public class Activity {
 			} else {
 			throw new IllegalArgumentException("A date for an activity must be given before adding.");
 			}
-	}
-	
-	/**
-	 * Checks whether the stop date has been changed
-	 * @return Returns true if start date has been changed and false otherwise
-	 */
-	public boolean hasStopDateChanged() {
-		if (stopDate != null) {
-			return true;
-			} else {
-			return false;
+			if (stopDate.before(creationDate)) {
+				throw new IllegalArgumentException("The startdate cannot be before the creationdate");
 			}
 	}
-
+	
 	/**
 	 * Adds number hours to the hours budgeted for the activity
 	 * @param hours the amount of hours
