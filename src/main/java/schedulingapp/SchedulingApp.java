@@ -197,7 +197,7 @@ public class SchedulingApp {
 	 * @return A list of all available developers
 	 * @throws Exception If the current user is not a project manager
 	 */
-	public List<Developer> getAvailableDevelopers() throws Exception {
+	public List<Developer> viewAvailableDevelopers() throws Exception {
 		if(!this.getCurrentUser().isProjectManager()) {
 			throw new IllegalArgumentException("Only project managers can view available developers");
 		}
