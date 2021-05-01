@@ -198,9 +198,16 @@ public class SchedulingApp {
 	 * @throws Exception If the current user is not a project manager
 	 */
 	public List<Developer> viewAvailableDevelopers() throws Exception {
+		assert developerList != null && this.currentUser != null;
+		
 		if(!this.getCurrentUser().isProjectManager()) {
 			throw new IllegalArgumentException("Only project managers can view available developers");
 		}
-		return developerList.stream().filter(d -> d.isAvailable()).collect(Collectors.toList());
+		List<Developer> availableDevelopers = developerList.stream().filter(d -> d.isAvailable()).collect(Collectors.toList());
+		
+		assert developerList.stream().filter(dev -> dev.isAvailable()).allMatch(dev -> availableDevelopers.contains(dev));
+		assert availableDevelopers.stream().allMatch(dev -> developerList.contains(dev) && dev.isAvailable());
+		
+		return availableDevelopers;
 	}
 }
