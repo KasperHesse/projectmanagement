@@ -2,7 +2,7 @@ Feature: View available developers
 	Description: User views a list of all available developers
 	Actors: Project Manager, Developer
 
-Scenario: Project Manager views a list of all developers on the project who are working on less than 10 activities
+Scenario: Project Manager views a list of all developers who are working on less than 10 activities
 	Given a user with initials "lomo" exists
 	And "lomo" is project manager for any project
 	And "dev1" , "dev2" are all available developers
@@ -21,7 +21,7 @@ Scenario: Project Manager views the list of available developers with only 1 dev
 	When "lomo" views the list of available developers
 	Then developer "dev1" is shown to the user
 	
-Scenario: Project Manager views a list of all developers when a developer is not available
+Scenario: Project Manager views a list of all available developers when a developer is not available
 	Given a user with initials "lomo" exists
 	And "lomo" is project manager for any project
 	And developer "dev1" is unavailable while "dev2" is available
