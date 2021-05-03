@@ -325,21 +325,29 @@ public class Project {
 	 */
 	public void changeStopDate(int weeks) {
 		stopDatePast = stopDate;
-		if (this.stopDate != null) {
-			this.stopDate.add(Calendar.WEEK_OF_YEAR, weeks);
-			} else {
-			throw new IllegalArgumentException("A date for a project must be given before adding.");
-			}
-			if (stopDate.after(startDate)) {
-				stopDate = stopDatePast;
-	
+				
+		assert weeks == (int)weeks : "PreCondition changeStopDate";
+		
+		if (stopDate != null) {
+			stopDate.add(Calendar.WEEK_OF_YEAR, weeks);
+			
+		} else  {
+			throw new IllegalArgumentException("A date for a project must be given before changing");
+		}
+			
+		if (stopDate.before(startDate)) {
+			
+			stopDate = stopDatePast;
 			throw new IllegalArgumentException("The startdate cannot be after the stopdate");
+		}
+		
+		if (stopDate.before(creationDate)) {
 
+			stopDate = stopDatePast;
+			throw new IllegalArgumentException("The stopdate cannot be before the creationdate");
 		}
-			if (stopDate.before(creationDate)) {
-				stopDate = stopDatePast;
-			throw new IllegalArgumentException("The startdate cannot be before the creationdate");
-		}
+		
+		assert stopDate.equals(getStopDate()) : "PostCondition changeStopDate";
 	}
 
 	/**
