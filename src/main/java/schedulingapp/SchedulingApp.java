@@ -11,6 +11,9 @@ public class SchedulingApp {
 	private List<Project> projectList;
 	public Object getCurrentUser;
 
+	/**
+	 * Constructor of SchedulingApp. Initializes developerList and projectList
+	 */
 	public SchedulingApp() {
 		this.developerList = new ArrayList<Developer>();
 		this.projectList = new ArrayList<Project>();
@@ -33,7 +36,6 @@ public class SchedulingApp {
 	 */
 	public void createProject(String projectName, Calendar startDate, Calendar stopDate, Developer projectManager) {
 		Project p = new Project(projectName, startDate, stopDate, projectManager, this);
-//		p.setApp(this);
 		projectList.add(p);
 	}
 	
@@ -193,7 +195,7 @@ public class SchedulingApp {
 	}
 
 	/**
-	 * Returns a list of all available developers
+	 * Sorts all the available developers from the developer list
 	 * @return A list of all available developers
 	 * @throws Exception If the current user is not a project manager
 	 */

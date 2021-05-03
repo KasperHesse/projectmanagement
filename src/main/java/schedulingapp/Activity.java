@@ -14,13 +14,19 @@ public class Activity {
 	private TimeSheet timeSheet = new TimeSheet();
 	private String activityName;
 	private Project project;
-
 	private Calendar creationDate;
 	private Calendar startDatePast;
 	private Calendar stopDatePast;
 
 
-	
+	/**
+	 * Creates an activity with following information
+	 * @param activityName the name of the activity
+	 * @param hoursBudgetted the number of hours budgeted for the activity
+	 * @param startDate the start date of the activity, as a Calendar object
+	 * @param stopDate the stop date of the activity, as a Calendar object
+	 * @param project the associated project
+	 */
 	public Activity(String activityName, int hoursBudgetted, Calendar startDate, Calendar stopDate, Project project) {
 		this.activityName = activityName;
 		this.hoursBudgetted = hoursBudgetted;
@@ -34,6 +40,10 @@ public class Activity {
 
 	}
 	
+	/**
+	 * Adds a developer to the activity
+	 * @param dev the developer to be added to the activity
+	 */
 	public void addDeveloper(Developer dev) {
 		if(this.hasDeveloperWithInitials(dev.getInitials())) {
 			throw new IllegalArgumentException("This developer is already working on this activity");
@@ -54,6 +64,10 @@ public class Activity {
 		return developerList.stream().anyMatch(d -> d.getInitials().equals(initials));
 	}
 
+	/**
+	 * Removes a given developer from the activity
+	 * @param dev the developer to be removed from the activity
+	 */
 	public void removeDeveloper(Developer dev) {
 		if (developerList.contains(dev)) {
 		developerList.remove(dev);
@@ -62,6 +76,11 @@ public class Activity {
 		}
 	}
 	
+	/**
+	 * Determines if the given developer is working on this activity
+	 * @param dev the developer to investigate
+	 * @return true if the developer is working on the activity
+	 */
 	public boolean isDeveloper(Developer dev) {
 		return developerList.contains(dev);
 	}
@@ -76,9 +95,9 @@ public class Activity {
 	}
 	
 	/**
-	 * Adds the given helper the given activitys assistingDeveloperlist if allowed. 
-	 * @param Who youd like to ask for help
-	 * @param On what activity you need helop for
+	 * Adds the given helper the given activity's assistingDeveloperlist if allowed. 
+	 * @param Who you'd like to ask for help
+	 * @param On what activity you need help for
 	 */
 	public void askForHelp(Developer helper, Activity activity) {
 		if(!helper.isAvailable()) {
@@ -155,13 +174,8 @@ public class Activity {
 	}
 	
 	/**
-<<<<<<< HEAD
-	 * Gets a Developers timeusage on a given date 
-	 * @param what date you want to check
-=======
 	 * Gets a Developers time usage on a given date 
 	 * @param which date you want to check
->>>>>>> master
 	 * @param what developer you want to check
 	 * @return the registered amount of hours
 	 */
@@ -226,7 +240,6 @@ public class Activity {
 	 * Adds number of weeks to the start date for the current activity
 	 * @param weeks The amount of weeks
 	 */
-	
 	public void changeStartDate(int weeks) {
 		startDatePast = startDate;
 				
@@ -308,6 +321,11 @@ public class Activity {
 		}
 	}
 
+	/**
+	 * Sets the start date of the activity
+	 * @param startDate the new start date of the activity
+	 * @throws ParseException
+	 */
 	public void setStartDate(String startDate) throws ParseException {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -319,6 +337,11 @@ public class Activity {
 
 	}
 	
+	/**
+	 * Sets the stop date of the activity
+	 * @param stopDate the new stop date of the activity
+	 * @throws ParseException
+	 */
 	public void setStopDate(String stopDate) throws ParseException {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
