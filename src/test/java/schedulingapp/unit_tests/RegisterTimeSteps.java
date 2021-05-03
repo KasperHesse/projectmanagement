@@ -6,6 +6,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -74,7 +75,7 @@ public class RegisterTimeSteps {
 	}
 
 	@Then("{int} hours is added to {string} time usage on that activity on {string}")
-	public void hours_is_added_to_time_usage_on_that_activity_on(Integer hours, String initials, String date) throws Exception{
+	public void hours_is_added_to_time_usage_on_that_activity_on(int hours, String initials, String date) throws Exception{
 		Developer dev1 = devHelper.getDeveloper(initials);
 		Project proj = projHelper.getProject("project");
 		Activity act = actHelper.getActivity(proj,"activity");
@@ -82,7 +83,7 @@ public class RegisterTimeSteps {
 		Calendar timeRegisterDate = Calendar.getInstance();
 		timeRegisterDate.setTime(formatter.parse(date));
 		
-		assertEquals(act.viewTime(timeRegisterDate, dev1),act.viewTime(timeRegisterDate, dev1));
+		assertEquals(act.viewTime(timeRegisterDate, dev1), hours);
 	}
 	
 	@Given("{string} user is not associated with the activity he wants to register time usage on")
@@ -107,6 +108,22 @@ public class RegisterTimeSteps {
 	    Activity act = actHelper.getActivity(proj,"activity");
 	    act.setStartDate(startDate1);
 	    act.setStopDate(stopDate1);
+	}
+	
+	@Given("{string} is associated with the activity he wants to register time usage on, and the startdate is {string} and the stopdate is {string}")
+	public void is_associated_with_the_activity_he_wants_to_register_time_usage_on_and_the_startdate_is_and_the_stopdate_is(String initials, String startDate, String stopDate) throws ParseException {
+		Developer dev1 = devHelper.getDeveloper(initials);
+		Project proj = projHelper.getProject("project");
+		Activity act = actHelper.getActivity(proj,"activity");
+		act.addDeveloper(dev1);
+		
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+		Calendar startDate1 = Calendar.getInstance();
+		Calendar stopDate1 = Calendar.getInstance();
+		
+		startDate1.setTime(formatter.parse(startDate));
+		stopDate1.setTime(formatter.parse(stopDate));
+		assertTrue(act.hasDeveloperWithInitials(initials));
 	}
 }
 
