@@ -14,10 +14,12 @@ public class Activity {
 	private TimeSheet timeSheet = new TimeSheet();
 	private String activityName;
 	private Project project;
+
 	private Calendar creationDate;
 	private Calendar startDatePast;
 	private Calendar stopDatePast;
 	private SchedulingApp schedulingApp;
+
 	
 	public Activity(String activityName, int hoursBudgetted, Calendar startDate, Calendar stopDate, Project project, SchedulingApp schedulingApp) {
 		this.activityName = activityName;
@@ -29,6 +31,7 @@ public class Activity {
 		this.developerList = new ArrayList<Developer>();
 		this.assistingDeveloperList = new ArrayList<Developer>();
 		this.schedulingApp = schedulingApp;
+
 	}
 	
 	public void addDeveloper(Developer dev) {
@@ -39,6 +42,7 @@ public class Activity {
 		}
 		this.developerList.add(dev);
 		dev.addProject(project);
+		dev.addDeveloperToActivity(this);
 	}
 	
 	/**

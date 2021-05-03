@@ -62,6 +62,7 @@ public class Project {
 			throw new IllegalArgumentException("Developers cannot add other developers to projects");
 		}
 		this.unassignedDevelopers.add(dev);
+		dev.addProject(this);
 	}
 	
 	
