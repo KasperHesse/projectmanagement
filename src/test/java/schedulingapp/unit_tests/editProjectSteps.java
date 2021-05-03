@@ -217,7 +217,7 @@ public class editProjectSteps {
 			projHelper.getProject(projectName).changeStopDate(weeks);
 		} catch (IllegalArgumentException e) {
 			errorMessageHolder.setErrorMessage(e.getMessage());
-		}
+		} 
 	}
 
 	@Then("the end time of the project {string} is {string}")
@@ -246,8 +246,6 @@ public class editProjectSteps {
 		Project project = projHelper.getProject(projectName);
 		project.setStartDate(startDate);
 		project.setCreationDate(creationDate);
-		initialStartDate = project.getStartDate();
-		initialCreationDate = project.getCreationDate();
 	}
 	
 	@Given("the project {string} has a startdate {string} and a stopdate {string}")
@@ -257,7 +255,5 @@ public class editProjectSteps {
 		project.setStopDate(stopDate);
 		initialStartDate = project.getStartDate();
 		initialStopDate = project.getStopDate();
-	}
-	
-	
+	}	
 }

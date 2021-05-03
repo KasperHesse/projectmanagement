@@ -25,8 +25,6 @@ public class Project {
 		this.projectName = projectName;
 		this.startDate = startDate;
 		this.stopDate = stopDate;
-		this.startDatePast = startDatePast;
-		this.stopDatePast = startDatePast;
 		this.projectManager = projectManager;
 		this.schedulingApp = schedulingApp;
 		this.creationDate = new GregorianCalendar();
@@ -295,21 +293,22 @@ public class Project {
 	 * @param weeks number of weeks being changed
 	 */
 	public void changeStartDate(int weeks) {
-		if (this.startDate != null) {
-			this.startDate.add(Calendar.WEEK_OF_YEAR, weeks);
-			assert startDate != null : "PreCondition changeStartDate";
+		startDatePast = startDate;
+
+		if (startDate != null) {
+			startDate.add(Calendar.WEEK_OF_YEAR, weeks);
 
 		} else {
 			throw new IllegalArgumentException("A date for a project must be given before changing");
 		}
-		if (startDate.before(creationDate)) {
-			throw new IllegalArgumentException("The startdate cannot be before the creationdate");
-		}
-		if (stopDate.before(startDate)) {
+		if (startDate.after(stopDate)) {
+			startDate = startDatePast;
 			throw new IllegalArgumentException("The startdate cannot be after the stopdate");
 		}
-		assert startDate.before(creationDate) : "PostCondition changeStartDate";
-		assert stopDate.before(startDate) : "PostCondition changeStartDate";
+		if (startDate.before(creationDate)) {
+			startDate = startDatePast;
+			throw new IllegalArgumentException("The startdate cannot be before the creationdate");
+		}
 	}
 	
 	/**
@@ -317,13 +316,20 @@ public class Project {
 	 * @param weeks number of weeks being changed
 	 */
 	public void changeStopDate(int weeks) {
-		this.stopDatePast = this.stopDate;
+		stopDatePast = stopDate;
 		if (this.stopDate != null) {
 			this.stopDate.add(Calendar.WEEK_OF_YEAR, weeks);
 			} else {
 			throw new IllegalArgumentException("A date for a project must be given before adding.");
 			}
+			if (stopDate.after(startDate)) {
+				stopDate = stopDatePast;
+	
+			throw new IllegalArgumentException("The startdate cannot be after the stopdate");
+
+		}
 			if (stopDate.before(creationDate)) {
+				stopDate = stopDatePast;
 			throw new IllegalArgumentException("The startdate cannot be before the creationdate");
 		}
 	}
@@ -384,7 +390,7 @@ public class Project {
 		
 		creationCal.setTime(formatter.parse(creationDate));
 
-		this.stopDate = creationCal;
+		this.creationDate = creationCal;
 		
 	}
 

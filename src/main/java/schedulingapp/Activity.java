@@ -15,6 +15,8 @@ public class Activity {
 	private String activityName;
 	private Project project;
 	private Calendar creationDate;
+	private Calendar startDatePast;
+	private Calendar stopDatePast;
 	//private SchedulingApp schedulingApp;
 	
 	public Activity(String activityName, int hoursBudgetted, Calendar startDate, Calendar stopDate, Project project) {
@@ -169,17 +171,26 @@ public class Activity {
 	 * @param weeks The amount of weeks
 	 */
 	
-	public void changeStartDate(Integer weeks) {
+	public void changeStartDate(int weeks) {
+		startDatePast = startDate;
+
 		if (startDate != null) {
-			this.startDate.add(Calendar.WEEK_OF_YEAR, weeks);
-			} else {
-			throw new IllegalArgumentException("A date for an activity must be given before adding.");
-			}
-		if (startDate.before(creationDate)) {
-			throw new IllegalArgumentException("The startdate cannot be before the creationdate");
+			assert startDate != null : "PreCondition changeStartDate";
+			startDate.add(Calendar.WEEK_OF_YEAR, weeks);
+
+		} else {
+			throw new IllegalArgumentException("A date for a project must be given before changing");
 		}
-		if (stopDate.before(startDate)) {
+		if (startDate.after(stopDate)) {
+			assert startDate.after(stopDate) : "PostCondition changeStartDate";
+			startDate = startDatePast;
 			throw new IllegalArgumentException("The startdate cannot be after the stopdate");
+
+		}
+		if (startDate.before(creationDate)) {
+			assert startDate.before(creationDate) : "PostCondition changeStartDate";
+			startDate = startDatePast;
+			throw new IllegalArgumentException("The startdate cannot be before the creationdate");
 		}
 	}
 	
@@ -187,15 +198,23 @@ public class Activity {
 	 * Adds number of weeks to the start date for the current activity
 	 * @param weeks The amount of weeks
 	 */
-	public void addWeeksToStopDate(Integer weeks) {
-		if (stopDate != null) {
+	public void changeStopDate(int weeks) {
+		stopDatePast = stopDate;
+		if (this.stopDate != null) {
 			this.stopDate.add(Calendar.WEEK_OF_YEAR, weeks);
 			} else {
-			throw new IllegalArgumentException("A date for an activity must be given before adding.");
+			throw new IllegalArgumentException("A date for a project must be given before adding.");
 			}
+			if (stopDate.after(startDate)) {
+				stopDate = stopDatePast;
+	
+			throw new IllegalArgumentException("The startdate cannot be after the stopdate");
+
+		}
 			if (stopDate.before(creationDate)) {
-				throw new IllegalArgumentException("The startdate cannot be before the creationdate");
-			}
+				stopDate = stopDatePast;
+			throw new IllegalArgumentException("The startdate cannot be before the creationdate");
+		}
 	}
 	
 	/**
@@ -242,8 +261,4 @@ public class Activity {
 		this.stopDate = stopCal;
 		
 	}
-	
-	
-	
-
 }
