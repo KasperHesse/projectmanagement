@@ -14,10 +14,12 @@ public class Activity {
 	private TimeSheet timeSheet = new TimeSheet();
 	private String activityName;
 	private Project project;
+
 	private Calendar creationDate;
 	private Calendar startDatePast;
 	private Calendar stopDatePast;
-	//private SchedulingApp schedulingApp;
+
+
 	
 	public Activity(String activityName, int hoursBudgetted, Calendar startDate, Calendar stopDate, Project project) {
 		this.activityName = activityName;
@@ -28,7 +30,8 @@ public class Activity {
 		this.creationDate = new GregorianCalendar();
 		this.developerList = new ArrayList<Developer>();
 		this.assistingDeveloperList = new ArrayList<Developer>();
-		//this.schedulingApp = schedulingApp;
+	
+
 	}
 	
 	public void addDeveloper(Developer dev) {
@@ -39,6 +42,7 @@ public class Activity {
 		}
 		this.developerList.add(dev);
 		dev.addProject(project);
+		dev.addDeveloperToActivity(this);
 	}
 	
 	/**
@@ -92,9 +96,9 @@ public class Activity {
 	
 	/**
 	 * Registers time on the given activity if allowed
-	 * @param The developerregistering time
+	 * @param The developer that is registering time
 	 * @param How many hours to register
-	 * @param On what date he wants register said hours
+	 * @param On what date he wants to register said hours
 	 */
 	public void registerTime(Developer dev, int hours, Calendar date) {
 		//precondition
@@ -117,17 +121,45 @@ public class Activity {
 		assert viewTime(date, dev) == hours;
 	}
 	
+	/**
+	 * Edits registered time on the given activity if allowed
+	 * @param The developer that wants to edit their registered time
+	 * @param How many hours to add to the registered time
+	 * @param On what date he wants to register said hours
+	 */
 	public void editTime(Developer dev, int hours, Calendar date) {
 		
+		assert dev != null && date != null && hours > 0;
+		
+		if(dev != this.getProject().getSchedulingApp().getCurrentUser()) {               																	//1                                                                  
+			throw new IllegalArgumentException("You can't edit other developers registered time");
+		}
+		
+		if(startDate != null && stopDate != null) {                                                             					//2
+			
+			if(startDate.before(date) || stopDate.after(date)) {
+				throw new IllegalArgumentException("You cannot register time outside the active status dates"); 
+			}
+		}
+		
+		if (!isDeveloper(dev)) { 																									//3
+			throw new IllegalArgumentException("You are not associated with chosen activity");
+		}
+		
+		timeSheet.editTime(dev, date, hours);
 	}
 	
 	/**
-	 * Gets a Developers timeusage on a given date 
-	 * @param what date you want to check
+	 * Gets a Developers time usage on a given date 
+	 * @param which date you want to check
 	 * @param what developer you want to check
-	 * @return
+	 * @return the registered amount of hours
 	 */
 	public int viewTime(Calendar date, Developer dev) {
+		if(!isDeveloper(dev)) {                                                                                 
+			throw new IllegalArgumentException("You can't view other developers registered time");
+		}
+		
 		return timeSheet.viewTime(date, dev);
 	}
 
