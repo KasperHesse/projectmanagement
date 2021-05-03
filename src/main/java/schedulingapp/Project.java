@@ -206,7 +206,7 @@ public class Project {
 		} else if(!schedulingApp.getCurrentUser().equals(this.projectManager)) {
 			throw new IllegalArgumentException("Developers cannot create new activities");
 		}
-		activityList.add(new Activity(name, 0, startDate, stopDate, this, schedulingApp));
+		activityList.add(new Activity(name, 0, startDate, stopDate, this));
 	}
 	
 	/**

@@ -18,10 +18,10 @@ public class Activity {
 	private Calendar creationDate;
 	private Calendar startDatePast;
 	private Calendar stopDatePast;
-	private SchedulingApp schedulingApp;
+
 
 	
-	public Activity(String activityName, int hoursBudgetted, Calendar startDate, Calendar stopDate, Project project, SchedulingApp schedulingApp) {
+	public Activity(String activityName, int hoursBudgetted, Calendar startDate, Calendar stopDate, Project project) {
 		this.activityName = activityName;
 		this.hoursBudgetted = hoursBudgetted;
 		this.startDate = startDate;
@@ -30,7 +30,7 @@ public class Activity {
 		this.creationDate = new GregorianCalendar();
 		this.developerList = new ArrayList<Developer>();
 		this.assistingDeveloperList = new ArrayList<Developer>();
-		this.schedulingApp = schedulingApp;
+	
 
 	}
 	
@@ -125,7 +125,7 @@ public class Activity {
 		
 		assert dev != null && date != null && hours > 0;
 		
-		if(dev != schedulingApp.getCurrentUser()) {               																	//1                                                                  
+		if(dev != this.getProject().getSchedulingApp().getCurrentUser()) {               																	//1                                                                  
 			throw new IllegalArgumentException("You can't edit other developers registered time");
 		}
 		
