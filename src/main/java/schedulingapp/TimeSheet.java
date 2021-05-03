@@ -11,10 +11,14 @@ public class TimeSheet {
 
 	
 	public TimeSheet() {
-		
-		
 	}
 	
+	/**
+	 * registers time on the given TimeSheet
+	 * @param The developer to register time on
+	 * @param How much time to register
+	 * @param The date to register time on
+	 */
 	public void registerTime(Developer dev, int hours, Calendar date) {
 		if(tooManyHours(hours)) {
 			throw new IllegalArgumentException("You can't register more than 24 hours on one day");
@@ -45,8 +49,8 @@ public void editTime(Developer dev, Calendar date, int change) {
 		
 		dateTimeUsage.get(date).compute(dev, (key, val) -> (val == null) ? 1 : val + change);
 	}
-
-public int viewTime(Calendar date, Developer dev) {
+	
+	public int viewTime(Calendar date, Developer dev) {
 	
 	Map<Developer, Integer> var = dateTimeUsage.get(date);
 	
@@ -82,10 +86,6 @@ public int viewTime(Calendar date, Developer dev) {
 		}
 		return false; 
 	}
-	
-	
-	
-	
 }
 
 

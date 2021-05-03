@@ -66,6 +66,11 @@ public class Activity {
 		return developerList.contains(dev);
 	}
 	
+	/**
+	 * Checks if the developer is Assisting developer on the given activity
+	 * @param the developer in question
+	 * @return Boolean, true if developer in question is assisting developer
+	 */
 	public boolean isAssistingDeveloper(Developer dev) {
 		return assistingDeveloperList.contains(dev);
 	}
@@ -96,7 +101,7 @@ public class Activity {
 	
 	/**
 	 * Registers time on the given activity if allowed
-	 * @param The developerregistering time
+	 * @param The developer registering time
 	 * @param How many hours to register
 	 * @param On what date he wants register said hours
 	 */
@@ -144,7 +149,7 @@ public class Activity {
 	}
 	
 	/**
-	 * Gets a Developers timeusage on a gsniiven date 
+	 * Gets a Developers timeusage on a given date 
 	 * @param what date you want to check
 	 * @param what developer you want to check
 	 * @return
@@ -178,10 +183,18 @@ public class Activity {
 		return (Calendar) this.stopDate.clone();
 	}
 	
+	/**
+	 * Sets the startdate of an activity
+	 * @param The settet date
+	 */
 	public void setStartDate(Calendar startDate) {
 		this.startDate = startDate;
 	}
 	
+	/**
+	 * Sets the stopdate of an activity
+	 * @param the settet date
+	 */
 	public void setStopDate(Calendar stopDate) {
 		this.stopDate = stopDate;
 	}
