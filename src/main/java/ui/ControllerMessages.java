@@ -22,4 +22,8 @@ public class ControllerMessages {
 	public final static String E_INVALID_DATE = "Unable to parse date. Dates must be in format yyyy-MM-dd (eg. 2021-12-24)";
 	
 	public final static String E_INVALID_HOURS = "Unable to parse hours. Must be at least 0.5 and at most 24";
+
+	public static final String I_EDIT_REGISTERED_TIME = "To register your edited time, enter a date in format YYYY-mm-DD\n"
+			+ "and the number of hours to modify that value by (resolution 1/2 hours)\n"
+			+ "Example: 2021-12-24 2 (if previous time registered was 12, new time will be 14)";
 }

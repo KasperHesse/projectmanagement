@@ -89,4 +89,11 @@ public interface ControllerInterface {
 	 * active project
 	 */
 	public void setActiveActivity(ActivityInfo actInfo) throws NoSuchElementException;
+	
+	/**
+	 * Edits the time registered on an activity by adding the offset to the previously stored value
+	 * @param date The date on which to edit registered time
+	 * @param hours The number of hours to modify the edited time by
+	 */
+	public void editTimeOnActivity(Calendar date, double hours);
 }

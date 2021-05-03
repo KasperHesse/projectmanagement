@@ -4,6 +4,7 @@ import schedulingapp.*;
 import static ui.ControllerState.*;
 import java.util.*;
 import java.beans.*;
+import static ui.ControllerMessages.*;
 
 import dto.*;
 import dto.ProjectInfo;
@@ -285,7 +286,24 @@ public class Controller implements PropertyChangeListener {
 			return;
 		}
 		model.registerTimeOnActivity(date, hours);
+	}
+	
+	private void processInputEditRegisteredTime(String[] tokens) {
+		if(tokens.length != 2) {
+			view.showError(ControllerMessages.E_INVALID_INPUT);
+			return;
+		}
+		Calendar date = Utils.validateDate(tokens[0]);
+		Double hours = Utils.validateDouble(tokens[1], 24);
 		
+		if(date == null) {
+			view.showError(ControllerMessages.E_INVALID_DATE);
+			return;
+		} else if (hours < 0.5 || hours > 24) {
+			view.showError(E_INVALID_HOURS);
+			return;
+		}
+		model.editTimeOnActivity(date, hours);
 	}
 	
 	
@@ -331,6 +349,9 @@ public class Controller implements PropertyChangeListener {
 			break;
 		case sREGISTERTIME:
 			view.showMessage(ControllerMessages.I_REGISTER_TIME);
+			break;
+		case sEDITREGISTEREDTIME:
+			view.showMessage(ControllerMessages.I_EDIT_REGISTERED_TIME);
 			break;
 		default:
 			break;

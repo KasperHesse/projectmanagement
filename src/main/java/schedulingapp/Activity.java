@@ -56,7 +56,7 @@ public class Activity {
 		
 	}
 	
-	public void editTime(Developer dev, int hours, Calendar date) {
+	public void editTime(Developer dev, double hours, Calendar date) {
 		
 	}
 	

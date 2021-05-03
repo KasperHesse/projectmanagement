@@ -155,11 +155,7 @@ public class SchedulingApp implements ControllerInterface {
 		return new DeveloperInfo(d);
 	}
 
-	@Override
-	public void registerTimeOnActivity(Calendar date, double hours) {
-		activeActivity.registerTime(currentUser, (int) hours, date);
-		support.firePropertyChange("time", null, hours);
-	}
+
 	
 	@Override
 	public ProjectInfo createProject(String name) {
@@ -192,6 +188,17 @@ public class SchedulingApp implements ControllerInterface {
 	@Override
 	public void addObserver(PropertyChangeListener listener) {
 		support.addPropertyChangeListener(listener);
+	}
+	
+	@Override
+	public void registerTimeOnActivity(Calendar date, double hours) {
+		activeActivity.registerTime(currentUser, (int) hours, date);
+		support.firePropertyChange("time", null, hours);
+	}
+	
+	@Override
+	public void editTimeOnActivity(Calendar date, double hours) {
+		activeActivity.editTime(currentUser, hours, date);
 	}
 
 }
