@@ -52,9 +52,6 @@ public class Project {
 		this(projectName, null, null, null, schedulingApp);
 	}
 	
-
-	
-	
 	public void addDeveloper(Developer dev) {
 		if(doesDeveloperExistInProject(dev)) {
 			throw new IllegalArgumentException("This developer is already a part of this project");
