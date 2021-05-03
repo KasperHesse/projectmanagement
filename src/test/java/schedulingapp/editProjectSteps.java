@@ -1,4 +1,4 @@
-package schedulingapp.unit_tests;
+package schedulingapp;
 
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -146,7 +146,7 @@ public class editProjectSteps {
 	public void a_developer_exists(String initials) {
 		Developer dev = devHelper.getDeveloper(initials);
 		
-		assertThat(schedulingApp.hasDeveloperWithInitials(initials), is(true));
+		assertThat(schedulingApp.hasDevWithInitials(initials), is(true));
 		
 		
 	}

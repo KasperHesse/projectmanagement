@@ -28,7 +28,7 @@ public class SchedulingApp implements ControllerInterface {
 	 * Sets the current user of the schedulingApp
 	 * @param currentUser The user currently logged in to the application
 	 */
-	public void setCurrentUser(Developer currentUser) {
+	void setCurrentUser(Developer currentUser) {
 		this.currentUser = currentUser;
 	}
 
@@ -39,7 +39,7 @@ public class SchedulingApp implements ControllerInterface {
 	 * @param stopDate The given date the project is expected to end, as Calendar object
 	 * @param projectManager The developer who is to manage the project
 	 */
-	public void createProject(String projectName, Calendar startDate, Calendar stopDate, Developer projectManager) {
+	void createProject(String projectName, Calendar startDate, Calendar stopDate, Developer projectManager) {
 		Project p = new Project(projectName, startDate, stopDate, projectManager, this);
 //		p.setApp(this);
 		projectList.add(p);
@@ -51,7 +51,7 @@ public class SchedulingApp implements ControllerInterface {
 	 * @param startDate The given date the project is expected to begin, as Calendar object
 	 * @param stopDate The given date the project is expected to end, as Calendar object
 	 */
-	public void createProject(String projectName, Calendar startDate, Calendar stopDate) {
+	void createProject(String projectName, Calendar startDate, Calendar stopDate) {
 		createProject(projectName, startDate, stopDate, null);
 	}
 	
@@ -62,7 +62,7 @@ public class SchedulingApp implements ControllerInterface {
 	 * @param stopDate The given date the project is expected to end, as a String formatted as "yyyy-MM-dd"
 	 * @throws ParseException If the date-Strings are not correctly formatted
 	 */
-	public void createProject(String projectName, String startDate, String stopDate) throws ParseException {
+	void createProject(String projectName, String startDate, String stopDate) throws ParseException {
 		//TODO Catch this exception
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 	
@@ -78,7 +78,7 @@ public class SchedulingApp implements ControllerInterface {
 	 * @param projectName The name of the project
 	 * @param projectManager The developer who is to manage the project
 	 */
-	public void createProject(String projectName, Developer projectManager) {
+	void createProject(String projectName, Developer projectManager) {
 		createProject(projectName, null, null, projectManager);
 	}
 	
@@ -86,7 +86,7 @@ public class SchedulingApp implements ControllerInterface {
 	 * Creates a project with the following information
 	 * @param projectName The name of the project
 	 */
-	public void createProject(String projectName) {
+	void createProjectInternal(String projectName) {
 		createProject(projectName, null, null, null);
 	}
 	
@@ -94,7 +94,7 @@ public class SchedulingApp implements ControllerInterface {
 	 * Retrieves the list of developers
 	 * @return developerList
 	 */
-	public List<Developer> getDevelopers() {
+	List<Developer> getDevelopers() {
 		return this.developerList;
 	}
 
@@ -108,21 +108,11 @@ public class SchedulingApp implements ControllerInterface {
 	}
 	
 	/**
-	 * Checks whether the scheduling app contains any developer with the given initials.
-	 * @param initials The initials of a developer being checked against
-	 * @return True if a developer with the current initials exists, otherwise false
-	 */
-	public boolean hasDeveloperWithInitials(String initials) {
-		return developerList.stream().anyMatch(d -> d.getInitials().equals(initials));
-	}
-	
-
-	/**
 	 * Checks whether the scheduling app contains any project with the given project number.
 	 * @param projectNumber The project number of the project being checked against
 	 * @return True if a project with project number {@code projectNumber} exists, otherwise false
 	 */
-	public boolean hasProjectWithNumber(String projectNumber) {
+	boolean hasProjectWithNumber(String projectNumber) {
 		return projectList.stream().anyMatch(p -> p.getProjectNumber().equals(projectNumber));
 	}
 
@@ -135,6 +125,14 @@ public class SchedulingApp implements ControllerInterface {
 	 */
 	Project getProjectByName(String name) throws NoSuchElementException {
 		List<Project> matches =  projectList.stream().filter(p -> p.getName().equals(name)).collect(Collectors.toList());
+		if(matches.size() == 1) {
+			return matches.get(0);
+		}
+		throw new NoSuchElementException("This project does not exist");
+	}
+	
+	Project getProjectByNumber(String projectNumber) throws NoSuchElementException {
+		List<Project> matches =  projectList.stream().filter(p -> p.getProjectNumber().equals(projectNumber)).collect(Collectors.toList());
 		if(matches.size() == 1) {
 			return matches.get(0);
 		}
@@ -309,4 +307,118 @@ public class SchedulingApp implements ControllerInterface {
 		
 		return availableDevelopers;
 	}
+	
+	/**
+	 * Returns a list of all available developers (defined as having fewer activities than their own maximum number)
+	 * @return A list of all developers d, where d.activeActivities < d.maxActivities
+	 */
+	Developer[] getAvailableDevelopers() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/*
+	 * ------ CONTROLLER INTERFACE METHODS START HERE ------
+	 */
+
+	
+	@Override
+	public void setActiveProject(ProjectInfo projInfo) throws NoSuchElementException {
+		activeProject = getProjectByName(projInfo.getName());
+		support.firePropertyChange("project", null, projInfo);
+	}
+	
+	@Override
+	public void setActiveActivity(ActivityInfo actInfo) throws NoSuchElementException {
+		this.activeActivity = activeProject.getActivityByName(actInfo.getName());
+		support.firePropertyChange("activity", null, actInfo);
+	}
+	
+	@Override
+	public boolean login(String initials) {
+		Developer dev = getDeveloperByInitials(initials);
+		if(dev == null) {
+			return false;
+		}
+		this.setCurrentUser(dev);
+		support.firePropertyChange("user", null, new DeveloperInfo(currentUser));
+		return true;
+	}
+	
+	@Override
+	public void logout() {
+		support.firePropertyChange("user", currentUser, null);
+		this.setCurrentUser(null);
+	}
+
+	@Override
+	public List<ActivityInfo> getActiveProjectActivities() {
+		return ActivityInfo.list2dto(activeProject.getActivityList());
+	}
+	
+	@Override
+	public DeveloperInfo createDeveloper(String name, String initials) {
+		Developer d = new Developer(initials, name);
+		addDeveloper(d);
+		return new DeveloperInfo(d);
+	}
+
+
+	
+	@Override
+	public ProjectInfo createProject(String name) {
+		Project p = new Project(name, this);
+		p.setApp(this);
+		projectList.add(p);
+		return new ProjectInfo(p);
+	}
+	
+	@Override
+	public void setProjectManager(ProjectInfo projInfo, DeveloperInfo devInfo) {
+		Project p = getProjectByName(projInfo.getName());
+		Developer d = getDeveloperByInitials(devInfo.getInitials());
+		p.setProjectManager(d);
+	}
+	
+	@Override 
+	public ActivityInfo createActivity(ProjectInfo projInfo, String name) {
+		Project p = getProjectByName(projInfo.getName());
+		p.createActivity(name);
+		Activity a = p.getActivityByName(name);
+		return new ActivityInfo(a);
+	}
+	
+	@Override
+	public List<ProjectInfo> getAllProjects() {
+		return ProjectInfo.list2dto(projectList);
+	}
+	
+	@Override
+	public void addObserver(PropertyChangeListener listener) {
+		support.addPropertyChangeListener(listener);
+	}
+	
+	@Override
+	public void registerTimeOnActivity(Calendar date, double hours) {
+		activeActivity.registerTime(currentUser, (int) hours, date);
+		support.firePropertyChange("time", null, hours);
+	}
+	
+	@Override
+	public void editTimeOnActivity(Calendar date, double hours) {
+		double oldHours = activeActivity.viewTime(date, currentUser);
+		activeActivity.editTime(currentUser, hours, date);
+		double newHours = activeActivity.viewTime(date, currentUser);
+		support.firePropertyChange("time", oldHours, hours + oldHours);
+	}
+	
+	@Override
+	public void assignDevToActivity(DeveloperInfo dev, ProjectInfo proj, ActivityInfo act) {
+		Developer d = getDeveloperByInitials(dev.getInitials());
+		Project p = getProjectByNumber(proj.getProjectNumber());
+		Activity a = p.getActivityByName(act.getName());
+		a.addDeveloper(d);
+	}
+
+
 }

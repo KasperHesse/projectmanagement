@@ -84,7 +84,7 @@ public class Developer {
 	 */
 	public void addProject(Project project) {
 		projectList.add(project);
-		
+	}
 
 	public String getName() {
 		return this.name;

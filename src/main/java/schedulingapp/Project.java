@@ -17,10 +17,8 @@ public class Project {
 	private List<Activity> activityList;
 	private SchedulingApp schedulingApp;
 	private Calendar creationDate;
-	private List<Developer> unassignedDevelopers;
+	private List<Developer> developerList;
 
-	
-	
 	public Project(String projectName, Calendar startDate, Calendar stopDate, Developer projectManager, SchedulingApp schedulingApp) {
 		this.projectName = projectName;
 		this.startDate = startDate;
@@ -31,13 +29,13 @@ public class Project {
 		this.activityList = new ArrayList<Activity>();
 		this.projectNumber = generateProjectNumber();
 		
-		unassignedDevelopers = new ArrayList<Developer>();
+		developerList = new ArrayList<Developer>();
 		if (projectManager != null) {
-			unassignedDevelopers.add(projectManager);
+			developerList.add(projectManager);
 			projectManager.addProject(this);			
 		}
 		if (schedulingApp.getCurrentUser() != null) {
-			unassignedDevelopers.add(schedulingApp.getCurrentUser());
+			developerList.add(schedulingApp.getCurrentUser());
 			schedulingApp.getCurrentUser().addProject(this);			
 		}
 
@@ -55,20 +53,6 @@ public class Project {
 		this(projectName, null, null, null, schedulingApp);
 	}
 	
-
-	
-	
-	public void addDeveloper(Developer dev) {
-		if(doesDeveloperExistInProject(dev)) {
-			throw new IllegalArgumentException("This developer is already a part of this project");
-		} else if(!this.isProjectManager(this.getCurrentUser())) {
-			throw new IllegalArgumentException("Developers cannot add other developers to projects");
-		}
-		this.unassignedDevelopers.add(dev);
-		dev.addProject(this);
-	}
-	
-	
 	/**
 	 * Creates a new Project with a given name and projectManager. startDate and stopDate are set to null
 	 * @param projectName
@@ -78,6 +62,18 @@ public class Project {
 	public Project(String projectName, Developer projectManager, SchedulingApp schedulingApp) {
 		this(projectName, null, null, projectManager, schedulingApp);
 	}
+		
+	
+	public void addDeveloper(Developer dev) {
+		if(doesDeveloperExistInProject(dev)) {
+			throw new IllegalArgumentException("This developer is already a part of this project");
+		} else if(!this.isProjectManager(this.getCurrentUser())) {
+			throw new IllegalArgumentException("Developers cannot add other developers to projects");
+		}
+		this.developerList.add(dev);
+		dev.addProject(this);
+	}
+
 	
 	/**
 	 * Generates a project number for a newly created project. The project number must be unique
@@ -117,7 +113,7 @@ public class Project {
 	
 	//Does this work as intended? Same as above?
 	public List<Developer> getDevelopers() {
-		List<Developer> allDevs = unassignedDevelopers;
+		List<Developer> allDevs = developerList;
 		
 		for (Activity activity : activityList) {
 			allDevs.addAll(activity.getDevelopers());
@@ -343,8 +339,8 @@ public class Project {
 	 * @param activity the activity to be removed
 	 */
 	public void removeDeveloper(Developer dev) {
-		if (unassignedDevelopers.contains(dev)) {
-		unassignedDevelopers.remove(dev);
+		if (developerList.contains(dev)) {
+		developerList.remove(dev);
 		} else {
 			throw new IllegalArgumentException("No developer with this initials exists in this project");
 		}
@@ -395,6 +391,7 @@ public class Project {
 		creationCal.setTime(formatter.parse(creationDate));
 
 		this.creationDate = creationCal;
+	}
 	List<Activity> getActivityList() {
 		return this.activityList;
 		

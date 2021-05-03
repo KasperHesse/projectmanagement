@@ -96,4 +96,13 @@ public interface ControllerInterface {
 	 * @param hours The number of hours to modify the edited time by
 	 */
 	public void editTimeOnActivity(Calendar date, double hours);
+	
+	/**
+	 * Assigns a developer to an activity under a given project. The developer must already be assigned to another activity
+	 * under the same project, or be in the list of unassigned developers
+	 * @param dev Info for the developer to add
+	 * @param proj Info for the project to modify
+	 * @param act Info the activity under which the dev should be added
+	 */
+	public void assignDevToActivity(DeveloperInfo dev, ProjectInfo proj, ActivityInfo act);
 }

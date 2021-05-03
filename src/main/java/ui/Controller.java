@@ -80,7 +80,8 @@ public class Controller implements PropertyChangeListener {
 		
 		ProjectInfo p = model.createProject("my first project");
 		model.setProjectManager(p, d);
-		model.createActivity(p, "my first activity");
+		ActivityInfo a = model.createActivity(p, "my first activity");
+		model.assignDevToActivity(d, p, a);
 		this.projectList = model.getAllProjects();
 		
 		model.logout();
@@ -131,6 +132,7 @@ public class Controller implements PropertyChangeListener {
 			case sSELECTACTIVITY: processInputSelectActivity(tokens); break;
 			case sACTIVITY: processInputActivity(tokens); break;
 			case sREGISTERTIME: processInputRegisterTime(tokens); break;
+			case sEDITREGISTEREDTIME: processInputEditRegisteredTime(tokens); break;
 			default: throw new Exception("An unknown error occured");
 			}
 		}
@@ -384,7 +386,12 @@ public class Controller implements PropertyChangeListener {
 			activeActivity = (ActivityInfo) evt.getNewValue();
 			view.showMessage(String.format("Selected activity \"%s\"", activeActivity.getName()));
 		} else if(evt.getPropertyName().equals("time")) {
-			view.showMessage(String.format("Registered %.1f hours on \"%s\"", (Double) evt.getNewValue(), activeActivity));
+			if((Double) evt.getOldValue() == null) {
+				view.showMessage(String.format("Registered %.1f hours on \"%s\"", (Double) evt.getNewValue(), activeActivity));
+			} else {
+				view.showMessage(String.format("Edited hours on \"%s\". Previous registration was %.1f, new registration is %.1f", activeActivity, (Double) evt.getOldValue(), (Double) evt.getNewValue()));
+			}
+			
 		}
 	}
 	

@@ -40,6 +40,9 @@ public class Activity {
 		this.developerList.add(dev);
 		dev.addProject(project);
 		dev.addDeveloperToActivity(this);
+		if(!project.doesDeveloperExistInProject(dev)) {
+			project.addDeveloper(dev);
+		}
 	}
 	
 	/**
@@ -97,7 +100,7 @@ public class Activity {
 	 * @param How many hours to register
 	 * @param On what date he wants register said hours
 	 */
-	public void registerTime(Developer dev, int hours, Calendar date) {
+	public void registerTime(Developer dev, double hours, Calendar date) {
 		//precondition
 		assert dev != null && date != null && hours > 0;
 		
@@ -128,7 +131,7 @@ public class Activity {
 	 * @param what developer you want to check
 	 * @return
 	 */
-	public int viewTime(Calendar date, Developer dev) {
+	public double viewTime(Calendar date, Developer dev) {
 		return timeSheet.viewTime(date, dev);
 	}
 

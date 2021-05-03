@@ -36,4 +36,8 @@ public class ProjectInfo implements DTOinterface {
 	public String getName() {
 		return this.projectName;
 	}
+	
+	public String getProjectNumber() {
+		return this.projectNumber;
+	}
 }
