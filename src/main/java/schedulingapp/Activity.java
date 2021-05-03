@@ -181,20 +181,17 @@ public class Activity {
 		startDatePast = startDate;
 
 		if (startDate != null) {
-			assert startDate != null : "PreCondition changeStartDate";
 			startDate.add(Calendar.WEEK_OF_YEAR, weeks);
 
 		} else {
 			throw new IllegalArgumentException("A date for a project must be given before changing");
 		}
 		if (startDate.after(stopDate)) {
-			assert startDate.after(stopDate) : "PostCondition changeStartDate";
 			startDate = startDatePast;
 			throw new IllegalArgumentException("The startdate cannot be after the stopdate");
 
 		}
 		if (startDate.before(creationDate)) {
-			assert startDate.before(creationDate) : "PostCondition changeStartDate";
 			startDate = startDatePast;
 			throw new IllegalArgumentException("The startdate cannot be before the creationdate");
 		}
