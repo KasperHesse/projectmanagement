@@ -14,6 +14,11 @@ public class Activity {
 	private TimeSheet timeSheet = new TimeSheet();
 	private String activityName;
 	private Project project;
+
+	private Calendar creationDate;
+	private Calendar startDatePast;
+	private Calendar stopDatePast;
+
 	
 	public Activity(String activityName, int hoursBudgetted, Calendar startDate, Calendar stopDate, Project project) {
 		this.activityName = activityName;
@@ -21,6 +26,7 @@ public class Activity {
 		this.startDate = startDate;
 		this.stopDate = stopDate;
 		this.project = project;
+		this.creationDate = new GregorianCalendar();
 		this.developerList = new ArrayList<Developer>();
 		this.assistingDeveloperList = new ArrayList<Developer>();
 	}
@@ -92,18 +98,24 @@ public class Activity {
 	 * @param On what date he wants register said hours
 	 */
 	public void registerTime(Developer dev, int hours, Calendar date) {
-		if(startDate != null && stopDate != null) {
+		//precondition
+		assert dev != null && date != null && hours > 0;
+		
+		if(startDate != null && stopDate != null) {                                                             //1
 			
 			if(startDate.before(date) || stopDate.after(date)) {
-				throw new IllegalArgumentException("You cannot register time outside the active status dates");
+				throw new IllegalArgumentException("You cannot register time outside the active status dates"); //2
 			}
 		}
 		
-		if(!isDeveloper(dev)) {
+		if(!isDeveloper(dev)) {                                                                                 //3
 			throw new IllegalArgumentException("You are not associated with chosen activity");
 		}
 		
 		timeSheet.registerTime(dev, hours, date);
+		
+		//postcondition
+		assert viewTime(date, dev) == hours;
 	}
 	
 	public void editTime(Developer dev, int hours, Calendar date) {
@@ -166,50 +178,52 @@ public class Activity {
 	 * @param weeks The amount of weeks
 	 */
 	
-	public void addWeeksToStartDate(Integer weeks) {
+	public void changeStartDate(int weeks) {
+		startDatePast = startDate;
+
 		if (startDate != null) {
-			this.startDate.add(Calendar.WEEK_OF_YEAR, weeks);
-			} else {
-			throw new IllegalArgumentException("A date for an activity must be given before adding.");
-			}
+			assert startDate != null : "PreCondition changeStartDate";
+			startDate.add(Calendar.WEEK_OF_YEAR, weeks);
+
+		} else {
+			throw new IllegalArgumentException("A date for a project must be given before changing");
+		}
+		if (startDate.after(stopDate)) {
+			assert startDate.after(stopDate) : "PostCondition changeStartDate";
+			startDate = startDatePast;
+			throw new IllegalArgumentException("The startdate cannot be after the stopdate");
+
+		}
+		if (startDate.before(creationDate)) {
+			assert startDate.before(creationDate) : "PostCondition changeStartDate";
+			startDate = startDatePast;
+			throw new IllegalArgumentException("The startdate cannot be before the creationdate");
+		}
 	}
 	
-	/**
-	 * Checks whether the start date has been changed
-	 * @return Returns true if start date has been changed and false otherwise
-	 */
-	public boolean hasStartDateChanged() {
-		if (startDate != null) {
-			return true;
-			} else {
-			return false;
-			}
-	}
-
 	/**
 	 * Adds number of weeks to the start date for the current activity
 	 * @param weeks The amount of weeks
 	 */
-	public void addWeeksToStopDate(Integer weeks) {
-		if (stopDate != null) {
+	public void changeStopDate(int weeks) {
+		stopDatePast = stopDate;
+		if (this.stopDate != null) {
 			this.stopDate.add(Calendar.WEEK_OF_YEAR, weeks);
 			} else {
-			throw new IllegalArgumentException("A date for an activity must be given before adding.");
+			throw new IllegalArgumentException("A date for a project must be given before adding.");
 			}
+			if (stopDate.after(startDate)) {
+				stopDate = stopDatePast;
+	
+			throw new IllegalArgumentException("The startdate cannot be after the stopdate");
+
+		}
+			if (stopDate.before(creationDate)) {
+				stopDate = stopDatePast;
+			throw new IllegalArgumentException("The startdate cannot be before the creationdate");
+		}
 	}
 	
-	/**
-	 * Checks whether the stop date has been changed
-	 * @return Returns true if start date has been changed and false otherwise
-	 */
-	public boolean hasStopDateChanged() {
-		if (stopDate != null) {
-			return true;
-			} else {
-			return false;
-			}
-	}
-
 	/**
 	 * Adds number hours to the hours budgeted for the activity
 	 * @param hours the amount of hours
@@ -254,8 +268,4 @@ public class Activity {
 		this.stopDate = stopCal;
 		
 	}
-	
-	
-	
-
 }

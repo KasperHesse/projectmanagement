@@ -25,8 +25,6 @@ public class Project {
 		this.projectName = projectName;
 		this.startDate = startDate;
 		this.stopDate = stopDate;
-		this.startDatePast = startDatePast;
-		this.stopDatePast = startDatePast;
 		this.projectManager = projectManager;
 		this.schedulingApp = schedulingApp;
 		this.creationDate = new GregorianCalendar();
@@ -291,55 +289,50 @@ public class Project {
 	}
 	
 	/**
-	 * Adds number of weeks to start date of the current project.
-	 * @param weeks number of weeks being added
+	 * changing number of weeks to start date of the current project.
+	 * 
+	 * @param weeks number of weeks being changed
 	 */
-	public void addWeeksToStartDate(int weeks) {
-		this.startDatePast = this.stopDate;
-		if (this.startDate != null) {
-		this.startDate.add(Calendar.WEEK_OF_YEAR, weeks);
+	public void changeStartDate(int weeks) {
+		startDatePast = startDate;
+
+		if (startDate != null) {
+			startDate.add(Calendar.WEEK_OF_YEAR, weeks);
+
 		} else {
-		throw new IllegalArgumentException("A date for a project must be given before adding.");
+			throw new IllegalArgumentException("A date for a project must be given before changing");
 		}
-		
+		if (startDate.after(stopDate)) {
+			startDate = startDatePast;
+			throw new IllegalArgumentException("The startdate cannot be after the stopdate");
+		}
+		if (startDate.before(creationDate)) {
+			startDate = startDatePast;
+			throw new IllegalArgumentException("The startdate cannot be before the creationdate");
+		}
 	}
 	
 	/**
-	 * Checks whether the start date has been changed
-	 * @return Returns true if start date has been changed and false otherwise
+	 * changing number of weeks to stop date of the current project.
+	 * @param weeks number of weeks being changed
 	 */
-	public boolean hasStartDateChanged() {
-		if (this.startDatePast != this.startDate) {
-			return true;
-			} else {
-			return false;
-			}
-	}
-	
-	/**
-	 * Adds number of weeks to stop date of the current project.
-	 * @param weeks number of weeks being added
-	 */
-	public void addWeeksToStopDate(Integer weeks) {
-		this.stopDatePast = this.stopDate;
+	public void changeStopDate(int weeks) {
+		stopDatePast = stopDate;
 		if (this.stopDate != null) {
 			this.stopDate.add(Calendar.WEEK_OF_YEAR, weeks);
 			} else {
 			throw new IllegalArgumentException("A date for a project must be given before adding.");
 			}
-		
-	}
+			if (stopDate.after(startDate)) {
+				stopDate = stopDatePast;
 	
-	/**
-	 * Checks whether the stop date has been changed
-	 * @return Returns true if start date has been changed and false otherwise
-	 */
-	public boolean hasStopDateChanged() {
-		if (this.stopDatePast != this.stopDate) {
-			return true;
-			} else {
-			return false;
-			}
+			throw new IllegalArgumentException("The startdate cannot be after the stopdate");
+
+		}
+			if (stopDate.before(creationDate)) {
+				stopDate = stopDatePast;
+			throw new IllegalArgumentException("The startdate cannot be before the creationdate");
+		}
 	}
 
 	/**
@@ -388,6 +381,17 @@ public class Project {
 		stopCal.setTime(formatter.parse(stopDate));
 
 		this.stopDate = stopCal;
+		
+	}
+	
+	public void setCreationDate(String creationDate) throws ParseException {
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+
+		Calendar creationCal = Calendar.getInstance();
+		
+		creationCal.setTime(formatter.parse(creationDate));
+
+		this.creationDate = creationCal;
 		
 	}
 

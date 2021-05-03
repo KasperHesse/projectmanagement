@@ -8,7 +8,7 @@ Scenario: User registers time on an activity successfully
     When "PETE" registers 24 hours on that activity on "2021-12-24"
     Then 24 hours is added to "PETE" time usage on that activity on "2021-12-24"
     
-    Scenario: User registers time on an activity successfully
+    Scenario: User registers time on an activity, but with too many hours
     Given A user with the name "PETE" is logged in
     And "PETE" is associated with the activity he wants to register time usage on
     When "PETE" registers 25 hours on that activity on "2021-12-24"
@@ -27,6 +27,12 @@ Scenario: User cannot register time on a project that is not active
 	And an activity with start date "2021-12-24"  and end date "2021-12-31" exists under a project
 	When "PETE" registers 24 hours on that activity on "2021-12-23"
 	Then the error message "You cannot register time outside the active status dates" is given
+	
+Scenario: User registers time on an activity with a start- and stopdate succesfully
+	Given A user with the name "PETE" is logged in
+	And "PETE" is associated with the activity he wants to register time usage on, and the startdate is "2021-21-24" and the stopdate is "2021-12-31"
+	When "PETE" registers 24 hours on that activity on "2021-12-25"
+	Then 24 hours is added to "PETE" time usage on that activity on "2021-12-25"
 
 
 #Given the constructor these scenraios are the same as the first one. I dont think theres any need for implementing them :) 

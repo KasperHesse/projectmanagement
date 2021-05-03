@@ -49,6 +49,29 @@ Scenario: User removes a developer from the project
 #	Then the hours budgeted is changed by 100000 for the current project
 
 
+Scenario: User changes start time which is null
+	Given that the user with initials "abcd" is the project manager of project "xyz"
+	Given the project "xyz" has no startdate 
+	When the user changes the start time by 2 weeks for the project "xyz"
+	Then the error message "A date for a project must be given before changing" is given
+	
+
+Scenario: User changes start time to before the creationdate
+	Given that the user with initials "abcd" is the project manager of project "xyz"
+	Given the project "xyz" has a startdate "2021-04-20" and the creationDate is "2021-04-19"
+	When the user changes the start time by -2 weeks for the project "xyz"
+	Then the error message "The startdate cannot be before the creationdate" is given
+	
+	
+Scenario: User changes start time to after stopDate
+	Given that the user with initials "abcd" is the project manager of project "xyz"
+	Given the project "xyz" has a startdate "2021-04-20" and a stopdate "2021-04-22"
+	When the user changes the start time by 1 weeks for the project "xyz"
+	Then the error message "The startdate cannot be after the stopdate" is given
 
 
-
+Scenario: User changes start time to after the creationdate
+	Given that the user with initials "abcd" is the project manager of project "xyz"
+	Given the project "xyz" has a startdate "2021-04-20" and the creationDate is "2021-04-19"
+	When the user changes the start time by 1 weeks for the project "xyz"
+	Then the start time of the project "xyz" is "2021-04-27"

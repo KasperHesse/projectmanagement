@@ -53,7 +53,7 @@ public class editActivitySteps {
 	public void the_user_moves_the_start_time_by_weeks_for_the_activity_the(Integer weeks, String name) {
 		Project project = projHelper.getProject();
 		try {
-			actHelper.getActivity(project, name).addWeeksToStartDate(weeks);
+			actHelper.getActivity(project, name).changeStartDate(weeks);
 		} catch (IllegalArgumentException e) {
 			errorMessageHolder.setErrorMessage(e.getMessage());
 		}
@@ -86,7 +86,7 @@ public class editActivitySteps {
 	public void the_user_moves_the_end_time_by_weeks_for_the_activity_the(Integer weeks, String name) {
 		Project project = projHelper.getProject();
 		try {
-			actHelper.getActivity(project, name).addWeeksToStopDate(weeks);
+			actHelper.getActivity(project, name).changeStopDate(weeks);
 		} catch (IllegalArgumentException e) {
 			errorMessageHolder.setErrorMessage(e.getMessage());
 		}
