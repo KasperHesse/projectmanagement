@@ -17,9 +17,9 @@ public class Activity {
 	private Calendar creationDate;
 	private Calendar startDatePast;
 	private Calendar stopDatePast;
-	//private SchedulingApp schedulingApp;
+	private SchedulingApp schedulingApp;
 	
-	public Activity(String activityName, int hoursBudgetted, Calendar startDate, Calendar stopDate, Project project) {
+	public Activity(String activityName, int hoursBudgetted, Calendar startDate, Calendar stopDate, Project project, SchedulingApp schedulingApp) {
 		this.activityName = activityName;
 		this.hoursBudgetted = hoursBudgetted;
 		this.startDate = startDate;
@@ -28,7 +28,7 @@ public class Activity {
 		this.creationDate = new GregorianCalendar();
 		this.developerList = new ArrayList<Developer>();
 		this.assistingDeveloperList = new ArrayList<Developer>();
-		//this.schedulingApp = schedulingApp;
+		this.schedulingApp = schedulingApp;
 	}
 	
 	public void addDeveloper(Developer dev) {
@@ -119,15 +119,37 @@ public class Activity {
 	
 	public void editTime(Developer dev, int hours, Calendar date) {
 		
+		assert dev != null && date != null && hours > 0;
+		
+		if(dev != schedulingApp.getCurrentUser()) {               																	//1                                                                  
+			throw new IllegalArgumentException("You can't edit other developers registered time");
+		}
+		
+		if(startDate != null && stopDate != null) {                                                             					//2
+			
+			if(startDate.before(date) || stopDate.after(date)) {
+				throw new IllegalArgumentException("You cannot register time outside the active status dates"); 
+			}
+		}
+		
+		if (!isDeveloper(dev)) { 																									//3
+			throw new IllegalArgumentException("You are not associated with chosen activity");
+		}
+		
+		timeSheet.editTime(dev, date, hours);
 	}
 	
 	/**
-	 * Gets a Developers timeusage on a given date 
+	 * Gets a Developers timeusage on a gsniiven date 
 	 * @param what date you want to check
 	 * @param what developer you want to check
 	 * @return
 	 */
 	public int viewTime(Calendar date, Developer dev) {
+		if(!isDeveloper(dev)) {                                                                                 
+			throw new IllegalArgumentException("You can't view other developers registered time");
+		}
+		
 		return timeSheet.viewTime(date, dev);
 	}
 
