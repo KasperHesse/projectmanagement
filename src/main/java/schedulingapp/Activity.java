@@ -96,9 +96,9 @@ public class Activity {
 	
 	/**
 	 * Registers time on the given activity if allowed
-	 * @param The developerregistering time
+	 * @param The developer that is registering time
 	 * @param How many hours to register
-	 * @param On what date he wants register said hours
+	 * @param On what date he wants to register said hours
 	 */
 	public void registerTime(Developer dev, int hours, Calendar date) {
 		//precondition
@@ -121,6 +121,12 @@ public class Activity {
 		assert viewTime(date, dev) == hours;
 	}
 	
+	/**
+	 * Edits registered time on the given activity if allowed
+	 * @param The developer that wants to edit their registered time
+	 * @param How many hours to add to the registered time
+	 * @param On what date he wants to register said hours
+	 */
 	public void editTime(Developer dev, int hours, Calendar date) {
 		
 		assert dev != null && date != null && hours > 0;
@@ -144,10 +150,10 @@ public class Activity {
 	}
 	
 	/**
-	 * Gets a Developers timeusage on a gsniiven date 
-	 * @param what date you want to check
+	 * Gets a Developers time usage on a given date 
+	 * @param which date you want to check
 	 * @param what developer you want to check
-	 * @return
+	 * @return the registered amount of hours
 	 */
 	public int viewTime(Calendar date, Developer dev) {
 		if(!isDeveloper(dev)) {                                                                                 

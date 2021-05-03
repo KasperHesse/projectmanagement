@@ -29,9 +29,13 @@ public class TimeSheet {
 		var.put(dev, hours);
 	}
 	
-public void editTime(Developer dev, Calendar date, int change) {
-		
-		
+	/**
+	 * Edits registered time on the given activity if allowed
+	 * @param The developer that wants to edit their registered time
+	 * @param How many hours to add to the registered time
+	 * @param On what date he wants to register said hours
+	 */
+public void editTime(Developer dev, Calendar date, int change) {	
 		Map<Developer, Integer> var = dateTimeUsage.get(date);
 		
 		
