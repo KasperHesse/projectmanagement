@@ -59,20 +59,7 @@ public class Project {
 		this(projectName, null, null, null, schedulingApp);
 	}
 	
-	/**
-	 * Adds a developer to this project
-	 * @param dev the developer that is added to the project
-	 */
-	public void addDeveloper(Developer dev) {
-		if(doesDeveloperExistInProject(dev)) {
-			throw new IllegalArgumentException("This developer is already a part of this project");
-		} else if(!this.isProjectManager(this.getCurrentUser())) {
-			throw new IllegalArgumentException("Developers cannot add other developers to projects");
-		}
-		this.unassignedDevelopers.add(dev);
-		dev.addProject(this);
-	}
-	
+
 	
 	/**
 	 * Creates a new Project with a given name and projectManager. startDate and stopDate are set to null
@@ -84,7 +71,10 @@ public class Project {
 		this(projectName, null, null, projectManager, schedulingApp);
 	}
 		
-	
+	/**
+	 * Adds a developer to this project
+	 * @param dev the developer that is added to the project
+	 */
 	public void addDeveloper(Developer dev) {
 		if(developerList.contains(dev)) {
 			throw new IllegalArgumentException("This developer is already a part of this project");

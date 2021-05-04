@@ -39,7 +39,7 @@ public class TimeSheet {
 	 * @param How many hours to add to the registered time
 	 * @param On what date he wants to register said hours
 	 */
-public void editTime(Developer dev, Calendar date, double change) {
+	public void editTime(Developer dev, Calendar date, double change) {
 		Map<Developer, Double> var = dateTimeUsage.get(date);
 		double oldHours = viewTime(date, dev);
 		if(tooManyHours(oldHours+change)) {
@@ -54,16 +54,6 @@ public void editTime(Developer dev, Calendar date, double change) {
 		dateTimeUsage.get(date).compute(dev, (key, val) -> (val == null) ? 1 : val + change);
 	}
 	
-	public int viewTime(Calendar date, Developer dev) {
-	
-	Map<Developer, Integer> var = dateTimeUsage.get(date);
-	
-	if(var == null) {
-		throw new IllegalArgumentException("No time has been registered on the activity this given day");
-	}
-	
-	return dateTimeUsage.get(date).get(dev);
-}
 	
 	public void calculateNewHours(int hours, int hoursWorked) {
 		
