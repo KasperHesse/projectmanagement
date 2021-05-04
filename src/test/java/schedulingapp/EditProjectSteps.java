@@ -21,7 +21,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-public class editProjectSteps {
+public class EditProjectSteps {
 	SchedulingApp schedulingApp;
 	ProjectHelper projHelper;
 	DeveloperHelper devHelper;
@@ -33,7 +33,7 @@ public class editProjectSteps {
 	private Calendar initialStopDate;
 	private Calendar initialCreationDate;
 
-	public editProjectSteps(SchedulingApp schedulingApp, ProjectHelper projHelper, DeveloperHelper devHelper,
+	public EditProjectSteps(SchedulingApp schedulingApp, ProjectHelper projHelper, DeveloperHelper devHelper,
 			ErrorMessageHolder errorMessageHolder, ActivityHelper actHelper, ActivityHelper actHelper1) {
 		this.schedulingApp = schedulingApp;
 		this.projHelper = projHelper;
@@ -177,7 +177,7 @@ public class editProjectSteps {
 		Developer dev = devHelper.getDeveloper(initials);
 
 		try {
-			assertThat(projHelper.getProject().doesDeveloperExistInProject(dev), is(true));
+			assertThat(projHelper.getProject().developerExistsInProject(dev), is(true));
 
 		} catch (AssertionError e) {
 			errorMessageHolder.setErrorMessage("That developer does not exist in the current project.");

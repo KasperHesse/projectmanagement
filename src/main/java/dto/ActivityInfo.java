@@ -1,17 +1,23 @@
 package dto;
+import java.text.*;
 import java.util.*;
 import schedulingapp.Activity;
 
 public class ActivityInfo implements DTOinterface {
 	private String name;
+	private String startDate;
+	private String stopDate;
 	
 	public ActivityInfo(Activity activity) {
 		this.name = activity.getName();
+		
+		this.startDate = Activity.cal2string(activity.getStartDate());
+		this.stopDate = Activity.cal2string(activity.getStopDate());
 	}
 	
 	@Override
 	public String toPrint() {
-		return this.toString();
+		return String.format("%s [%s-%s]", this.name, this.startDate, this.stopDate);
 	}
 	
 	public static List<ActivityInfo> list2dto(List<Activity> activityList) {

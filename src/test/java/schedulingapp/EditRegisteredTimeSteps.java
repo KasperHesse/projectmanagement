@@ -1,4 +1,4 @@
-package schedulingapp.unit_tests;
+package schedulingapp;
 
 import io.cucumber.java.en.*;
 
@@ -18,7 +18,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.hamcrest.CoreMatchers.*;
 
-public class editRegisteredTimeSteps {
+public class EditRegisteredTimeSteps {
 
 	SchedulingApp schedulingApp;
 	Activity activity;
@@ -29,7 +29,7 @@ public class editRegisteredTimeSteps {
 	ErrorMessageHolder errorMessageHolder;
 	TimeSheet timeSheet;
 	
-	public editRegisteredTimeSteps(SchedulingApp schedulingApp, ProjectHelper projHelper, DeveloperHelper devHelper, 
+	public EditRegisteredTimeSteps(SchedulingApp schedulingApp, ProjectHelper projHelper, DeveloperHelper devHelper, 
 			ErrorMessageHolder errorMessageHolder, ActivityHelper actHelper, TimeSheet timeSheet) {
 		this.schedulingApp = schedulingApp;
 		this.projHelper = projHelper;
@@ -87,12 +87,11 @@ public class editRegisteredTimeSteps {
 		
 		act.registerTime(dev1, hours, timeRegisterDate);
 		
-		int int1 = act.viewTime(timeRegisterDate, dev1);
+		double int1 = act.viewTime(timeRegisterDate, dev1);
 		act.editTime(dev1, hours, timeRegisterDate);
-		int int2 = act.viewTime(timeRegisterDate, dev1);
+		double int2 = act.viewTime(timeRegisterDate, dev1);
 		
-		assertEquals(int1+hours, int2);
-		
+		assertEquals(int1+hours, int2, 0.1);	
 	}
 	
 	

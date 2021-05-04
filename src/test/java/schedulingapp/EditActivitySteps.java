@@ -20,7 +20,7 @@ import schedulingapp.Project;
 import schedulingapp.ProjectHelper;
 import schedulingapp.SchedulingApp;
 
-public class editActivitySteps {
+public class EditActivitySteps {
 	SchedulingApp schedulingApp;
 	ProjectHelper projHelper;
 	DeveloperHelper devHelper;
@@ -29,7 +29,7 @@ public class editActivitySteps {
 	private Calendar initialStartDate;
 	private Calendar initialStopDate;
 
-	public editActivitySteps(SchedulingApp schedulingApp, ProjectHelper projHelper, DeveloperHelper devHelper,
+	public EditActivitySteps(SchedulingApp schedulingApp, ProjectHelper projHelper, DeveloperHelper devHelper,
 			ErrorMessageHolder errorMessageHolder, ActivityHelper actHelper, ActivityHelper actHelper1) {
 		this.schedulingApp = schedulingApp;
 		this.projHelper = projHelper;

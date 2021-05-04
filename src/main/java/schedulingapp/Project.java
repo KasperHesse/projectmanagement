@@ -28,15 +28,15 @@ public class Project {
 		this.creationDate = new GregorianCalendar();
 		this.activityList = new ArrayList<Activity>();
 		this.projectNumber = generateProjectNumber();
-		
 		developerList = new ArrayList<Developer>();
+		
 		if (projectManager != null) {
 			developerList.add(projectManager);
 			projectManager.addProject(this);			
 		}
 		if (schedulingApp.getCurrentUser() != null) {
-			developerList.add(schedulingApp.getCurrentUser());
-			schedulingApp.getCurrentUser().addProject(this);			
+			this.developerList.add(schedulingApp.getCurrentUser());
+			schedulingApp.getCurrentUser().addProject(this);		
 		}
 
 	}
@@ -46,9 +46,6 @@ public class Project {
 	 * @param projectName
 	 * @param schedulingApp
 	 */
-	private String generateProjectNumber() {
-		// TODO Auto-generated method stub
-		return "123456";
 	public Project(String projectName, SchedulingApp schedulingApp) {
 		this(projectName, null, null, null, schedulingApp);
 	}
@@ -65,16 +62,20 @@ public class Project {
 		
 	
 	public void addDeveloper(Developer dev) {
-		if(doesDeveloperExistInProject(dev)) {
+		if(developerList.contains(dev)) {
 			throw new IllegalArgumentException("This developer is already a part of this project");
-		} else if(!this.isProjectManager(this.getCurrentUser())) {
+		} else if(this.projectManager != null && !this.isProjectManager(this.getCurrentUser())) {
 			throw new IllegalArgumentException("Developers cannot add other developers to projects");
 		}
 		this.developerList.add(dev);
-		dev.addProject(this);
+
+		if(!dev.getProjects().contains(this)) { //Only add if they're not already assisting on this project
+			dev.addProject(this);
+		} else {
+			dev.promoteFromAssistant(this);
+		}
 	}
 
-	
 	/**
 	 * Generates a project number for a newly created project. The project number must be unique
 	 * @return projectNumber
@@ -115,9 +116,9 @@ public class Project {
 	public List<Developer> getDevelopers() {
 		List<Developer> allDevs = developerList;
 		
-		for (Activity activity : activityList) {
-			allDevs.addAll(activity.getDevelopers());
-		}
+//		for (Activity activity : activityList) {
+//			allDevs.addAll(activity.getDevelopers());
+//		}
 		
 		return allDevs.stream().distinct().collect(Collectors.toList());
 		
@@ -129,7 +130,7 @@ public class Project {
 	 * @param dev The developer in question
 	 * @return True if this developer is a part of the current project, false otherwise
 	 */
-	public boolean doesDeveloperExistInProject(Developer dev){
+	public boolean developerExistsInProject(Developer dev){
 		return activityList.stream().anyMatch(a -> a.getDevelopers().contains(dev));
 	}
 	
@@ -164,8 +165,6 @@ public class Project {
 		}
 	}
 	
-	
-	
 	/**
 	 * Returns the ProjectManager of the current project.
 	 */
@@ -186,8 +185,17 @@ public class Project {
 	 * @param dev The new project manager of the project
 	 */
 	public void setProjectManager(Developer dev) {
-		this.projectManager = dev;
-		dev.addProject(this);
+		if(schedulingApp.getCurrentUser() != this.projectManager && this.projectManager != null) {
+			throw new IllegalArgumentException("Only the current PM can change the project manager");
+		}
+		try {
+			this.addDeveloper(dev);
+			this.projectManager = dev;
+		} catch (IllegalArgumentException e) {
+			if(developerList.contains(dev)) { //Error may be thrown if new PM already exists under this project
+				this.projectManager = dev;
+			}
+		}
 	}
 	
 
@@ -335,14 +343,17 @@ public class Project {
 	}
 
 	/**
-	 * Removes an activity from the project
-	 * @param activity the activity to be removed
+	 * Removes a developer from the project
+	 * @param dev the developer to be removed
 	 */
 	public void removeDeveloper(Developer dev) {
-		if (developerList.contains(dev)) {
-		developerList.remove(dev);
+		if(dev == this.projectManager) {
+			throw new IllegalArgumentException("Project managers cannot remove themselves from a project. Promote a new PM first");
+		} else if(developerList.contains(dev)) {
+			developerList.remove(dev);
+			dev.removeProject(this);
 		} else {
-			throw new IllegalArgumentException("No developer with this initials exists in this project");
+			throw new IllegalArgumentException("No developer with these initials exists in this project");
 		}
 	}
 
@@ -394,7 +405,20 @@ public class Project {
 	}
 	List<Activity> getActivityList() {
 		return this.activityList;
-		
+	}
+	
+	/**
+	 * Checks whether two projects are the same. This is true if they represent the same object in memory OR
+	 * if they have the same project number
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if(obj == this) {
+			return true;
+		} else {
+			Project otherProject = (Project) obj;
+			return this.projectNumber.equals(otherProject.getProjectNumber());
+		}
 	}
 
 

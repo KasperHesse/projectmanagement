@@ -83,7 +83,7 @@ public class RegisterTimeSteps {
 		Calendar timeRegisterDate = Calendar.getInstance();
 		timeRegisterDate.setTime(formatter.parse(date));
 		
-		assertEquals(act.viewTime(timeRegisterDate, dev1), hours);
+		assertEquals(act.viewTime(timeRegisterDate, dev1), hours, 0.1);
 	}
 	
 	@Given("{string} user is not associated with the activity he wants to register time usage on")

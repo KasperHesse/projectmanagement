@@ -1,5 +1,6 @@
 package schedulingapp;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -18,6 +19,14 @@ public class Activity {
 	private Calendar creationDate;
 	private Calendar startDatePast;
 	private Calendar stopDatePast;
+	
+	public static String cal2string(Calendar date) {
+		DateFormat formatter = new SimpleDateFormat("yyyy 'W'w");
+		if(date == null) {
+			return "No date set";
+		}
+		return formatter.format(date.getTime());
+	}
 
 
 	
@@ -30,8 +39,6 @@ public class Activity {
 		this.creationDate = new GregorianCalendar();
 		this.developerList = new ArrayList<Developer>();
 		this.assistingDeveloperList = new ArrayList<Developer>();
-	
-
 	}
 	
 	public void addDeveloper(Developer dev) {
@@ -42,14 +49,14 @@ public class Activity {
 		}
 		this.developerList.add(dev);
 		dev.addProject(project);
-		dev.addDeveloperToActivity(this);
-		if(!project.doesDeveloperExistInProject(dev)) {
+		dev.addActivity(this);
+		if(!project.developerExistsInProject(dev)) {
 			project.addDeveloper(dev);
 		}
 	}
 	
 	/**
-	 * Checks whether a developer with the given initials is already working on this project
+	 * Checks whether a developer with the given initials is already working on this activity
 	 * @param initials The initials to check against
 	 * @return True if a developer has this set of initials, false otherwise
 	 */
@@ -59,12 +66,28 @@ public class Activity {
 
 	public void removeDeveloper(Developer dev) {
 		if (developerList.contains(dev)) {
-		developerList.remove(dev);
+			developerList.remove(dev);
+			dev.removeActivity(this);
 		} else {
 			throw new IllegalArgumentException("No developer with this name exists in this project");
 		}
 	}
 	
+	public void removeAssistingDeveloper(Developer dev) {
+		if(assistingDeveloperList.contains(dev)) {
+			assistingDeveloperList.remove(dev);
+			dev.removeActivity(this);
+			dev.removeProject(this.project);
+		} else {
+			throw new IllegalArgumentException("No assisting developer with this name exists in this project");
+		}
+	}
+	
+	/**
+	 * Checks whether the given developer is working on this activity
+	 * @param dev The developer
+	 * @return True if they work on the activity, false otherwise
+	 */
 	public boolean isDeveloper(Developer dev) {
 		return developerList.contains(dev);
 	}
@@ -78,12 +101,12 @@ public class Activity {
 	 * @param Who youd like to ask for help
 	 * @param On what activity you need helop for
 	 */
-	public void askForHelp(Developer helper, Activity activity) {
+	public void askForHelp(Developer helper) {
 		if(!helper.isAvailable()) {
 			throw new IllegalArgumentException("The requested developer is associated with max amount of activities");
 		}
 		
-		if(isDeveloper(helper)) {
+		if(isDeveloper(helper) || isAssistingDeveloper(helper)) {
 			throw new IllegalArgumentException("The requested developer is already associated with the activity");
 		}
 		
@@ -91,10 +114,9 @@ public class Activity {
 			throw new IllegalArgumentException("The requested developer is not in the system");
 		}
 		
-		if(helper.isAvailable()) {
 		assistingDeveloperList.add(helper);
-		helper.addDeveloperToActivity(activity);
-		}
+		helper.addActivity(this);
+		helper.addProject(this.project);
 	}
 	
 	/**
@@ -125,7 +147,6 @@ public class Activity {
 	}
 	
 	public void editTime(Developer dev, double hours, Calendar date) {
-		
 		assert dev != null && date != null && hours > 0;
 		
 		if(dev != this.getProject().getSchedulingApp().getCurrentUser()) {               																	//1                                                                  
@@ -133,12 +154,10 @@ public class Activity {
 		}
 		
 		if(startDate != null && stopDate != null) {                                                             					//2
-			
 			if(startDate.before(date) || stopDate.after(date)) {
 				throw new IllegalArgumentException("You cannot register time outside the active status dates"); 
 			}
 		}
-		
 		if (!isDeveloper(dev)) { 																									//3
 			throw new IllegalArgumentException("You are not associated with chosen activity");
 		}
@@ -147,16 +166,15 @@ public class Activity {
 	}
 	
 	/**
-	 * Gets a Developers timeusage on a gsniiven date 
+	 * Gets a Developers timeusage on a given date 
 	 * @param what date you want to check
 	 * @param what developer you want to check
 	 * @return
 	 */
-	public int viewTime(Calendar date, Developer dev) {
-		if(!isDeveloper(dev)) {                                                                                 
-			throw new IllegalArgumentException("You can't view other developers registered time");
+	public double viewTime(Calendar date, Developer dev) {
+		if(!isDeveloper(dev) && !isAssistingDeveloper(dev)) {                                                                                 
+			throw new IllegalArgumentException("You cannot view time on an activity you are not active on");
 		}
-		
 		return timeSheet.viewTime(date, dev);
 	}
 
@@ -171,6 +189,9 @@ public class Activity {
 	 * Returns a *copy* of the start date for this activity. Modifications on that copy will not modify the start date of the activity
 	 */
 	public Calendar getStartDate() {
+		if(this.startDate == null) {
+			return null;
+		}
 		return (Calendar) this.startDate.clone();
 	}
 
@@ -178,14 +199,23 @@ public class Activity {
 	 * Returns a *copy* of the end date for this activity. Modifications on that copy will not modify the end date of the activity
 	 */
 	public Calendar getStopDate() {
+		if(this.stopDate == null) {
+			return null;
+		}
 		return (Calendar) this.stopDate.clone();
 	}
 	
 	public void setStartDate(Calendar startDate) {
+		if(this.stopDate != null && startDate.after(this.stopDate)) {
+			throw new IllegalArgumentException(String.format("Given start date (%s) must be before stop date (%s)", Activity.cal2string(startDate), Activity.cal2string(this.stopDate)));
+		}
 		this.startDate = startDate;
 	}
 	
 	public void setStopDate(Calendar stopDate) {
+		if(this.startDate != null && stopDate.before(this.startDate)) {
+			throw new IllegalArgumentException(String.format("Given stop date (%s) must be after start date (%s)", Activity.cal2string(stopDate), Activity.cal2string(this.startDate)));
+		}
 		this.stopDate = stopDate;
 	}
 
@@ -300,5 +330,36 @@ public class Activity {
 
 		this.stopDate = stopCal;
 		
+	}
+
+	public List<Developer> getAssistingDeveloperList() {
+		return this.assistingDeveloperList;
+	}
+	
+	public int getHoursBudgeted() {
+		return this.hoursBudgetted;
+	}
+
+	public void setHoursBudgeted(int hoursBudgetted) {
+		this.hoursBudgetted = hoursBudgetted;
+		
+	}
+
+	/**
+	 * Moves a developer from the assisting developer list to the ordinary developer list
+	 * @param developer The developer to move from assistant to ordinary developer
+	 */
+	void migrateDeveloper(Developer developer) {
+		this.assistingDeveloperList.remove(developer);
+		this.developerList.add(developer);	
+	}
+
+	/**
+	 * Returns a string representation of the 
+	 * @return
+	 */
+	public String getStartDateString() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

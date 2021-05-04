@@ -12,7 +12,6 @@ public class TimeSheet {
 	
 	public TimeSheet() {
 		
-		
 	}
 	
 	public void registerTime(Developer dev, double hours, Calendar date) {
@@ -29,40 +28,19 @@ public class TimeSheet {
 		var.put(dev, hours);
 	}
 	
-public void editTime(Developer dev, Calendar date, int change) {
-		
-		
-		Map<Developer, Integer> var = dateTimeUsage.get(date);
-		
-		
-		if(tooManyHours(dateTimeUsage.get(date).get(dev)+change)) {
+public void editTime(Developer dev, Calendar date, double change) {
+		Map<Developer, Double> var = dateTimeUsage.get(date);
+		double oldHours = viewTime(date, dev);
+		if(tooManyHours(oldHours+change)) {
 			throw new IllegalArgumentException("You can't register more than 24 hours on one day"); 							//4
+		} else if(tooFewHours(oldHours+change)) {
+			throw new IllegalArgumentException("You can't register less than 0 hours in one day");
 		}
 		
 		if(var == null) {																										//5
 			throw new IllegalArgumentException("You can't edit time if none is registered");
 		}
-		
 		dateTimeUsage.get(date).compute(dev, (key, val) -> (val == null) ? 1 : val + change);
-	}
-
-public int viewTime(Calendar date, Developer dev) {
-	
-	Map<Developer, Integer> var = dateTimeUsage.get(date);
-	
-	if(var == null) {
-		throw new IllegalArgumentException("No time has been registered on the activity this given day");
-	}
-	
-	return dateTimeUsage.get(date).get(dev);
-}
-	
-	public void calculateNewHours(int hours, int hoursWorked) {
-		
-	}
-	
-	public void setHours(Developer dev, int hours, Calendar date) {
-		
 	}
 	
 	//Are any hours registered at all?
@@ -81,6 +59,13 @@ public int viewTime(Calendar date, Developer dev) {
 		return true;
 		}
 		return false; 
+	}
+	
+	boolean tooFewHours(double hours) {
+		if(hours < 0) {
+			return true;
+		}
+		return false;
 	}
 	
 	
@@ -103,7 +88,6 @@ public int viewTime(Calendar date, Developer dev) {
 			}
 		}
 		return hours;
-//		return dateTimeUsage.get(date).get(dev);
 	}
 }
 

@@ -4,6 +4,10 @@ import schedulingapp.*;
 import static ui.ControllerState.*;
 import java.util.*;
 import java.beans.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
+
 import static ui.ControllerMessages.*;
 
 import dto.*;
@@ -22,9 +26,12 @@ public class Controller implements PropertyChangeListener {
 	
 	List<ProjectInfo> projectList;
 	List<ActivityInfo> activityList;
+	List<DeveloperInfo> developerList;
 	
 	ProjectInfo activeProject;
 	ActivityInfo activeActivity;
+	DeveloperInfo currentUser;
+	
 	
 	private final String[] MAINOPTIONS = new String[] {"Logout", 
 			"Show projects", 
@@ -35,17 +42,22 @@ public class Controller implements PropertyChangeListener {
 			"Manage project"
 	};
 	
-	private final String[] MANAGEPROJECTOPTIONS = new String[] {"Add developer",
-			"Remove developer",
+	private final String[] MANAGEPROJECTOPTIONS = new String[] {"Add developer (PM)",
+			"Remove developer (PM)",
 			"Change/assign project manager",
-			"Get time report"
+			"Get time report (PM)"
 	};
 	
 	private final String[] ACTIVITYOPTIONS = new String[] {"Register time", 
 			"Edit registered time", 
-			"Seek assistance", 
 			"View registered time", 
-			"Remove assisant developer (PM)"
+			"Seek assistance", 
+			"Assign developer to activity (PM)",
+			"Remove developer from activity (PM)",
+			"Remove assisant developer (PM)",
+			"Change hours budgeted (PM)",
+			"Change start date",
+			"Change stop date"
 	};
 	
 
@@ -71,32 +83,15 @@ public class Controller implements PropertyChangeListener {
 		new Controller();
 	}
 	
+	//Move this to the scheduling app for easier data management
 	/**
 	 * Performs the initial setup of the system, such as generating developers and projects
 	 */
 	private void initialSetup() {
-		DeveloperInfo d = model.createDeveloper("Kasper Hesse", "kahe");
-		model.login("kahe");
-		
-		ProjectInfo p = model.createProject("my first project");
-		model.setProjectManager(p, d);
-		ActivityInfo a = model.createActivity(p, "my first activity");
-		model.assignDevToActivity(d, p, a);
-		this.projectList = model.getAllProjects();
-		
-		model.logout();
-		
-		showWelcomeMessage();
-		
+		model.presentationSetup();		
+		view.showMessage(I_WELCOME_MSG);
+	}
 
-	}
-	
-	/**
-	 * Displays a welcome message when the app is booted, or whenever the user logs out
-	 */
-	private void showWelcomeMessage() {
-		System.out.println("Welcome to the Scheduling Application. Please enter your initials to login");
-	}
 	
 	/**
 	 * The main control loop for the CLI application
@@ -133,8 +128,136 @@ public class Controller implements PropertyChangeListener {
 			case sACTIVITY: processInputActivity(tokens); break;
 			case sREGISTERTIME: processInputRegisterTime(tokens); break;
 			case sEDITREGISTEREDTIME: processInputEditRegisteredTime(tokens); break;
+			case sVIEWTIME: processInputViewTime(tokens); break;
+			case sASSISTANCE: processInputSeekAssistance(tokens); break;
+			case sREMOVEASSTDEV: processInputRemoveAsstDev(tokens); break;
+			case sCHANGEBUDGETHOURS: processInputChangeBudgetHours(tokens); break;
+			case sADDDEVPROJ: processInputAddDevProject(tokens); break;
+			case sREMOVEDEVPROJ: processInputRemoveDevProject(tokens); break;
+			case sMANAGEPROJECT: processInputManageProject(tokens); break;
+			case sCHANGEPROJMAN: processInputChangeProjMan(tokens); break;
+			case sADDDEVACT: processInputAddDevActivity(tokens); break;
+			case sREMOVEDEVACT: processInputRemoveDevActivity(tokens); break;
+			case sCHANGESTARTWEEK: processInputChangeStartWeek(tokens); break;
+			case sCHANGESTOPWEEK: processInputChangeStopWeek(tokens); break;
 			default: throw new Exception("An unknown error occured");
 			}
+		}
+	}
+	
+
+	/**
+	 * Sets the state of the controller, and calls any state-specific functionality that should always be performed.
+	 * This version should onlyy be called when adding items to the state stack
+	 * @param state The new state of the system
+	 */
+	private void setState(ControllerState state) {
+		setState(state, true);
+	}
+	
+	/**
+	 * Sets the state of the controller, and calls any state-specific functionality. 
+	 * @param state The new state of the system
+	 * @param shouldPush Whether the current state should be pushed onto the state stack
+	 */
+	private void setState(ControllerState state, boolean shouldPush) {
+		if(shouldPush) {stateStack.push(this.state); }
+		this.state = state;
+		switch(state) {
+		case sLOGIN:
+			view.showMessage(I_WELCOME_MSG);
+			break;
+		case sMAIN:
+			view.showOptions(MAINOPTIONS);
+			break;
+		case sSELECTPROJECT:
+			this.projectList = model.getVisisbleProjects();
+			view.showOptions(projectList);
+			break;
+		case sPROJECT:
+			view.showOptions(PROJECTOPTIONS);
+			break;
+		case sMANAGEPROJECT:
+			view.showOptions(MANAGEPROJECTOPTIONS);
+			break;
+		case sSELECTACTIVITY:
+			view.showOptions(activityList);
+			break;
+		case sACTIVITY:
+			view.showOptions(ACTIVITYOPTIONS);
+			break;
+		case sREGISTERTIME:
+			view.showMessage(ControllerMessages.I_REGISTER_TIME);
+			break;
+		case sEDITREGISTEREDTIME:
+			view.showMessage(ControllerMessages.I_EDIT_REGISTERED_TIME);
+			break;
+		case sVIEWTIME:
+			view.showMessage(I_VIEW_TIME);
+			break;
+		case sASSISTANCE:
+			view.showMessage(I_SEEK_ASSISTANCE);
+			break;
+		case sREMOVEASSTDEV:
+			developerList = model.getAssistantDeveloperList();
+			if(developerList.isEmpty()) {
+				view.showMessage(I_NO_DEVELOPERS_REMOVE);
+				goBack();
+				break;
+			}
+			view.showMessage(I_REMOVE_ASST_DEV);
+			view.showOptions(developerList);
+			break;
+		case sCHANGEBUDGETHOURS:
+			view.showMessage(I_CHANGE_BUDGET_HOURS);
+			view.showMessage(String.format("This activity currently has %d hours budgeted", model.getActivityTimeBudget()));
+			break;
+		case sADDDEVACT:
+			developerList = model.getProjectDeveloperList();
+			developerList.removeAll(model.getActivityDeveloperList());
+			if(developerList.isEmpty()) {
+				view.showMessage(I_NO_DEVELOPERS_ADD);
+				goBack();
+				break;
+			}
+			view.showMessage(I_ADD_DEV_ACT);
+			view.showOptions(developerList);
+			break;
+		case sREMOVEDEVACT:
+			developerList = model.getActivityDeveloperList();
+			developerList.remove(currentUser);
+			if(developerList.isEmpty()) {
+				view.showMessage(I_NO_DEVELOPERS_REMOVE);
+				goBack();
+				break;
+			}
+			view.showMessage(I_REMOVE_DEV_ACT);
+			view.showOptions(developerList);
+			break;
+		case sCHANGESTARTWEEK:
+			view.showMessage(I_CHANGE_START_WEEK);
+			break;
+		case sCHANGESTOPWEEK:
+			view.showMessage(I_CHANGE_STOP_WEEK);
+			break;
+		case sADDDEVPROJ:
+			view.showMessage(I_ADD_DEV_PROJ);
+			break;
+		case sREMOVEDEVPROJ:
+			developerList = model.getProjectDeveloperList();
+			view.showMessage(I_REMOVE_DEV_PROJ);
+			view.showOptions(developerList);
+			break;
+		case sCHANGEPROJMAN:
+			view.showMessage(I_CHANGE_PROJ_MAN);
+			break;
+		case sVIEWDEVS:
+			view.showMessage(I_VIEW_DEVS);
+			developerList = model.getAvailableDevelopers();
+			view.showOptions(developerList, "");
+			goBack();
+		default:
+			break;
 		}
 	}
 
@@ -142,8 +265,7 @@ public class Controller implements PropertyChangeListener {
 	 * Shows the help message for the current state
 	 */
 	private void showHelp() {
-		view.showError("showHelp not yet implemented");
-		
+		view.showMessage(I_HELP_MSG);
 	}
 
 	/**
@@ -168,7 +290,7 @@ public class Controller implements PropertyChangeListener {
 		} else {
 			//Login attempt
 			if(!model.login(tokens[0].toLowerCase())) {
-				view.showError(ControllerMessages.E_NO_SUCH_INITIALS);
+				view.showError(ControllerMessages.E_INVALID_INITIALS);
 			} else {
 				setState(sMAIN);
 			}
@@ -183,8 +305,6 @@ public class Controller implements PropertyChangeListener {
 		int token = validateInteger(tokens, 2);
 		//Process valid input
 		switch(token) {
-		case -1:
-			break;
 		case 0: 
 			model.logout();
 			setState(sLOGIN);
@@ -193,9 +313,7 @@ public class Controller implements PropertyChangeListener {
 			setState(sSELECTPROJECT);
 			break;
 		case 2:
-//			this.state = sVIEWDEVS;
-//			view.showOptions(model.getAvailableDevelopers());
-			view.showError("Not yet implemented");
+			setState(sVIEWDEVS);
 			break;
 
 		default:
@@ -210,7 +328,7 @@ public class Controller implements PropertyChangeListener {
 	 */
 	private void processInputSelectProject(String[] tokens) {
 		int token = validateInteger(tokens, projectList.size()-1);
-		if(token == -1) {
+		if(token == Integer.MIN_VALUE) {
 			return;
 		}
 		model.setActiveProject(projectList.get(token));
@@ -240,10 +358,11 @@ public class Controller implements PropertyChangeListener {
 	 */
 	private void processInputSelectActivity(String[] tokens) {
 		int token = validateInteger(tokens, activityList.size()-1);
-		if(token == -1) {
+		if(token == Integer.MIN_VALUE) {
 			return;
 		}
 		model.setActiveActivity(activityList.get(token));
+		this.activeActivity = model.getActiveActivity();
 		setState(sACTIVITY);
 	}
 	
@@ -252,8 +371,8 @@ public class Controller implements PropertyChangeListener {
 	 * @param tokens
 	 */
 	private void processInputActivity(String[] tokens) {
-		int token = validateInteger(tokens, 4);
-		switch(token) {
+		int tokenInt = validateInteger(tokens, ACTIVITYOPTIONS.length-1);
+		switch(tokenInt) {
 		case 0:
 			setState(sREGISTERTIME);
 			break;
@@ -261,137 +380,413 @@ public class Controller implements PropertyChangeListener {
 			setState(sEDITREGISTEREDTIME);
 			break;
 		case 2:
-			setState(sASSISTANCE);
-			break;
-		case 3:
 			setState(sVIEWTIME);
 			break;
+		case 3:
+			setState(sASSISTANCE);
+			break;
 		case 4:
+			if(!ensureUserIsPM()) {
+				break;
+			}
+			setState(sADDDEVACT);
+			break;
+		case 5:
+			if(!ensureUserIsPM()) {
+				break;
+			}
+			setState(sREMOVEDEVACT);
+			break;
+		case 6:
+			if(!ensureUserIsPM()) {
+				break;
+			}
 			setState(sREMOVEASSTDEV);
+			break;
+		case 7:
+			if(!ensureUserIsPM()) {
+				break;
+			}
+			setState(sCHANGEBUDGETHOURS);
+			break;
+		case 8:
+			if(!ensureUserIsPM()) {
+				break;
+			}
+			setState(sCHANGESTARTWEEK);
+			break;
+		case 9:
+			if(!ensureUserIsPM()) {
+				break;
+			}
+			setState(sCHANGESTOPWEEK);
 			break;
 		}
 	}
 	
+	
+	/**
+	 * Processes input when the REGISTERTIME state is active
+	 * @param tokens
+	 */
 	private void processInputRegisterTime(String[] tokens) {
 		if(tokens.length != 2) {
 			view.showError(ControllerMessages.E_INVALID_INPUT);
 			return;
 		}
 		Calendar date = Utils.validateDate(tokens[0]);
-		Double hours = Utils.validateDouble(tokens[1], 24);
+		Double hours = Utils.validateDouble(tokens[1], 0.5, 24);
 		
 		if(date == null) {
 			view.showError(ControllerMessages.E_INVALID_DATE);
 			return;
-		} else if (hours < 0.5 || hours > 24) {
+		} else if (hours == Integer.MIN_VALUE) {
 			view.showError(ControllerMessages.E_INVALID_HOURS);
 			return;
 		}
 		model.registerTimeOnActivity(date, hours);
 	}
 	
+	/**
+	 * Processes input when the EDITREGISTEREDTIME state is active
+	 * @param tokens
+	 */
 	private void processInputEditRegisteredTime(String[] tokens) {
 		if(tokens.length != 2) {
 			view.showError(ControllerMessages.E_INVALID_INPUT);
 			return;
 		}
 		Calendar date = Utils.validateDate(tokens[0]);
-		Double hours = Utils.validateDouble(tokens[1], 24);
+		Double hours = Utils.validateDouble(tokens[1], -24, 24);
 		
 		if(date == null) {
 			view.showError(ControllerMessages.E_INVALID_DATE);
 			return;
-		} else if (hours < 0.5 || hours > 24) {
+		} else if (hours == Integer.MIN_VALUE) {
 			view.showError(E_INVALID_HOURS);
 			return;
 		}
-		model.editTimeOnActivity(date, hours);
-	}
-	
-	
-	/**
-	 * Sets the state of the controller, and calls any state-specific functionality that should always be performed.
-	 * This version should onlyy be called when adding items to the state stack
-	 * @param state The new state of the system
-	 */
-	private void setState(ControllerState state) {
-		setState(state, true);
+		try {
+			model.editTimeOnActivity(date, hours);
+		} catch (Exception e) {
+			view.showError(e.getMessage());
+		}
 	}
 	
 	/**
-	 * Sets the state of the controller, and calls any state-specific functionality. 
-	 * @param state The new state of the system
-	 * @param shouldPush Whether the current state should be pushed onto the state stack
+	 * Processes input when the VIEWTIME state is active
+	 * @param tokens
 	 */
-	private void setState(ControllerState state, boolean shouldPush) {
-		if(shouldPush) {stateStack.push(this.state); }
-		this.state = state;
-		switch(state) {
-		case sLOGIN:
-			model.logout();
-			showWelcomeMessage();
+	private void processInputViewTime(String[] tokens) {
+		if(tokens.length != 1) {
+			view.showError(E_INVALID_INPUT);
+			return;
+		}
+		Calendar date = Utils.validateDate(tokens[0]);
+		if(date == null) {
+			view.showError(E_INVALID_DATE);
+			return;
+		}
+		try {
+			view.showMessage(String.format("You have %.1f hours registered on that date", model.getHoursOnActivity(date)));
+		} catch (Exception e) {
+			view.showError(e.getMessage());
+		}
+	}
+	
+	/**
+	 * Processes input when in the ASSISTANCE state
+	 * @param tokens
+	 */
+	private void processInputSeekAssistance(String[] tokens) {
+		DeveloperInfo d = validateInitials(tokens);
+		if(d == null) {
+			return;
+		}
+		try {
+			model.addAssistantDeveloper(d);
+			goBack();
+		} catch (Exception e) {
+			view.showError(e.getMessage());
+		}
+	}
+	
+	/**
+	 * Processes input when in the REMOVEASSTDEV state
+	 * @param tokens
+	 */
+	private void processInputRemoveAsstDev(String[] tokens) {
+		int tokenInt = Utils.validateInteger(tokens[0], MANAGEPROJECTOPTIONS.length);
+		if(tokens.length != 1 || tokenInt == Integer.MIN_VALUE) {
+			view.showError(ControllerMessages.E_INVALID_INPUT);
+			return;
+		}
+		try {
+			model.removeAssistantDeveloper(developerList.get(tokenInt));
+			goBack();
+		} catch (Exception e) {
+			view.showError(e.getMessage());
+		}
+	}
+	
+	private void processInputChangeBudgetHours(String[] tokens) {
+		int input = Utils.validateInteger(tokens[0], Integer.MAX_VALUE);
+		if(tokens.length != 1 || input == Integer.MIN_VALUE) {
+			view.showError(E_INVALID_BUDGET);
+			return;
+		}
+		try {
+			model.setActivityTimeBudget(input);
+			goBack();
+		} catch (Exception e) {
+			view.showError(e.getMessage());
+		}
+	}
+	
+	/**
+	 * Process input when in the ADDDEVACT state
+	 * @param tokens
+	 */
+	private void processInputAddDevActivity(String[] tokens) {
+		int input = validateInteger(tokens, developerList.size()-1);
+		if(input == Integer.MIN_VALUE) {
+			return;
+		}
+		try {
+			model.addDeveloperToActivity(developerList.get(input));
+			goBack();
+		} catch (Exception e) {
+			view.showError(e.getMessage());
+		}
+	}
+	
+	/**
+	 * Process input when in the REMOVEDEVACT state
+	 * @param tokens
+	 */
+	private void processInputRemoveDevActivity(String[] tokens) {
+		int input = validateInteger(tokens, developerList.size()-1);
+		if(input == Integer.MIN_VALUE) {
+			return;
+		}
+		try {
+			model.removeDeveloperFromActivity(developerList.get(input));
+			goBack();
+		} catch (Exception e) {
+			view.showError(e.getMessage());
+		}
+	}
+	
+	private void processInputChangeStartWeek(String[] tokens) {
+		Calendar date = Utils.validateDate(tokens[0]);
+		if(tokens.length != 1 || date == null) {
+			view.showError(E_INVALID_DATE);
+		}
+		try {
+			model.setActivityStartDate(date);
+			goBack();
+		} catch (Exception e) {
+			view.showError(e.getMessage());
+		}
+	}
+	
+	private void processInputChangeStopWeek(String[] tokens) {
+		Calendar date = Utils.validateDate(tokens[0]);
+		if(tokens.length != 1 || date == null) {
+			view.showError(E_INVALID_DATE);
+		}
+		try {
+			model.setActivityStopDate(date);
+			goBack();
+		} catch (Exception e) {
+			view.showError(e.getMessage());
+		}
+	}
+	
+	private void processInputManageProject(String[] tokens) {
+		int tokenInt = validateInteger(tokens, MANAGEPROJECTOPTIONS.length-1);
+		switch(tokenInt) {
+		case 0:
+			if(!ensureUserIsPM()) {
+				break;
+			}
+			setState(sADDDEVPROJ);
 			break;
-		case sMAIN:
-			view.showOptions(MAINOPTIONS);
+		case 1:
+			if(!ensureUserIsPM()) {
+				break;
+			}
+			setState(sREMOVEDEVPROJ);
 			break;
-		case sSELECTPROJECT:
-			view.showOptions(projectList);
+		case 2:
+			if(projectHasPM() && !ensureUserIsPM()) {
+				break;
+			}
+			setState(sCHANGEPROJMAN);
 			break;
-		case sPROJECT:
-			view.showOptions(PROJECTOPTIONS);
-			break;
-		case sMANAGEPROJECT:
-			view.showOptions(MANAGEPROJECTOPTIONS);
-			break;
-		case sSELECTACTIVITY:
-			view.showOptions(activityList);
-			break;
-		case sACTIVITY:
-			view.showOptions(ACTIVITYOPTIONS);
-			break;
-		case sREGISTERTIME:
-			view.showMessage(ControllerMessages.I_REGISTER_TIME);
-			break;
-		case sEDITREGISTEREDTIME:
-			view.showMessage(ControllerMessages.I_EDIT_REGISTERED_TIME);
-			break;
-		default:
+		case 3:
+			if(!ensureUserIsPM()) {
+				break;
+			}
+			setState(sGETTIMEREPORT);
+			view.showError("Not yet implemented");
+			goBack();
 			break;
 		}
 	}
+	
+	private void processInputAddDevProject(String[] tokens) {
+		//Check if system contains a dev with those initials
+		DeveloperInfo d = validateInitials(tokens);
+		if(d == null) {
+			return;
+		}
+		try {
+			model.addDeveloperToProject(d);
+			goBack();
+		} catch (Exception e) {
+			view.showError(e.getMessage());
+		}
+	}
+	
+	private void processInputRemoveDevProject(String[] tokens) {
+		//Project managers cannot remove themselves - must promote someone else to be PM
+		int input = Utils.validateInteger(tokens[0], developerList.size()-1);
+		if(tokens.length != 1 || input == Integer.MIN_VALUE) {
+			view.showError(E_INVALID_INPUT);
+			return;
+		}
+		try {
+			model.removeDeveloperFromProject(developerList.get(input));
+			goBack();
+		} catch (Exception e) {
+			view.showError(e.getMessage());
+		}
+	}
+	
+	private void processInputChangeProjMan(String[] tokens) {
+		//Get initials. If they match someone, make that person the PM
+		DeveloperInfo d = validateInitials(tokens);
+		if(d == null) {
+			return;
+		}
+		try {
+			model.setProjectManager(d);
+			goBack();
+		} catch (Exception e) {
+			view.showError(e.getMessage());
+		}
+	}
+	
+	private void processInputGetTimeReport(String[] tokens) {
+		
+	}
+	
+	
+	/**
+	 * Verifies if the current user of the system is the project manager of the active project. Outputs an error message if this is not the case.
+	 * @return True if they are the PM, false otherwise
+	 */
+	private boolean ensureUserIsPM() {
+		if(!model.userIsProjectManager()) {
+			view.showError(E_NOT_PROJ_MAN);
+			return false;
+		}
+		return true;
+	}
+	
+	/**
+	 * Checks whether the active project has a project manager set.
+	 * @return True if the project has as PM, false otherwise
+	 */
+	private boolean projectHasPM() {
+		return model.getProjectManager() != null;
+	}
+	
+	
 	
 	/**
 	 * Verifies that the only input received is a valid integer of a maximum size. Will output an error if more than 1 value was input
 	 * @param tokens The tokens received on the command line
 	 * @param max The largest allowed value (inclusive)
-	 * @return The valid integer received, or -1 if no valid integer was present
+	 * @return The valid integer received, or Integer.MIN_VALUE if no valid integer was present
 	 */
 	private int validateInteger(String[] tokens, int max) {
 		int tokenInt = Utils.validateInteger(tokens[0], max);
 		//Input validation
-		if(tokens.length != 1 || tokenInt == -1) {
+		if(tokens.length != 1 || tokenInt == Integer.MIN_VALUE) {
 			view.showError(ControllerMessages.E_INVALID_INPUT);
-			tokenInt = -1;
+			tokenInt = Integer.MIN_VALUE;
 		}
 		return tokenInt;
 	}
 	
+	/**
+	 * Verifies that the only input received was a valid set of initials. Prints an error if no developer was found
+	 * @param tokens The tokens received on the command line
+	 * @return A handle to information on the given developer, or null if no developer was found.
+	 */
+	private DeveloperInfo validateInitials(String[] tokens) {
+		DeveloperInfo d = model.getDeveloperWithInitials(tokens[0]);
+		if(tokens.length != 1 || tokens[0].length() != 4 || d == null) {
+			view.showError(E_INVALID_INITIALS);
+			return null;
+		}
+		return d;
+	}
+	
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
-		if(evt.getPropertyName().equals("user")) {
+		if(evt.getPropertyName().equals("user")) { //User has changed
 			userChangedEvent(evt);
-		} else if (evt.getPropertyName().equals("project")) {
+			
+		} else if (evt.getPropertyName().equals("project")) { //Active project has changed
 			projectChangedEvent(evt);
-		} else if(evt.getPropertyName().equals("activity")) {
+			
+		} else if(evt.getPropertyName().equals("activity")) { //Active activity has changed
 			activeActivity = (ActivityInfo) evt.getNewValue();
 			view.showMessage(String.format("Selected activity \"%s\"", activeActivity.getName()));
-		} else if(evt.getPropertyName().equals("time")) {
+			
+		} else if(evt.getPropertyName().equals("time")) { //Time registration changed
 			if((Double) evt.getOldValue() == null) {
 				view.showMessage(String.format("Registered %.1f hours on \"%s\"", (Double) evt.getNewValue(), activeActivity));
 			} else {
 				view.showMessage(String.format("Edited hours on \"%s\". Previous registration was %.1f, new registration is %.1f", activeActivity, (Double) evt.getOldValue(), (Double) evt.getNewValue()));
 			}
+	
+		} else if(evt.getPropertyName().equals("asstdev")) { //Assistant developer changed
+			if(evt.getNewValue() != null) {
+				view.showMessage(String.format("%s was added to the activity as an assistant developer", ((DeveloperInfo) evt.getNewValue()).getName()));
+			} else {
+				view.showMessage(String.format("%s was removed as an assistant developer", ((DeveloperInfo) evt.getOldValue()).getName()));
+			}
+		
+		} else if (evt.getPropertyName().equals("budget")) { //Hours budgetted
+			view.showMessage(String.format("This activity now has %d hours budgetted", (int) evt.getNewValue()));
 			
+		} else if (evt.getPropertyName().equals("devlist")) { //Developer list changed
+			if(evt.getNewValue() != null) {
+				view.showMessage(String.format("%s has been added as a developer", ((DeveloperInfo) evt.getNewValue()).getName()));
+			} else {
+				view.showMessage(String.format("%s has been removed as a developer", ((DeveloperInfo) evt.getOldValue()).getName()));
+			}
+			developerList = model.getProjectDeveloperList();
+			
+		} else if (evt.getPropertyName().equals("projman")) { //Project manager changed
+			view.showMessage(String.format("The new project manager of this project is %s", ((DeveloperInfo) evt.getNewValue()).getName()));
+		
+		} else if (evt.getPropertyName().equals("startdate")) { //Activity start date changed
+			DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+			formatter.setLenient(false);
+			String date = formatter.format(((Calendar) evt.getNewValue()).getTime());
+			view.showMessage(String.format("Activity start date has been changed to %s", date));
+			activityList = model.getActiveProjectActivities();
+		} else if (evt.getPropertyName().equals("stopdate")) { //Activity stop date changed
+			DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+			formatter.setLenient(false);
+			String date = formatter.format(((Calendar) evt.getNewValue()).getTime());
+			view.showMessage(String.format("Activity stop date has been changed to %s", date));
+			activityList = model.getActiveProjectActivities();
 		}
 	}
 	
@@ -404,6 +799,7 @@ public class Controller implements PropertyChangeListener {
 			view.showMessage("Logged out");
 		} else {
 			view.showMessage(String.format("Logged in. Welcome, %s.", ((DeveloperInfo) evt.getNewValue()).getName()));
+			currentUser = (DeveloperInfo) evt.getNewValue();
 		}
 	}
 	

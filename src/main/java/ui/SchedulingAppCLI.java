@@ -19,7 +19,7 @@ public class SchedulingAppCLI {
 	 */
 	void showError(String errorMsg) {
 		String[] tokens = errorMsg.split("\n");
-		System.out.printf("ERROR: %s\n", tokens[0]);
+		System.out.printf("ERROR:\t%s\n", tokens[0]);
 		for(int i = 1; i<tokens.length; i++) {
 			System.out.printf("\t%s\n", tokens[i]);
 		}
@@ -30,7 +30,11 @@ public class SchedulingAppCLI {
 	 * @param message The message to show
 	 */
 	public void showMessage(String message) {
-		System.out.printf("INFO: %s\n", message);
+		String[] tokens = message.split("\n");
+		System.out.printf("INFO:\t%s\n", tokens[0]);
+		for(int i = 1; i<tokens.length; i++) {
+			System.out.printf("\t%s\n", tokens[i]);
+		}
 	}
 
 	/**
@@ -38,7 +42,22 @@ public class SchedulingAppCLI {
 	 * @param options The options to be shown
 	 */
 	public void showOptions(String[] options) {
-		System.out.println("Please select one of the below options: ");
+		showOptions(options, "Please select one of the below options:");
+//		System.out.println("Please select one of the below options: ");
+//		for(int i=0; i<options.length; i++) {
+//			System.out.printf("[%d] %s\n", i, options[i]);
+//		}
+	}
+	
+	/**
+	 * Shows a list of options to the user of the application
+	 * @param options The options to be shown
+	 * @param showHeader An optional header to be shown before the options
+	 */
+	public void showOptions(String[] options, String header) {
+		if(!header.equals("")) {
+			System.out.println(header);
+		}
 		for(int i=0; i<options.length; i++) {
 			System.out.printf("[%d] %s\n", i, options[i]);
 		}
@@ -49,8 +68,12 @@ public class SchedulingAppCLI {
 	 * @param options A list of objects that implement DTOinterface
 	 */
 	public void showOptions(List<? extends DTOinterface> options) {
+		showOptions(options, "Please select one of the below options");
+	}
+	
+	public void showOptions(List<? extends DTOinterface> options, String header) {
 		List<String> strings = options.stream().map(o -> o.toPrint()).collect(Collectors.toList());
-		showOptions(strings.toArray(new String[0]));
+		showOptions(strings.toArray(new String[0]), header);
 	}
 	
 	

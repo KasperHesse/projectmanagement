@@ -41,7 +41,6 @@ public class SchedulingApp implements ControllerInterface {
 	 */
 	void createProject(String projectName, Calendar startDate, Calendar stopDate, Developer projectManager) {
 		Project p = new Project(projectName, startDate, stopDate, projectManager, this);
-//		p.setApp(this);
 		projectList.add(p);
 	}
 	
@@ -80,14 +79,6 @@ public class SchedulingApp implements ControllerInterface {
 	 */
 	void createProject(String projectName, Developer projectManager) {
 		createProject(projectName, null, null, projectManager);
-	}
-	
-	/**
-	 * Creates a project with the following information
-	 * @param projectName The name of the project
-	 */
-	void createProjectInternal(String projectName) {
-		createProject(projectName, null, null, null);
 	}
 	
 	/**
@@ -177,106 +168,7 @@ public class SchedulingApp implements ControllerInterface {
 		return this.currentUser;
 	}
 	
-	/**
-	 * Returns a list of all available developers (defined as having fewer activities than their own maximum number)
-	 * @return A list of all developers d, where d.activeActivities < d.maxActivities
-	 */
-	Developer[] getAvailableDevelopers() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
-	/*
-	 * ------ CONTROLLER INTERFACE METHODS START HERE ------
-	 */
-
-	
-	@Override
-	public void setActiveProject(ProjectInfo projInfo) throws NoSuchElementException {
-		activeProject = getProjectByName(projInfo.getName());
-		support.firePropertyChange("project", null, projInfo);
-	}
-	
-	@Override
-	public void setActiveActivity(ActivityInfo actInfo) throws NoSuchElementException {
-		this.activeActivity = activeProject.getActivityByName(actInfo.getName());
-		support.firePropertyChange("activity", null, actInfo);
-	}
-	
-	@Override
-	public boolean login(String initials) {
-		Developer dev = getDeveloperByInitials(initials);
-		if(dev == null) {
-			return false;
-		}
-		this.setCurrentUser(dev);
-		support.firePropertyChange("user", null, new DeveloperInfo(currentUser));
-		return true;
-	}
-	
-	@Override
-	public void logout() {
-		support.firePropertyChange("user", currentUser, null);
-		this.setCurrentUser(null);
-	}
-
-	@Override
-	public List<ActivityInfo> getActiveProjectActivities() {
-		return ActivityInfo.list2dto(activeProject.getActivityList());
-	}
-	
-	@Override
-	public DeveloperInfo createDeveloper(String name, String initials) {
-		Developer d = new Developer(initials, name);
-		addDeveloper(d);
-		return new DeveloperInfo(d);
-	}
-
-
-	
-	@Override
-	public ProjectInfo createProject(String name) {
-		Project p = new Project(name);
-		p.setApp(this);
-		projectList.add(p);
-		return new ProjectInfo(p);
-	}
-	
-	@Override
-	public void setProjectManager(ProjectInfo projInfo, DeveloperInfo devInfo) {
-		Project p = getProjectByName(projInfo.getName());
-		Developer d = getDeveloperByInitials(devInfo.getInitials());
-		p.setProjectManager(d);
-	}
-	
-	@Override 
-	public ActivityInfo createActivity(ProjectInfo projInfo, String name) {
-		Project p = getProjectByName(projInfo.getName());
-		p.createActivity(name);
-		Activity a = p.getActivityByName(name);
-		return new ActivityInfo(a);
-	}
-	
-	@Override
-	public List<ProjectInfo> getAllProjects() {
-		return ProjectInfo.list2dto(projectList);
-	}
-	
-	@Override
-	public void addObserver(PropertyChangeListener listener) {
-		support.addPropertyChangeListener(listener);
-	}
-	
-	@Override
-	public void registerTimeOnActivity(Calendar date, double hours) {
-		activeActivity.registerTime(currentUser, (int) hours, date);
-		support.firePropertyChange("time", null, hours);
-	}
-	
-	@Override
-	public void editTimeOnActivity(Calendar date, double hours) {
-		activeActivity.editTime(currentUser, hours, date);
-	}
 
 
 	/**
@@ -284,7 +176,7 @@ public class SchedulingApp implements ControllerInterface {
 	 * @param year The year to get amount of created projects for
 	 * @return The amount of projects created that year
 	 */
-	public int getAmountOfProjectsCreatedYear(int year) {
+	int getAmountOfProjectsCreatedYear(int year) {
 		List<Project> matches =  projectList.stream().filter(p -> p.getCreationDate().get(1) == year).collect(Collectors.toList());
 		return matches.size();
 	}
@@ -294,7 +186,7 @@ public class SchedulingApp implements ControllerInterface {
 	 * @return A list of all available developers
 	 * @throws Exception If the current user is not a project manager
 	 */
-	public List<Developer> viewAvailableDevelopers() throws Exception {
+	List<Developer> viewAvailableDevelopers() throws Exception {
 		assert developerList != null && this.currentUser != null;
 		
 		if(!this.getCurrentUser().isProjectManager()) {
@@ -308,19 +200,46 @@ public class SchedulingApp implements ControllerInterface {
 		return availableDevelopers;
 	}
 	
-	/**
-	 * Returns a list of all available developers (defined as having fewer activities than their own maximum number)
-	 * @return A list of all developers d, where d.activeActivities < d.maxActivities
-	 */
-	Developer[] getAvailableDevelopers() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
+	/**
+	 * Returns a list of all projects which currently do not have a project manager associated
+	 * @return
+	 */
+	private List<Project> getProjectsWithNoPM() {
+		List<Project> list = projectList.stream().filter(p -> p.getProjectManager() == null).collect(Collectors.toList());
+		return list;
+	}
+	
+	/**
+	 * Applies a pre-made config to the system, including a number of users, projects and activities
+	 */
+	public void presentationSetup() {
+		createDeveloper("Kasper Hesse", "kahe");
+		createDeveloper("Peter Ejlev", "pete");
+		createDeveloper("Emil Pontoppidan", "emil");
+		Developer kahe = getDeveloperByInitials("kahe");
+		Developer pete = getDeveloperByInitials("pete");
+		Developer emil = getDeveloperByInitials("emil");
+		
+		login("kahe");
+		
+		createProject("My first project");
+		createProject("My second project");
+		Project p1 = getProjectByName("My first project");
+		Project p2 = getProjectByName("My second project");
+		p1.setProjectManager(kahe);
+		p1.addDeveloper(emil);
+		p1.createActivity("My first activity");
+		Activity a = p1.getActivityByName("My first activity");
+		a.addDeveloper(kahe);
+		a.askForHelp(pete);
+		
+		logout();
+	}
+	
 	/*
 	 * ------ CONTROLLER INTERFACE METHODS START HERE ------
 	 */
-
 	
 	@Override
 	public void setActiveProject(ProjectInfo projInfo) throws NoSuchElementException {
@@ -362,23 +281,19 @@ public class SchedulingApp implements ControllerInterface {
 		addDeveloper(d);
 		return new DeveloperInfo(d);
 	}
-
-
 	
 	@Override
 	public ProjectInfo createProject(String name) {
-		Project p = new Project(name, this);
-		p.setApp(this);
-		projectList.add(p);
-		return new ProjectInfo(p);
+		createProject(name, null);
+		return new ProjectInfo(getProjectByName(name));
 	}
 	
-	@Override
-	public void setProjectManager(ProjectInfo projInfo, DeveloperInfo devInfo) {
-		Project p = getProjectByName(projInfo.getName());
-		Developer d = getDeveloperByInitials(devInfo.getInitials());
-		p.setProjectManager(d);
-	}
+//	@Override
+//	public void setProjectManager(ProjectInfo projInfo, DeveloperInfo devInfo) {
+//		Project p = getProjectByName(projInfo.getName());
+//		Developer d = getDeveloperByInitials(devInfo.getInitials());
+//		p.setProjectManager(d);
+//	}
 	
 	@Override 
 	public ActivityInfo createActivity(ProjectInfo projInfo, String name) {
@@ -408,7 +323,6 @@ public class SchedulingApp implements ControllerInterface {
 	public void editTimeOnActivity(Calendar date, double hours) {
 		double oldHours = activeActivity.viewTime(date, currentUser);
 		activeActivity.editTime(currentUser, hours, date);
-		double newHours = activeActivity.viewTime(date, currentUser);
 		support.firePropertyChange("time", oldHours, hours + oldHours);
 	}
 	
@@ -419,6 +333,142 @@ public class SchedulingApp implements ControllerInterface {
 		Activity a = p.getActivityByName(act.getName());
 		a.addDeveloper(d);
 	}
+
+	@Override
+	public double getHoursOnActivity(Calendar date) {
+		return activeActivity.viewTime(date, currentUser);
+	}
+	
+	@Override
+	public DeveloperInfo getDeveloperWithInitials(String initials) {
+		Developer d = getDeveloperByInitials(initials);
+		if(d == null) {
+			return null;
+		}
+		return new DeveloperInfo(getDeveloperByInitials(initials));
+	}
+
+	@Override
+	public void addAssistantDeveloper(DeveloperInfo devInfo) {
+		Developer dev = getDeveloperByInitials(devInfo.getInitials());
+		activeActivity.askForHelp(dev);
+		support.firePropertyChange("asstdev", null, devInfo);
+	}
+
+	@Override
+	public List<DeveloperInfo> getAssistantDeveloperList() {
+		return DeveloperInfo.list2dto(activeActivity.getAssistingDeveloperList());
+	}
+	
+	@Override
+	public ActivityInfo getActiveActivity() {
+		return new ActivityInfo(activeActivity);
+	}
+
+	@Override
+	public void removeAssistantDeveloper(DeveloperInfo devInfo) {
+		Developer dev = getDeveloperByInitials(devInfo.getInitials());
+		activeActivity.removeAssistingDeveloper(dev);
+		support.firePropertyChange("asstdev", devInfo, null);
+	}
+
+	@Override
+	public boolean userIsProjectManager() {
+		return currentUser == activeProject.getProjectManager();
+	}
+	
+	@Override
+	public List<ProjectInfo> getVisisbleProjects() {
+		List<Project> projects = new ArrayList<Project>(currentUser.getProjects());
+		projects.addAll(this.getProjectsWithNoPM());
+		return ProjectInfo.list2dto(projects.stream().distinct().collect(Collectors.toList()));
+	}
+	
+	@Override
+	public int getActivityTimeBudget() {
+		return activeActivity.getHoursBudgeted();
+	}
+	
+	@Override
+	public void setActivityTimeBudget(int hours) {
+		activeActivity.setHoursBudgeted(hours);
+		support.firePropertyChange("budget", null, hours);
+	}
+
+	@Override
+	public List<DeveloperInfo> getProjectDeveloperList() {
+		return DeveloperInfo.list2dto(activeProject.getDevelopers());
+	}
+
+	@Override
+	public void addDeveloperToProject(DeveloperInfo devInfo) {
+		Developer dev = getDeveloperByInitials(devInfo.getInitials());
+		activeProject.addDeveloper(dev);
+		support.firePropertyChange("devlist", null, devInfo);
+	}
+
+	@Override
+	public void removeDeveloperFromProject(DeveloperInfo devInfo) {
+		Developer dev = getDeveloperByInitials(devInfo.getInitials());
+		activeProject.removeDeveloper(dev);
+		support.firePropertyChange("devlist", devInfo, null);
+	}
+
+	@Override
+	public void setProjectManager(DeveloperInfo devInfo) {
+		Developer dev = getDeveloperByInitials(devInfo.getInitials());
+		DeveloperInfo oldPM = new DeveloperInfo(activeProject.getProjectManager());
+		activeProject.setProjectManager(dev);
+		support.firePropertyChange("projman", oldPM, devInfo);
+	}
+
+	@Override
+	public DeveloperInfo getProjectManager() {
+		Developer pm = activeProject.getProjectManager();
+		if(pm == null) {
+			return null;
+		}
+		return new DeveloperInfo(pm);
+	}
+
+	@Override
+	public List<DeveloperInfo> getActivityDeveloperList() {
+		return DeveloperInfo.list2dto(activeActivity.getDevelopers());
+	}
+
+	@Override
+	public void addDeveloperToActivity(DeveloperInfo devInfo) {
+		Developer dev = getDeveloperByInitials(devInfo.getInitials());
+		activeActivity.addDeveloper(dev);
+		support.firePropertyChange("devlist", null, devInfo);
+		
+	}
+
+	@Override
+	public void removeDeveloperFromActivity(DeveloperInfo devInfo) {
+		Developer dev = getDeveloperByInitials(devInfo.getInitials());
+		activeActivity.removeDeveloper(dev);
+		support.firePropertyChange("devlist", devInfo, null);
+	}
+	
+	@Override
+	public List<DeveloperInfo> getAvailableDevelopers() {
+		return DeveloperInfo.list2dto(this.developerList.stream().filter(d -> d.isAvailable()).collect(Collectors.toList()));
+	}
+	
+	@Override
+	public void setActivityStartDate(Calendar date) {
+		activeActivity.setStartDate(date);
+		support.firePropertyChange("startdate", null, date);
+	}
+	
+	@Override
+	public void setActivityStopDate(Calendar date) {
+		activeActivity.setStopDate(date);
+		support.firePropertyChange("stopdate", null, date);
+		
+	}
+
 
 
 }

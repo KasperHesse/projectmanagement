@@ -2,6 +2,9 @@ package schedulingapp;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import dto.ProjectInfo;
 
 public class Developer {
 	private List<Activity> activityList;
@@ -21,7 +24,6 @@ public class Developer {
 
 		this.activityList = new ArrayList<Activity>(); 
 		this.projectList = new ArrayList<Project>();
-
 	}
 	
 	/**
@@ -54,7 +56,7 @@ public class Developer {
 	}
 
 	/**
-	 * Compares this Developer to another Developer, and returns true if they represent the same object /
+	 * Compares this Developer to another Developer, and returns true if they represent the same object OR
 	 * if they have the same set of initials
 	 * @return true if these Developers are the same, false otherwise
 	 */
@@ -73,8 +75,10 @@ public class Developer {
 		return activityList; 
 	}
 	
-	public void addDeveloperToActivity(Activity activity) {
-		activityList.add(activity);
+	public void addActivity(Activity activity) {
+		if(!activityList.contains(activity)) {
+			activityList.add(activity);
+		}
 	}
 
 
@@ -83,10 +87,53 @@ public class Developer {
 	 * @param project The project to be added to the project list
 	 */
 	public void addProject(Project project) {
-		projectList.add(project);
+		if(!projectList.contains(project)) {
+			projectList.add(project);
+		}
 	}
 
 	public String getName() {
 		return this.name;
+	}
+
+	/**
+	 * Removes an activity from the developers list of activities
+	 * @param activity
+	 */
+	public void removeActivity(Activity activity) {
+		this.activityList.remove(activity);
+	}
+
+	/**
+	 * Returns a list of all the projects that this user is working under
+	 * @return
+	 */
+	public List<Project> getProjects() {
+		return this.projectList;
+	}
+
+	/**
+	 * Removes a given project from this developer's list of projects.
+	 * Also removes the developer from all activities associated with that project
+	 * @param project
+	 */
+	public void removeProject(Project project) {
+		this.projectList.remove(project);
+		
+		List<Activity> actList = this.activityList.stream().filter(a -> a.getProject().equals(project)).collect(Collectors.toList());
+		for(Activity act : actList) {
+			act.removeDeveloper(this);
+			this.activityList.remove(act);
+		}
+	}
+
+	/**
+	 * Promotes a developer from assisting on a project to being directly associated with the project.
+	 * This will cause the developer to be removed from the assistant developer list on all activities under the given project,
+	 * adding them instead to the normal developer list
+	 * @param project The project which the developer was added to
+	 */
+	public void promoteFromAssistant(Project project) {
+		this.activityList.stream().filter(a -> a.getProject().equals(project)).forEach(a -> a.migrateDeveloper(this));
 	}
 }

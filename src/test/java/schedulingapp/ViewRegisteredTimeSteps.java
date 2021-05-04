@@ -1,4 +1,4 @@
-package schedulingapp.unit_tests;
+package schedulingapp;
 
 import io.cucumber.java.en.*;
 import java.text.ParseException;
@@ -84,8 +84,7 @@ public class ViewRegisteredTimeSteps {
 		Calendar date_cal = Calendar.getInstance();
 		date_cal.setTime(formatter.parse(date));
 		
-		assertEquals(act.viewTime(date_cal, dev), hours);
-		
+		assertEquals(act.viewTime(date_cal, dev), hours, 0.1);
 	}
 }
 

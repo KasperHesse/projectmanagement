@@ -82,7 +82,7 @@ public class SeekAssistanceSteps {
 		proj.setProjectManager(dev1);
 		Activity act = actHelper.getActivity();		
 		try {
-			act.askForHelp(dev2, act);
+			act.askForHelp(dev2);
 		} catch (IllegalArgumentException e) {
 			errorMessageHolder.setErrorMessage(e.getMessage());
 		}
@@ -137,17 +137,17 @@ public class SeekAssistanceSteps {
 //		act10.addDeveloper(dev2);
 //		act11.addDeveloper(dev2);
 
-		dev2.addDeveloperToActivity(act1);
-		dev2.addDeveloperToActivity(act2);
-		dev2.addDeveloperToActivity(act3);
-		dev2.addDeveloperToActivity(act4);
-		dev2.addDeveloperToActivity(act5);
-		dev2.addDeveloperToActivity(act6);
-		dev2.addDeveloperToActivity(act7);
-		dev2.addDeveloperToActivity(act8);
-		dev2.addDeveloperToActivity(act9);
-		dev2.addDeveloperToActivity(act10);
-		dev2.addDeveloperToActivity(act11);
+		dev2.addActivity(act1);
+		dev2.addActivity(act2);
+		dev2.addActivity(act3);
+		dev2.addActivity(act4);
+		dev2.addActivity(act5);
+		dev2.addActivity(act6);
+		dev2.addActivity(act7);
+		dev2.addActivity(act8);
+		dev2.addActivity(act9);
+		dev2.addActivity(act10);
+		dev2.addActivity(act11);
 		
 		assertFalse(dev2.isAvailable());
 	}
