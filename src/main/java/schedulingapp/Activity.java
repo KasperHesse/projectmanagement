@@ -15,7 +15,6 @@ public class Activity {
 	private TimeSheet timeSheet = new TimeSheet();
 	private String activityName;
 	private Project project;
-
 	private Calendar creationDate;
 	private Calendar startDatePast;
 	private Calendar stopDatePast;
@@ -29,7 +28,14 @@ public class Activity {
 	}
 
 
-	
+	/**
+	 * Creates an activity with following information
+	 * @param activityName the name of the activity
+	 * @param hoursBudgetted the number of hours budgeted for the activity
+	 * @param startDate the start date of the activity, as a Calendar object
+	 * @param stopDate the stop date of the activity, as a Calendar object
+	 * @param project the associated project
+	 */
 	public Activity(String activityName, int hoursBudgetted, Calendar startDate, Calendar stopDate, Project project) {
 		this.activityName = activityName;
 		this.hoursBudgetted = hoursBudgetted;
@@ -41,6 +47,10 @@ public class Activity {
 		this.assistingDeveloperList = new ArrayList<Developer>();
 	}
 	
+	/**
+	 * Adds a developer to the activity
+	 * @param dev the developer to be added to the activity
+	 */
 	public void addDeveloper(Developer dev) {
 		if(this.hasDeveloperWithInitials(dev.getInitials())) {
 			throw new IllegalArgumentException("This developer is already working on this activity");
@@ -64,6 +74,10 @@ public class Activity {
 		return developerList.stream().anyMatch(d -> d.getInitials().equals(initials));
 	}
 
+	/**
+	 * Removes a given developer from the activity
+	 * @param dev the developer to be removed from the activity
+	 */
 	public void removeDeveloper(Developer dev) {
 		if (developerList.contains(dev)) {
 			developerList.remove(dev);
@@ -84,22 +98,27 @@ public class Activity {
 	}
 	
 	/**
-	 * Checks whether the given developer is working on this activity
-	 * @param dev The developer
-	 * @return True if they work on the activity, false otherwise
+	 * Determines if the given developer is working on this activity
+	 * @param dev the developer to investigate
+	 * @return true if the developer is working on the activity
 	 */
 	public boolean isDeveloper(Developer dev) {
 		return developerList.contains(dev);
 	}
 	
+	/**
+	 * Checks if the developer is Assisting developer on the given activity
+	 * @param the developer in question
+	 * @return Boolean, true if developer in question is assisting developer
+	 */
 	public boolean isAssistingDeveloper(Developer dev) {
 		return assistingDeveloperList.contains(dev);
 	}
 	
 	/**
-	 * Adds the given helper the given activitys assistingDeveloperlist if allowed. 
-	 * @param Who youd like to ask for help
-	 * @param On what activity you need helop for
+	 * Adds the given helper the given activity's assistingDeveloperlist if allowed. 
+	 * @param Who you'd like to ask for help
+	 * @param On what activity you need help for
 	 */
 	public void askForHelp(Developer helper) {
 		if(!helper.isAvailable()) {
@@ -121,9 +140,9 @@ public class Activity {
 	
 	/**
 	 * Registers time on the given activity if allowed
-	 * @param The developerregistering time
+	 * @param The developer registering time
 	 * @param How many hours to register
-	 * @param On what date he wants register said hours
+	 * @param On what date he wants to register said hours
 	 */
 	public void registerTime(Developer dev, double hours, Calendar date) {
 		//precondition
@@ -146,6 +165,12 @@ public class Activity {
 		assert viewTime(date, dev) == hours;
 	}
 	
+	/**
+	 * Edits registered time on the given activity if allowed
+	 * @param The developer that wants to edit their registered time
+	 * @param How many hours to add to the registered time
+	 * @param On what date he wants to register said hours
+	 */
 	public void editTime(Developer dev, double hours, Calendar date) {
 		assert dev != null && date != null && hours > 0;
 		
@@ -166,10 +191,10 @@ public class Activity {
 	}
 	
 	/**
-	 * Gets a Developers timeusage on a given date 
-	 * @param what date you want to check
+	 * Gets a Developers time usage on a given date 
+	 * @param which date you want to check
 	 * @param what developer you want to check
-	 * @return
+	 * @return the registered amount of hours
 	 */
 	public double viewTime(Calendar date, Developer dev) {
 		if(!isDeveloper(dev) && !isAssistingDeveloper(dev)) {                                                                                 
@@ -205,6 +230,10 @@ public class Activity {
 		return (Calendar) this.stopDate.clone();
 	}
 	
+	/**
+	 * Sets the startdate of an activity
+	 * @param The settet date
+	 */
 	public void setStartDate(Calendar startDate) {
 		if(this.stopDate != null && startDate.after(this.stopDate)) {
 			throw new IllegalArgumentException(String.format("Given start date (%s) must be before stop date (%s)", Activity.cal2string(startDate), Activity.cal2string(this.stopDate)));
@@ -212,6 +241,10 @@ public class Activity {
 		this.startDate = startDate;
 	}
 	
+	/**
+	 * Sets the stopdate of an activity
+	 * @param the settet date
+	 */
 	public void setStopDate(Calendar stopDate) {
 		if(this.startDate != null && stopDate.before(this.startDate)) {
 			throw new IllegalArgumentException(String.format("Given stop date (%s) must be after start date (%s)", Activity.cal2string(stopDate), Activity.cal2string(this.startDate)));
@@ -240,51 +273,62 @@ public class Activity {
 	 * Adds number of weeks to the start date for the current activity
 	 * @param weeks The amount of weeks
 	 */
-	
 	public void changeStartDate(int weeks) {
 		startDatePast = startDate;
-
+				
+		assert weeks == (int)weeks : "PreCondition changeStartDate";
+		
 		if (startDate != null) {
-			assert startDate != null : "PreCondition changeStartDate";
 			startDate.add(Calendar.WEEK_OF_YEAR, weeks);
-
-		} else {
+			
+		} else  {
 			throw new IllegalArgumentException("A date for a project must be given before changing");
 		}
+			
 		if (startDate.after(stopDate)) {
-			assert startDate.after(stopDate) : "PostCondition changeStartDate";
+			
 			startDate = startDatePast;
 			throw new IllegalArgumentException("The startdate cannot be after the stopdate");
-
 		}
+		
 		if (startDate.before(creationDate)) {
-			assert startDate.before(creationDate) : "PostCondition changeStartDate";
+
 			startDate = startDatePast;
 			throw new IllegalArgumentException("The startdate cannot be before the creationdate");
 		}
+		
+		assert startDate.equals(getStartDate()) : "PostCondition changeStartDate";
 	}
 	
-	/**
+	/*
 	 * Adds number of weeks to the start date for the current activity
 	 * @param weeks The amount of weeks
 	 */
 	public void changeStopDate(int weeks) {
 		stopDatePast = stopDate;
-		if (this.stopDate != null) {
-			this.stopDate.add(Calendar.WEEK_OF_YEAR, weeks);
-			} else {
-			throw new IllegalArgumentException("A date for a project must be given before adding.");
-			}
-			if (stopDate.after(startDate)) {
-				stopDate = stopDatePast;
-	
+				
+		assert weeks == (int)weeks : "PreCondition changeStopDate";
+		
+		if (stopDate != null) {
+			stopDate.add(Calendar.WEEK_OF_YEAR, weeks);
+			
+		} else  {
+			throw new IllegalArgumentException("A date for a project must be given before changing");
+		}
+			
+		if (stopDate.before(startDate)) {
+			
+			stopDate = stopDatePast;
 			throw new IllegalArgumentException("The startdate cannot be after the stopdate");
+		}
+		
+		if (stopDate.before(creationDate)) {
 
+			stopDate = stopDatePast;
+			throw new IllegalArgumentException("The stopdate cannot be before the creationdate");
 		}
-			if (stopDate.before(creationDate)) {
-				stopDate = stopDatePast;
-			throw new IllegalArgumentException("The startdate cannot be before the creationdate");
-		}
+		
+		assert stopDate.equals(getStopDate()) : "PostCondition changeStopDate";
 	}
 	
 	/**
@@ -310,6 +354,11 @@ public class Activity {
 		}
 	}
 
+	/**
+	 * Sets the start date of the activity
+	 * @param startDate the new start date of the activity
+	 * @throws ParseException
+	 */
 	public void setStartDate(String startDate) throws ParseException {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -321,6 +370,11 @@ public class Activity {
 
 	}
 	
+	/**
+	 * Sets the stop date of the activity
+	 * @param stopDate the new stop date of the activity
+	 * @throws ParseException
+	 */
 	public void setStopDate(String stopDate) throws ParseException {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 

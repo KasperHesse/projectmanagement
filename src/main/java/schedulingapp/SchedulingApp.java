@@ -18,6 +18,9 @@ public class SchedulingApp implements ControllerInterface {
 	private Project activeProject;
 	private Activity activeActivity;
 
+	/**
+	 * Constructor of SchedulingApp. Initializes developerList and projectList
+	 */
 	public SchedulingApp() {
 		this.developerList = new ArrayList<Developer>();
 		this.projectList = new ArrayList<Project>();
@@ -182,7 +185,7 @@ public class SchedulingApp implements ControllerInterface {
 	}
 
 	/**
-	 * Returns a list of all available developers
+	 * Sorts all the available developers from the developer list
 	 * @return A list of all available developers
 	 * @throws Exception If the current user is not a project manager
 	 */

@@ -19,6 +19,15 @@ public class Project {
 	private Calendar creationDate;
 	private List<Developer> developerList;
 
+	
+	/**
+	 * Creates a new Project with a given name, startDate, stopDate and projectManager
+	 * @param projectName the name of the project
+	 * @param startDate the start date of the project, as Calendar object
+	 * @param stopDate the stop date of the project, as Calendar object
+	 * @param projectManager the developer who is to be project manager of the project
+	 * @param schedulingApp the SchedulingApp to manage this project in
+	 */
 	public Project(String projectName, Calendar startDate, Calendar stopDate, Developer projectManager, SchedulingApp schedulingApp) {
 		this.projectName = projectName;
 		this.startDate = startDate;
@@ -43,18 +52,33 @@ public class Project {
 	
 	/**
 	 * Creates a new Project with a given name. startDate, stopDate and projectManager are set to null
-	 * @param projectName
-	 * @param schedulingApp
+	 * @param projectName the name of the project
+	 * @param schedulingApp the SchedulingApp to manage this project in
 	 */
 	public Project(String projectName, SchedulingApp schedulingApp) {
 		this(projectName, null, null, null, schedulingApp);
 	}
 	
 	/**
+	 * Adds a developer to this project
+	 * @param dev the developer that is added to the project
+	 */
+	public void addDeveloper(Developer dev) {
+		if(doesDeveloperExistInProject(dev)) {
+			throw new IllegalArgumentException("This developer is already a part of this project");
+		} else if(!this.isProjectManager(this.getCurrentUser())) {
+			throw new IllegalArgumentException("Developers cannot add other developers to projects");
+		}
+		this.unassignedDevelopers.add(dev);
+		dev.addProject(this);
+	}
+	
+	
+	/**
 	 * Creates a new Project with a given name and projectManager. startDate and stopDate are set to null
-	 * @param projectName
-	 * @param projectManager
-	 * @param schedulingApp
+	 * @param projectName the name of the project
+	 * @param projectManager the developer who is to be manager of the project
+	 * @param schedulingApp the SchedulingApp to manage this project in
 	 */
 	public Project(String projectName, Developer projectManager, SchedulingApp schedulingApp) {
 		this(projectName, null, null, projectManager, schedulingApp);
@@ -78,7 +102,7 @@ public class Project {
 
 	/**
 	 * Generates a project number for a newly created project. The project number must be unique
-	 * @return projectNumber
+	 * @return projectNumber a unique auto-generated number, based on the date and amount of current projects
 	 */
 	private String generateProjectNumber() {
 		int year = creationDate.get(Calendar.YEAR);
@@ -91,10 +115,8 @@ public class Project {
 	}
 
 	/**
-
 	 * Removes an activity from the project
-	 * @param activity the activity to be removed
-
+	 * @param name the name of the activity to be removed
 	 */
 	public void removeActivity(String name) {
 		if (hasActivityNamed(name)) {
@@ -112,7 +134,11 @@ public class Project {
 	}
 	
 	
-	//Does this work as intended? Same as above?
+	/**
+	 * Returns a distinct list of all developers on this project. 
+	 * The list is a concatenation of the developers on all the activites of the project and the developers only assigned to the project
+	 * @return a list of all developers associated with the project
+	 */
 	public List<Developer> getDevelopers() {
 		List<Developer> allDevs = developerList;
 		
@@ -168,7 +194,6 @@ public class Project {
 	/**
 	 * Returns the ProjectManager of the current project.
 	 */
-	
 	public Developer getProjectManager() {
 		return this.projectManager;
 	}
@@ -259,13 +284,13 @@ public class Project {
 		}
 	}
 
-	/**
-	 * Sets a link between this project and the scheduling app
-	 * @param schedulingApp The scheduling application to which this project belongs
-	 */
-	public void setApp(SchedulingApp schedulingApp) {
-		this.schedulingApp = schedulingApp;
-	}
+//	/**
+//	 * Sets a link between this project and the scheduling app
+//	 * @param schedulingApp The scheduling application to which this project belongs
+//	 */
+//	public void setApp(SchedulingApp schedulingApp) {
+//		this.schedulingApp = schedulingApp;
+//	}
 	
 	/**
 	 * Returns a handle to the current user of the system
@@ -302,21 +327,29 @@ public class Project {
 	 */
 	public void changeStartDate(int weeks) {
 		startDatePast = startDate;
-
+				
+		assert weeks == (int)weeks : "PreCondition changeStartDate";
+		
 		if (startDate != null) {
 			startDate.add(Calendar.WEEK_OF_YEAR, weeks);
-
-		} else {
+			
+		} else  {
 			throw new IllegalArgumentException("A date for a project must be given before changing");
 		}
+			
 		if (startDate.after(stopDate)) {
+			
 			startDate = startDatePast;
 			throw new IllegalArgumentException("The startdate cannot be after the stopdate");
 		}
+		
 		if (startDate.before(creationDate)) {
+
 			startDate = startDatePast;
 			throw new IllegalArgumentException("The startdate cannot be before the creationdate");
 		}
+		
+		assert startDate.equals(getStartDate()) : "PostCondition changeStartDate";
 	}
 	
 	/**
@@ -325,21 +358,29 @@ public class Project {
 	 */
 	public void changeStopDate(int weeks) {
 		stopDatePast = stopDate;
-		if (this.stopDate != null) {
-			this.stopDate.add(Calendar.WEEK_OF_YEAR, weeks);
-			} else {
-			throw new IllegalArgumentException("A date for a project must be given before adding.");
-			}
-			if (stopDate.after(startDate)) {
-				stopDate = stopDatePast;
-	
+				
+		assert weeks == (int)weeks : "PreCondition changeStopDate";
+		
+		if (stopDate != null) {
+			stopDate.add(Calendar.WEEK_OF_YEAR, weeks);
+			
+		} else  {
+			throw new IllegalArgumentException("A date for a project must be given before changing");
+		}
+			
+		if (stopDate.before(startDate)) {
+			
+			stopDate = stopDatePast;
 			throw new IllegalArgumentException("The startdate cannot be after the stopdate");
+		}
+		
+		if (stopDate.before(creationDate)) {
 
+			stopDate = stopDatePast;
+			throw new IllegalArgumentException("The stopdate cannot be before the creationdate");
 		}
-			if (stopDate.before(creationDate)) {
-				stopDate = stopDatePast;
-			throw new IllegalArgumentException("The startdate cannot be before the creationdate");
-		}
+		
+		assert stopDate.equals(getStopDate()) : "PostCondition changeStopDate";
 	}
 
 	/**
@@ -372,6 +413,11 @@ public class Project {
 		return this.projectNumber;
 	}
 
+	/**
+	 * Set the start date of a project
+	 * @param startDate the new start date of the project
+	 * @throws ParseException
+	 */
 	public void setStartDate(String startDate) throws ParseException {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -383,6 +429,11 @@ public class Project {
 
 	}
 	
+	/**
+	 * Set the stop date of the project
+	 * @param stopDate the new stop date
+	 * @throws ParseException
+	 */
 	public void setStopDate(String stopDate) throws ParseException {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -394,6 +445,11 @@ public class Project {
 		
 	}
 	
+	/**
+	 * Sets the creation date of the project. Only used for creating specific tests
+	 * @param creationDate the new creation date
+	 * @throws ParseException
+	 */
 	public void setCreationDate(String creationDate) throws ParseException {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 

@@ -31,7 +31,7 @@ public class Developer {
 	 * @return true, if developer is project manager of a project
 	 */
 	public boolean isProjectManager() {
-		return projectList.stream().anyMatch(p -> p.isProjectManager(this) == true);
+		return projectList.stream().anyMatch(p -> p.isProjectManager(this));
 	}
 	
 	/**
@@ -70,11 +70,17 @@ public class Developer {
 		}
 	}
 
-	
+	/**
+	 * @return activityList the list of activities the developer is working on
+	 */
 	public List<Activity> getActivtyList() {
 		return activityList; 
 	}
 	
+	/**
+	 * Adds the developer to the given activity
+	 * @param activity the activity to add the developer to
+	 */
 	public void addActivity(Activity activity) {
 		if(!activityList.contains(activity)) {
 			activityList.add(activity);
