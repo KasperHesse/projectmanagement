@@ -42,9 +42,10 @@ public class SchedulingApp implements ControllerInterface {
 	 * @param stopDate The given date the project is expected to end, as Calendar object
 	 * @param projectManager The developer who is to manage the project
 	 */
-	void createProject(String projectName, Calendar startDate, Calendar stopDate, Developer projectManager) {
+	Project createProject(String projectName, Calendar startDate, Calendar stopDate, Developer projectManager) {
 		Project p = new Project(projectName, startDate, stopDate, projectManager, this);
 		projectList.add(p);
+		return p;
 	}
 	
 //	/**
@@ -72,7 +73,7 @@ public class SchedulingApp implements ControllerInterface {
 		Calendar stopCal = Calendar.getInstance();
 		startCal.setTime(formatter.parse(startDate));
 		stopCal.setTime(formatter.parse(stopDate));
-		createProject(projectName, startCal, stopCal,null);
+		createProject(projectName, startCal, stopCal, null);
 	}
 
 	/**
@@ -112,17 +113,17 @@ public class SchedulingApp implements ControllerInterface {
 
 
 	/**
-	 * Returns a handle to the project with a given name 
+	 * Returns a handle to the project with a given name. If more than one project exists with this name, returns the first project with that name
 	 * @param name The name of the project to be found
 	 * @return A handle to the project if it exists, otherwise throws an exception
 	 * @throws NoSuchElementException if the project was not found
 	 */
 	Project getProjectByName(String name) throws NoSuchElementException {
 		List<Project> matches =  projectList.stream().filter(p -> p.getName().equals(name)).collect(Collectors.toList());
-		if(matches.size() == 1) {
+		if(matches.size() >= 1) {
 			return matches.get(0);
 		}
-		throw new NoSuchElementException("This project does not exist");
+		throw new NoSuchElementException("No project exists with the given name");
 	}
 	
 	Project getProjectByNumber(String projectNumber) throws NoSuchElementException {
@@ -130,7 +131,7 @@ public class SchedulingApp implements ControllerInterface {
 		if(matches.size() == 1) {
 			return matches.get(0);
 		}
-		throw new NoSuchElementException("This project does not exist");
+		throw new NoSuchElementException("No project exists with the given project number");
 	}
 
 	/**
@@ -223,9 +224,11 @@ public class SchedulingApp implements ControllerInterface {
 		createDeveloper("Kasper Hesse", "kahe");
 		createDeveloper("Peter Ejlev", "pete");
 		createDeveloper("Emil Pontoppidan", "emil");
+		createDeveloper("Jonathan Michelsen", "jona");
 		Developer kahe = getDeveloperByInitials("kahe");
 		Developer pete = getDeveloperByInitials("pete");
 		Developer emil = getDeveloperByInitials("emil");
+
 		
 		login("kahe");
 		
@@ -246,7 +249,7 @@ public class SchedulingApp implements ControllerInterface {
 	
 	@Override
 	public void setActiveProject(ProjectInfo projInfo) throws NoSuchElementException {
-		activeProject = getProjectByName(projInfo.getName());
+		activeProject = getProjectByNumber(projInfo.getProjectNumber());
 		support.firePropertyChange("project", null, projInfo);
 	}
 	
@@ -275,7 +278,17 @@ public class SchedulingApp implements ControllerInterface {
 
 	@Override
 	public List<ActivityInfo> getActiveProjectActivities() {
-		return ActivityInfo.list2dto(activeProject.getActivityList());
+//		return ActivityInfo.list2dto(activeProject.getActivityList());
+		List<Activity> activities = new ArrayList<Activity>(activeProject.getActivityList());
+		if(activeProject.getProjectManager() != null && this.currentUser.equals(activeProject.getProjectManager())) {
+			return ActivityInfo.list2dto(activities);
+		}
+		activities = activities
+				.stream()
+				.filter(a -> a.hasDeveloperWithInitials(currentUser.getInitials()) 
+						| a.hasAssistantDeveloperWithInitials(currentUser.getInitials()))
+				.collect(Collectors.toList());
+		return ActivityInfo.list2dto(activities);
 	}
 	
 	@Override
@@ -286,9 +299,8 @@ public class SchedulingApp implements ControllerInterface {
 	}
 	
 	@Override
-	public ProjectInfo createProject(String name) {
+	public void createProject(String name) {
 		createProject(name, null);
-		return new ProjectInfo(getProjectByName(name));
 	}
 	
 //	@Override
@@ -300,7 +312,7 @@ public class SchedulingApp implements ControllerInterface {
 	
 	@Override 
 	public ActivityInfo createActivity(ProjectInfo projInfo, String name) {
-		Project p = getProjectByName(projInfo.getName());
+		Project p = getProjectByNumber(projInfo.getProjectNumber());
 		p.createActivity(name);
 		Activity a = p.getActivityByName(name);
 		return new ActivityInfo(a);
@@ -470,6 +482,28 @@ public class SchedulingApp implements ControllerInterface {
 		activeActivity.setStopDate(date);
 		support.firePropertyChange("stopdate", null, date);
 		
+	}
+
+	@Override
+	public void addNewProject(String name, Calendar startDate, Calendar stopDate, DeveloperInfo projMan) {
+		Developer pm = null;
+		if(projMan != null) {
+			pm = getDeveloperByInitials(projMan.getInitials());
+		}
+		Project p = createProject(name, startDate, stopDate, pm);
+		support.firePropertyChange("projlist", null, new ProjectInfo(p));
+	}
+
+	@Override
+	public void addNewActivity(String name, Calendar startDate, Calendar stopDate, Integer hoursToBudget) {
+		activeProject.createActivity(name, startDate, stopDate);
+		Activity a = activeProject.getActivityByName(name);
+		support.firePropertyChange("actlist", null, new ActivityInfo(a));
+	}
+
+	@Override
+	public ProjectInfo getActiveProject() {
+		return new ProjectInfo(this.activeProject);
 	}
 
 

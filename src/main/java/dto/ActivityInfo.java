@@ -7,12 +7,13 @@ public class ActivityInfo implements DTOinterface {
 	private String name;
 	private String startDate;
 	private String stopDate;
+	private int hoursBudgeted;
 	
 	public ActivityInfo(Activity activity) {
 		this.name = activity.getName();
-		
 		this.startDate = Activity.cal2string(activity.getStartDate());
 		this.stopDate = Activity.cal2string(activity.getStopDate());
+		this.hoursBudgeted = activity.getHoursBudgeted();
 	}
 	
 	@Override
@@ -35,6 +36,14 @@ public class ActivityInfo implements DTOinterface {
 
 	public String getName() {
 		return this.name;
+	}
+
+	/**
+	 * Returns a string with the most important information regarding this activity
+	 * @return
+	 */
+	public String getInfoString() {
+		return String.format("Start: %s. Stop: %s. Hours budgeted: %d", startDate, stopDate, hoursBudgeted);
 	}
 
 }

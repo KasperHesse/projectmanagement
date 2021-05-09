@@ -25,6 +25,20 @@ public class ControllerMessages {
 	
 	public static final String E_NOT_PROJ_MAN = "You cannot do this, as you are not the project manager";
 	
+	public static final String E_KEYVAL_BADFORMAT = "Unable to parse the given <key>=<value> string. Please try again";
+	
+	public static final String E_KEY_NOT_PRESENT = "Unable to find the given key in the string";
+	
+	public static final String E_NEW_PROJ_MUST_HAVE_NAME = "Did not receive a project name. Please enter a project name to create a project";
+	
+//	public static final String E_PROJ_NAME_EXISTS = "A project with this name already exists";
+	
+	public static final String E_DEV_MAX_PROJECTS = "The given developer cannot be added as they are already working on the maximum number of projects";
+	
+	public static final String E_DATES_INVALID = "The given start date must be before the given stop date";
+	
+	public static final String E_NO_ACTIVITIES = "You do not have access to any activities under this project";
+	
 	public final static String I_REGISTER_TIME = "To register time, enter a date in format YYYY-mm-DD\n"
 			+ "and the number of hours to register (resolution 1/2 hour)\n"
 			+ "Example: 2021-12-24 12.5";
@@ -67,6 +81,12 @@ public class ControllerMessages {
 	
 	public static final String I_VIEW_DEVS = "All developers shown below are available\n"
 			+ "To add them to a project, navigate to Show Projects -> <your project> -> Add Developer -> <enter their initials>";
+	
+	public static final String I_NEW_PROJECT = "To create a new project, enter any of the following information.\n"
+			+ "name=<Project Name> start=<Start Date> stop=<Stop Date> pm<Project Manager's initials> Only the project name is mandatory";
+	
+	public static final String I_NEW_ACTIVITY = "To create a new activity, enter any of the following\n"
+			+ "name=<Project Name> start=<Start Date> stop=<Stop Date hours=<Hours to be budgeted>. Only the activity name is mandatory";
 	
 
 }

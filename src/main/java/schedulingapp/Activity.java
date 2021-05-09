@@ -155,7 +155,7 @@ public class Activity {
 			}
 		}
 		
-		if(!isDeveloper(dev)) {                                                                                 //3
+		if(!isDeveloper(dev) && !isAssistingDeveloper(dev)) {                                                                                 //3
 			throw new IllegalArgumentException("You are not associated with chosen activity");
 		}
 		
@@ -183,7 +183,7 @@ public class Activity {
 				throw new IllegalArgumentException("You cannot register time outside the active status dates"); 
 			}
 		}
-		if (!isDeveloper(dev)) { 																									//3
+		if (!isDeveloper(dev) && !isAssistingDeveloper(dev)) { 																									//3
 			throw new IllegalArgumentException("You are not associated with chosen activity");
 		}
 		
@@ -378,6 +378,16 @@ public class Activity {
 		if (!developerList.contains(developer)) {
 			this.developerList.add(developer);	
 		}
+	}
+
+
+	/**
+	 * Verifies whether the activity has an assistant developer with the given initials working on the activity
+	 * @param initials The initials to check against
+	 * @return True if the developer with those initials is assisting on this activity, false otherwise
+	 */
+	public boolean hasAssistantDeveloperWithInitials(String initials) {
+		return assistingDeveloperList.stream().anyMatch(d -> d.getInitials().equals(initials));
 	}
 
 }

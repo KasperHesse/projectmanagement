@@ -48,9 +48,8 @@ public interface ControllerInterface {
 	/**
 	 * Creates a new project with the given project name
 	 * @param projectName
-	 * @return
 	 */
-	public ProjectInfo createProject(String projectName);
+	public void createProject(String projectName);
 	
 //	/**
 //	 * Sets the project manager of the project indicated by projInfo to the developer indicated by devInfo
@@ -128,7 +127,7 @@ public interface ControllerInterface {
 	/**
 	 * Gets a developer from their initials
 	 * @param initials The initials of the developer to get
-	 * @return A DeveloperInfo object
+	 * @return A DeveloperInfo object representing that developer, or null if no developer was found
 	 */
 	public DeveloperInfo getDeveloperWithInitials(String initials);
 	
@@ -241,6 +240,30 @@ public interface ControllerInterface {
 	 * @param date The end date
 	 */
 	public void setActivityStopDate(Calendar date);
+	
+	/**
+	 * Creates a new project with the given name, start date, stop date and project manager.
+	 * @param name The name of the project
+	 * @param startDate The start date of the project
+	 * @param stopDate The stop date of the project
+	 * @param projMan The project manager for the new project
+	 */
+	public void addNewProject(String name, Calendar startDate, Calendar stopDate, DeveloperInfo projMan);
+	
+	/**
+	 * Creates a new activity under the current project with a given name, start date, stop date and project manager
+	 * @param name The name of the activity
+	 * @param startDate The start date of the project
+	 * @param stopDate The stop date of the project
+	 * @param hoursToBudget The number of hours to budget for the project
+	 */
+	public void addNewActivity(String name, Calendar startDate, Calendar stopDate, Integer hoursToBudget);
+	
+	/**
+	 * Returns information on the currently active project
+	 * @return
+	 */
+	public ProjectInfo getActiveProject();
 	
 
 }
