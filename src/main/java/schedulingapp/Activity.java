@@ -289,7 +289,11 @@ public class Activity {
 			return false;
 		}
 	}
-
+	
+	/**
+	 * Sets the start date of the activity
+	 * @param startDate The start date of the activity to be set
+	 */
 	public void setStartDate(String startDate) throws ParseException {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -301,6 +305,10 @@ public class Activity {
 
 	}
 	
+	/**
+	 * Sets the stop date of the activity
+	 * @param stopDate The stop date of the activity to be set
+	 */
 	public void setStopDate(String stopDate) throws ParseException {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 

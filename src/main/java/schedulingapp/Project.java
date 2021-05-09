@@ -377,7 +377,10 @@ public class Project {
 	public String getProjectNumber() {
 		return this.projectNumber;
 	}
-
+	/**
+	 * Sets the start date of the project
+	 * @param startDate The start date of the project to be set
+	 */
 	public void setStartDate(String startDate) throws ParseException {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -389,6 +392,10 @@ public class Project {
 
 	}
 	
+	/**
+	 * Sets the stop date of the project
+	 * @param stopDate The stop date of the project to be set
+	 */
 	public void setStopDate(String stopDate) throws ParseException {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -400,6 +407,10 @@ public class Project {
 		
 	}
 	
+	/**
+	 * Sets the creation date of the project
+	 * @param creationDate The creation date of the project to be set
+	 */
 	public void setCreationDate(String creationDate) throws ParseException {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
