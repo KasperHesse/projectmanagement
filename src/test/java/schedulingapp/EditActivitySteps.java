@@ -137,9 +137,37 @@ public class EditActivitySteps {
 		assertThat(actHelper.getActivity().getHoursBudgeted() == hoursBudgetted, is(true));
 	}
 	
+	@When("the user changes startdate for the activity {string} to {string}")
+	public void the_user_changes_startdate_for_the_activity_to(String name, String startDate) throws ParseException {
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+		Calendar startCal = Calendar.getInstance();
+		startCal.setTime(formatter.parse(startDate));
+		
+		Project project = projHelper.getProject();
+		Activity activity = actHelper.getActivity(project, name);
+		
+		try {			
+			activity.setStartDate(startCal);
+		} catch (Exception e) {
+			errorMessageHolder.setErrorMessage(e.getMessage());
+		}
+	}
 	
-
-	
+	@When("the user changes stopdate for the activity {string} to {string}")
+	public void the_user_changes_stopdate_for_the_activity_to(String name, String stopDate) throws ParseException {
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+		Calendar stopCal = Calendar.getInstance();
+		stopCal.setTime(formatter.parse(stopDate));
+		
+		Project project = projHelper.getProject();
+		Activity activity = actHelper.getActivity(project, name);
+		
+		try {			
+			activity.setStopDate(stopCal);
+		} catch (Exception e) {
+			errorMessageHolder.setErrorMessage(e.getMessage());
+		}
+	}
 	
 
 }

@@ -9,7 +9,6 @@ public class Activity {
 	private Calendar startDate;
 	private Calendar stopDate;
 	private int hoursBudgetted;
-	private int hoursBudgettedPast;
 	private List<Developer> developerList;
 	private List<Developer> assistingDeveloperList;
 	private TimeSheet timeSheet = new TimeSheet();
@@ -132,6 +131,7 @@ public class Activity {
 		if(!getProject().getSchedulingApp().getDevelopers().contains(helper)){
 			throw new IllegalArgumentException("The requested developer is not in the system");
 		}
+		
 		
 		assistingDeveloperList.add(helper);
 		helper.addActivity(this);
@@ -260,10 +260,10 @@ public class Activity {
 		return List.copyOf(this.developerList);
 	}
 
-	public void registerTime(Developer currentUser, Double hours, String date) {
-		// TODO Auto-generated method stub
-		
-	}
+//	public void registerTime(Developer currentUser, Double hours, String date) {
+//		// TODO Auto-generated method stub
+//		
+//	}
 	
 	public Project getProject() {
 		return project;

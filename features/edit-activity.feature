@@ -31,3 +31,23 @@ Scenario: User changes hours budgeted for activity
 	When the user changes hours budgeted to 200 for the current activity
 	Then the hours budgeted is 200 for the current activity
 	
+Scenario: User tries to removes a non-existent developer from an activity
+	Given that the user with initials "abcd" is the project manager of project "xyz"
+	And that an activity named "research" exists under the current project
+	When the user removes the developer with initials "efgh" from the activity
+	Then the error message "No developer with this name exists in this project" is given
+	
+Scenario: User sets new start time of activity to a date after stopdate
+	Given that the user with initials "abcd" is the project manager of project "xyz"
+	And that an activity named "research" exists under the current project
+	And the activity "research" has a stopdate "2021-04-06"
+	When the user changes startdate for the activity "research" to "2021-04-20"
+	Then the error message "Given start date (2021 W16) must be before stop date (2021 W14)" is given
+	
+Scenario: User sets new stopdate of activity to a date before startdate
+	Given that the user with initials "abcd" is the project manager of project "xyz"
+	And that an activity named "research" exists under the current project
+	And the activity "research" has a startdate "2021-04-20"
+	When the user changes stopdate for the activity "research" to "2021-04-06"
+	Then the error message "Given stop date (2021 W14) must be after start date (2021 W16)" is given
+	
