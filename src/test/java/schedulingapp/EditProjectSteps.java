@@ -178,22 +178,22 @@ public class EditProjectSteps {
 	@Given("a developer {string} is bound to the current project")
 	public void a_developer_is_bound_to_the_current_project(String initials) {
 		Developer dev = devHelper.getDeveloper(initials);
-		projHelper.getProject().addDeveloper(dev);
+		Project project = projHelper.getProject();
+		project.addDeveloper(dev);
+		Activity act = actHelper.getActivity(project, "act name");
+		act.addDeveloper(dev);
 		
-		try {
 		assertThat(projHelper.getProject().developerExistsInProject(dev), is(true));
 
-		} catch (AssertionError e) {
-			errorMessageHolder.setErrorMessage("That developer does not exist in the current project.");
-		}
 	}
 
 	@When("the user removes the developer {string} from the current project")
 	public void the_user_removes_the_developer_from_the_current_project(String initials) {
 		Developer dev = devHelper.getDeveloper(initials);
+		Project project = projHelper.getProject();
 		
 		try {
-			projHelper.getProject().removeDeveloper(dev);
+			project.removeDeveloper(dev);
 		} catch (Exception e) {
 			errorMessageHolder.setErrorMessage(e.getMessage());
 		}
@@ -245,6 +245,13 @@ public class EditProjectSteps {
 		
 	}
 	
+	@Given("the project {string} has a stopdate {string} and the creationDate is {string}")
+	public void the_project_has_a_stopdate_and_the_creation_date_is(String projectName, String stopDate, String creationDate) throws ParseException {
+		Project project = projHelper.getProject(projectName);
+		project.setStopDate(stopDate);
+		project.setCreationDate(creationDate);
+	}
+	
 	@Given("the project {string} has a startdate {string} and the creationDate is {string}")
 	public void the_project_has_a_startdate_and_the_creation_date_is(String projectName, String startDate, String creationDate) throws ParseException {
 		Project project = projHelper.getProject(projectName);
@@ -258,4 +265,5 @@ public class EditProjectSteps {
 		project.setStartDate(startDate);
 		project.setStopDate(stopDate);
 	}	
+	
 }

@@ -59,6 +59,10 @@ Scenario: User changes start time which is null
 	When the user changes the start time by 2 weeks for the project "xyz"
 	Then the error message "A date for a project must be given before changing" is given
 	
+Scenario: User changes stop time which is null
+	Given that the user with initials "abcd" is the project manager of project "xyz"
+	When the user changes the end time by 2 weeks for the project "xyz"
+	Then the error message "A date for a project must be given before changing" is given
 
 Scenario: User changes start time to before the creationdate
 	Given that the user with initials "abcd" is the project manager of project "xyz"
@@ -66,6 +70,11 @@ Scenario: User changes start time to before the creationdate
 	When the user changes the start time by -2 weeks for the project "xyz"
 	Then the error message "The startdate cannot be before the creationdate" is given
 	
+Scenario: User changes stop time to before the creationdate
+	Given that the user with initials "abcd" is the project manager of project "xyz"
+	Given the project "xyz" has a stopdate "2021-04-20" and the creationDate is "2021-04-19"
+	When the user changes the end time by -2 weeks for the project "xyz"
+	Then the error message "The stopdate cannot be before the creationdate" is given	
 	
 Scenario: User changes start time to after stopDate
 	Given that the user with initials "abcd" is the project manager of project "xyz"
@@ -73,10 +82,24 @@ Scenario: User changes start time to after stopDate
 	When the user changes the start time by 1 weeks for the project "xyz"
 	Then the error message "The startdate cannot be after the stopdate" is given
 
-
-Scenario: User changes start time to after the creationdate
+Scenario: User changes start time to after stopDate
 	Given that the user with initials "abcd" is the project manager of project "xyz"
-	Given the project "xyz" has a startdate "2021-04-20" and the creationDate is "2021-04-19"
+	Given the project "xyz" has a startdate "2021-04-20" and a stopdate "2021-04-22"
 	When the user changes the start time by 1 weeks for the project "xyz"
-	Then the start time of the project "xyz" is "2021-04-27"
+	Then the error message "The startdate cannot be after the stopdate" is given
+
+Scenario: User changes stop time to after startDate
+	Given that the user with initials "abcd" is the project manager of project "xyz"
+	Given the project "xyz" has a startdate "2021-04-20" and a stopdate "2021-04-22"
+	When the user changes the end time by -1 weeks for the project "xyz"
+	Then the error message "The startdate cannot be after the stopdate" is given
 	
+Scenario: Project manager tries to remove himself from the project
+	Given that the user with initials "abcd" is the project manager of project "xyz"
+	When the user removes the developer "abcd" from the current project						
+	Then the error message "Project managers cannot remove themselves from a project. Promote a new PM first" is given
+	
+Scenario: User tries to remove non-existent developer from the project
+	Given that the user with initials "abcd" is the project manager of project "xyz"
+	When the user removes the developer "efgh" from the current project						
+	Then the error message "No developer with these initials exists in this project" is given	
