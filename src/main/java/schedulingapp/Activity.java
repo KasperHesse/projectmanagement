@@ -150,7 +150,7 @@ public class Activity {
 		
 		if(startDate != null && stopDate != null) {                                                             //1
 			
-			if(startDate.before(date) || stopDate.after(date)) {
+			if(date.before(startDate) || date.after(stopDate)) {
 				throw new IllegalArgumentException("You cannot register time outside the active status dates"); //2
 			}
 		}
@@ -187,7 +187,11 @@ public class Activity {
 			throw new IllegalArgumentException("You are not associated with chosen activity");
 		}
 		
+		double preEditTime = viewTime(date, dev);
+		
 		timeSheet.editTime(dev, date, hours);
+		
+		assert viewTime(date, dev) == preEditTime + hours;
 	}
 	
 	/**

@@ -51,3 +51,38 @@ Scenario: User sets new stopdate of activity to a date before startdate
 	When the user changes stopdate for the activity "research" to "2021-04-06"
 	Then the error message "Given stop date (2021 W14) must be after start date (2021 W16)" is given
 	
+Scenario: User tries to change start time of activity with no current start time given
+	Given that the user with initials "abcd" is the project manager of project "xyz"
+	And that an activity named "research" exists under the current project
+	When the user moves the start time by 2 weeks for the activity the "research"
+	Then the error message "A date for a project must be given before changing" is given
+
+Scenario: User tries to change end time of activity with no current end time given
+	Given that the user with initials "abcd" is the project manager of project "xyz"
+	And that an activity named "research" exists under the current project
+	When the user moves the end time by 2 weeks for the activity the "research"
+	Then the error message "A date for a project must be given before changing" is given	
+	
+Scenario: User changes start time of activity to a date after stopdate
+	Given that the user with initials "abcd" is the project manager of project "xyz"
+	And that an activity named "research" exists under the current project
+	And the activity "research" has a startdate "2021-04-06"
+	And the activity "research" has a stopdate "2021-04-10"
+	When the user moves the start time by 2 weeks for the activity the "research"
+	Then the error message "The startdate cannot be after the stopdate" is given
+	
+Scenario: User changes end time of activity to a date before creationdate
+	Given that the user with initials "abcd" is the project manager of project "xyz"
+	And that an activity named "research" exists under the current project
+	And the activity "research" has a startdate "2021-01-06"
+	And the activity "research" has a stopdate "2021-04-10"
+	When the user moves the end time by -2 weeks for the activity the "research"
+	Then the error message "The stopdate cannot be before the creationdate" is given
+
+Scenario: User changes end time of activity to a date before startdate
+	Given that the user with initials "abcd" is the project manager of project "xyz"
+	And that an activity named "research" exists under the current project
+	And the activity "research" has a startdate "2031-04-06"
+	And the activity "research" has a stopdate "2031-04-10"
+	When the user moves the end time by -2 weeks for the activity the "research"
+	Then the error message "The startdate cannot be after the stopdate" is given			
