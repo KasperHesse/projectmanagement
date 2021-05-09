@@ -13,7 +13,7 @@ public class Developer {
 	private String initials;
 	
 	/**
-	 * Creates a new developer with the given data. And adds the person to the activitys "holiday" and "course" under the project "misc"
+	 * Creates a new developer with the given data.
 	 * @param initials The initials of the developer
 	 * @param name The full name of the developer
 	 * @note The initials *must* be a string exactly 4 characters long.
@@ -70,12 +70,12 @@ public class Developer {
 		}
 	}
 
-	/**
-	 * @return activityList the list of activities the developer is working on
-	 */
-	public List<Activity> getActivityList() {
-		return activityList; 
-	}
+//	/**
+//	 * @return activityList the list of activities the developer is working on
+//	 */
+//	public List<Activity> getActivityList() {
+//		return activityList; 
+//	}
 	
 	/**
 	 * Adds the developer to the given activity

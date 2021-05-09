@@ -55,19 +55,6 @@ public class TimeSheet {
 	}
 	
 	
-	public void calculateNewHours(int hours, int hoursWorked) {
-		
-	}
-	
-	public void setHours(Developer dev, int hours, Calendar date) {
-		
-	}
-	
-	//Are any hours registered at all?
-	public boolean containsHours() {
-		return true;
-	}
-	
 	
 	/**
 	 * Boolean to detect if person is registering more than 24 hours on one day
@@ -110,13 +97,6 @@ public class TimeSheet {
 		return hours;
 	}
 }
-
-
-
-
-
-
-
 
 
 

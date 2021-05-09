@@ -31,9 +31,6 @@ public class EditProjectSteps {
 	ActivityHelper actHelper;
 	Calendar oldstartDate;
 	Calendar oldstopDate;
-	private Calendar initialStartDate;
-	private Calendar initialStopDate;
-	private Calendar initialCreationDate;
 
 	public EditProjectSteps(SchedulingApp schedulingApp, ProjectHelper projHelper, DeveloperHelper devHelper,
 			ErrorMessageHolder errorMessageHolder, ActivityHelper actHelper, ActivityHelper actHelper1) {
@@ -58,9 +55,6 @@ public class EditProjectSteps {
 	public void the_project_has_a_startdate(String projectName, String startDate) throws ParseException {
 		Project project = projHelper.getProject(projectName);
 		project.setStartDate(startDate);
-		initialStartDate = project.getStartDate();
-		
-		
 		
 	}
 	
@@ -197,7 +191,7 @@ public class EditProjectSteps {
 	@When("the user removes the developer {string} from the current project")
 	public void the_user_removes_the_developer_from_the_current_project(String initials) {
 		Developer dev = devHelper.getDeveloper(initials);
-
+		
 		try {
 			projHelper.getProject().removeDeveloper(dev);
 		} catch (Exception e) {
@@ -217,7 +211,7 @@ public class EditProjectSteps {
 	public void the_project_has_a_enddate(String projectName, String stopDate) throws ParseException {
 		Project project = projHelper.getProject(projectName);
 		project.setStopDate(stopDate);
-		initialStopDate = project.getStopDate();
+
 		
 	}
 
@@ -263,7 +257,5 @@ public class EditProjectSteps {
 		Project project = projHelper.getProject(projectName);
 		project.setStartDate(startDate);
 		project.setStopDate(stopDate);
-		initialStartDate = project.getStartDate();
-		initialStopDate = project.getStopDate();
 	}	
 }
