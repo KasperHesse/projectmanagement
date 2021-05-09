@@ -33,7 +33,7 @@ public class ProjectHelper {
 	 */
 	public Project getProject() {
 		if(mostRecent == null) {
-			mostRecent = new Project("Sample project", schedulingApp);
+			mostRecent = getProject("Sample Projcet");
 		}
 		return mostRecent;
 	}

@@ -12,6 +12,8 @@ import schedulingapp.ProjectHelper;
 import schedulingapp.SchedulingApp;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.hamcrest.CoreMatchers.*;
 
 import java.text.ParseException;
@@ -43,13 +45,13 @@ public class EditProjectSteps {
 
 	}
 
-	// User adds themselves as project manager to a project with no project manager
-	@Given("that a project exists with project number {string}")
-	public void that_a_project_exists_with_project_number(String projectName) {
-		Project project = projHelper.getProject(projectName);
-		
-		assertThat(schedulingApp.hasProjectNamed(projectName), is(true));
-
+	
+	@Given("that a project exists with an auto-generated project number")
+	public void that_a_project_exists_with_an_auto_generated_project_number() {
+	    Project project = projHelper.getProject();
+	    String projectNumber = project.getProjectNumber();
+	    assertTrue(project.equals(schedulingApp.getProjectByNumber(projectNumber)));
+	    
 	}
 	
 	@Given("the project {string} has a startdate {string}")
@@ -95,7 +97,13 @@ public class EditProjectSteps {
 	@When("the user {string} adds themselves as project manager to the project")
 	public void the_user_adds_themselves_as_project_manager_to_the_project(String initials) {
 		Developer dev = devHelper.getDeveloper(initials);
-		projHelper.getProject().setProjectManager(dev);
+		schedulingApp.setCurrentUser(dev);
+		try {
+			projHelper.getProject().setProjectManager(dev);
+		} catch (IllegalArgumentException e) {
+			errorMessageHolder.setErrorMessage(e.getMessage());
+		}
+		
 
 	}
 
@@ -140,6 +148,7 @@ public class EditProjectSteps {
 	@Then("the activity named {string} is removed from the project {string}")
 	public void the_activity_named_is_removed_from_the_project(String projectName, String name) {
 		assertThat(projHelper.getProject(projectName).hasActivityNamed(name), is(false));
+		assertFalse(projHelper.getProject(projectName).getActivityList().stream().anyMatch(a -> a.getName().equals(name)));
 	}
 
 	@Given("a developer {string} exists")
@@ -175,9 +184,10 @@ public class EditProjectSteps {
 	@Given("a developer {string} is bound to the current project")
 	public void a_developer_is_bound_to_the_current_project(String initials) {
 		Developer dev = devHelper.getDeveloper(initials);
-
+		projHelper.getProject().addDeveloper(dev);
+		
 		try {
-			assertThat(projHelper.getProject().developerExistsInProject(dev), is(true));
+		assertThat(projHelper.getProject().developerExistsInProject(dev), is(true));
 
 		} catch (AssertionError e) {
 			errorMessageHolder.setErrorMessage("That developer does not exist in the current project.");

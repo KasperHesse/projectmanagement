@@ -47,15 +47,15 @@ public class SchedulingApp implements ControllerInterface {
 		projectList.add(p);
 	}
 	
-	/**
-	 * Creates a project with the following information
-	 * @param projectName The name of the project
-	 * @param startDate The given date the project is expected to begin, as Calendar object
-	 * @param stopDate The given date the project is expected to end, as Calendar object
-	 */
-	void createProject(String projectName, Calendar startDate, Calendar stopDate) {
-		createProject(projectName, startDate, stopDate, null);
-	}
+//	/**
+//	 * Creates a project with the following information
+//	 * @param projectName The name of the project
+//	 * @param startDate The given date the project is expected to begin, as Calendar object
+//	 * @param stopDate The given date the project is expected to end, as Calendar object
+//	 */
+//	void createProject(String projectName, Calendar startDate, Calendar stopDate) {
+//		createProject(projectName, startDate, stopDate, null);
+//	}
 	
 	/**
 	 * Creates a project with the following information
@@ -203,6 +203,9 @@ public class SchedulingApp implements ControllerInterface {
 		return availableDevelopers;
 	}
 	
+	/*
+	 * ------ CONTROLLER INTERFACE METHODS START HERE ------
+	 */
 
 	/**
 	 * Returns a list of all projects which currently do not have a project manager associated
@@ -240,9 +243,6 @@ public class SchedulingApp implements ControllerInterface {
 		logout();
 	}
 	
-	/*
-	 * ------ CONTROLLER INTERFACE METHODS START HERE ------
-	 */
 	
 	@Override
 	public void setActiveProject(ProjectInfo projInfo) throws NoSuchElementException {

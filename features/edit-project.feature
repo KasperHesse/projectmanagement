@@ -3,11 +3,15 @@ Description: User edits a project
 Actors: Developer
 
 Scenario: User adds themselves as project manager to a project with no project manager
-	Given that a project exists with project number "012345" 
+	Given that a project exists with an auto-generated project number 
 	And no project manager is bound to the current project
 	When the user "EPR" adds themselves as project manager to the project
 	Then the current user is added as project manager to the current project
 	
+Scenario: User adds themselves as project manager to a project with a current project manager
+	Given that the user with initials "abcd" is the project manager of project "xyz"
+	When the user "EPR" adds themselves as project manager to the project
+	Then the error message "Only the current PM can change the project manager" is given	
 	
 Scenario: User changes Start time of project
 	Given that the user with initials "abcd" is the project manager of project "xyz"

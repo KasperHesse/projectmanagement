@@ -274,9 +274,7 @@ public class Activity {
 	 * @param weeks The amount of weeks
 	 */
 	public void changeStartDate(int weeks) {
-		startDatePast = startDate;
-				
-		assert weeks == (int)weeks : "PreCondition changeStartDate";
+		startDatePast = startDate;	
 		
 		if (startDate != null) {
 			startDate.add(Calendar.WEEK_OF_YEAR, weeks);
@@ -297,7 +295,6 @@ public class Activity {
 			throw new IllegalArgumentException("The startdate cannot be before the creationdate");
 		}
 		
-		assert startDate.equals(getStartDate()) : "PostCondition changeStartDate";
 	}
 	
 	/*
@@ -306,8 +303,6 @@ public class Activity {
 	 */
 	public void changeStopDate(int weeks) {
 		stopDatePast = stopDate;
-				
-		assert weeks == (int)weeks : "PreCondition changeStopDate";
 		
 		if (stopDate != null) {
 			stopDate.add(Calendar.WEEK_OF_YEAR, weeks);
@@ -326,31 +321,6 @@ public class Activity {
 
 			stopDate = stopDatePast;
 			throw new IllegalArgumentException("The stopdate cannot be before the creationdate");
-		}
-		
-		assert stopDate.equals(getStopDate()) : "PostCondition changeStopDate";
-	}
-	
-	/**
-	 * Adds number hours to the hours budgeted for the activity
-	 * @param hours the amount of hours
-	 */
-	public void addHours(Integer hours) {
-		this.hoursBudgettedPast = this.hoursBudgetted;
-		this.hoursBudgetted += hours;
-		
-	}
-	
-	/**
-	 * Checks whether the budgeted hours for the activity has been changed
-	 * @param hours the amount of hours
-	 * @return Returns true if budgeted hours has been changed false otherwise
-	 */
-	public boolean hoursHasChanged(Integer hours) {
-		if(this.hoursBudgettedPast == this.hoursBudgetted-hours) {
-			return true;
-		} else {
-			return false;
 		}
 	}
 
@@ -398,22 +368,16 @@ public class Activity {
 		this.hoursBudgetted = hoursBudgetted;
 		
 	}
-
+	
 	/**
 	 * Moves a developer from the assisting developer list to the ordinary developer list
 	 * @param developer The developer to move from assistant to ordinary developer
 	 */
 	void migrateDeveloper(Developer developer) {
 		this.assistingDeveloperList.remove(developer);
-		this.developerList.add(developer);	
+		if (!developerList.contains(developer)) {
+			this.developerList.add(developer);	
+		}
 	}
 
-	/**
-	 * Returns a string representation of the 
-	 * @return
-	 */
-	public String getStartDateString() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }

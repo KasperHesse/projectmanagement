@@ -27,6 +27,7 @@ Scenario: User removes a developer from an activity
 Scenario: User changes hours budgeted for activity
 	Given that the user with initials "abcd" is the project manager of project "xyz"
 	And that an activity named "research" exists under the current project
-	When the user changes hours budgeted by 100 for the current activity
-	Then the hours budgeted is changed by 100 for the current activity
+	And the hours budgetted is 100 for the current activity
+	When the user changes hours budgeted to 200 for the current activity
+	Then the hours budgeted is 200 for the current activity
 	

@@ -67,6 +67,7 @@ public class CreateProjectSteps {
 		Developer testDev = schedulingApp.getDeveloperByInitials(initials);
 		Project testProject = schedulingApp.getProjectByName(projectName);
 		assertTrue(testProject.isProjectManager(testDev));
+		assertTrue(testDev.equals(testProject.getProjectManager()));
 	}
 	
 	@When("the user creates a project with name {string}, start date {string} and stop date {string}")

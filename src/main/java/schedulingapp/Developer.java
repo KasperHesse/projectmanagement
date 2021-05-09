@@ -73,7 +73,7 @@ public class Developer {
 	/**
 	 * @return activityList the list of activities the developer is working on
 	 */
-	public List<Activity> getActivtyList() {
+	public List<Activity> getActivityList() {
 		return activityList; 
 	}
 	

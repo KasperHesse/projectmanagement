@@ -122,14 +122,24 @@ public class EditActivitySteps {
 		assertThat(dList.stream().anyMatch(d -> d.getInitials().equals(initials)), is(false));
 	}
 
-	@When("the user changes hours budgeted by {int} for the current activity")
-	public void the_user_changes_hours_budgeted_by_for_the_current_activity(Integer hours) {
-		actHelper.getActivity().addHours(hours);
+	@Given("the hours budgetted is {int} for the current activity")
+	public void the_hours_budgetted_is_for_the_current_activity(Integer hoursBudgetted) {
+		actHelper.getActivity().setHoursBudgeted(hoursBudgetted);
 	}
 
-	@Then("the hours budgeted is changed by {int} for the current activity")
-	public void the_hours_budgeted_is_changed_by_for_the_current_activity(Integer hours) {
-		assertThat(actHelper.getActivity().hoursHasChanged(hours), is(true));
+	@When("the user changes hours budgeted to {int} for the current activity")
+	public void the_user_changes_hours_budgeted_to_for_the_current_activity(Integer newHours) {
+		actHelper.getActivity().setHoursBudgeted(newHours);
 	}
+
+	@Then("the hours budgeted is {int} for the current activity")
+	public void the_hours_budgeted_is_for_the_current_activity(Integer hoursBudgetted) {
+		assertThat(actHelper.getActivity().getHoursBudgeted() == hoursBudgetted, is(true));
+	}
+	
+	
+
+	
+	
 
 }

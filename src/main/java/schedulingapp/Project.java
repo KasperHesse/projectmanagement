@@ -50,26 +50,26 @@ public class Project {
 
 	}
 	
-	/**
-	 * Creates a new Project with a given name. startDate, stopDate and projectManager are set to null
-	 * @param projectName the name of the project
-	 * @param schedulingApp the SchedulingApp to manage this project in
-	 */
-	public Project(String projectName, SchedulingApp schedulingApp) {
-		this(projectName, null, null, null, schedulingApp);
-	}
-	
-
-	
-	/**
-	 * Creates a new Project with a given name and projectManager. startDate and stopDate are set to null
-	 * @param projectName the name of the project
-	 * @param projectManager the developer who is to be manager of the project
-	 * @param schedulingApp the SchedulingApp to manage this project in
-	 */
-	public Project(String projectName, Developer projectManager, SchedulingApp schedulingApp) {
-		this(projectName, null, null, projectManager, schedulingApp);
-	}
+//	/**
+//	 * Creates a new Project with a given name. startDate, stopDate and projectManager are set to null
+//	 * @param projectName the name of the project
+//	 * @param schedulingApp the SchedulingApp to manage this project in
+//	 */
+//	public Project(String projectName, SchedulingApp schedulingApp) {
+//		this(projectName, null, null, null, schedulingApp);
+//	}
+//	
+//
+//	
+//	/**
+//	 * Creates a new Project with a given name and projectManager. startDate and stopDate are set to null
+//	 * @param projectName the name of the project
+//	 * @param projectManager the developer who is to be manager of the project
+//	 * @param schedulingApp the SchedulingApp to manage this project in
+//	 */
+//	public Project(String projectName, Developer projectManager, SchedulingApp schedulingApp) {
+//		this(projectName, null, null, projectManager, schedulingApp);
+//	}
 		
 	/**
 	 * Adds a developer to this project
@@ -116,12 +116,12 @@ public class Project {
 		}
 	}
 	
-	/**
-	 * Returns the TimeSheet for this project
-	 */
-	public TimeSheet getTimeReport() {
-		return null;
-	}
+//	/**
+//	 * Returns the TimeSheet for this project
+//	 */
+//	public TimeSheet getTimeReport() {
+//		return null;
+//	}
 	
 	
 	/**
@@ -147,10 +147,10 @@ public class Project {
 	 * @return True if this developer is a part of the current project, false otherwise
 	 */
 	public boolean developerExistsInProject(Developer dev){
-		return activityList.stream().anyMatch(a -> a.getDevelopers().contains(dev));
+		return developerList.stream().anyMatch(d -> d.equals(dev));
 	}
 	
-	
+//	activityList.stream().anyMatch(a -> a.getDevelopers().contains(dev));
 	/**
 	 * Checks whether the given developer is the project manager of this project
 	 * @param dev The developer in question
@@ -348,8 +348,6 @@ public class Project {
 	 */
 	public void changeStopDate(int weeks) {
 		stopDatePast = stopDate;
-				
-		assert weeks == (int)weeks : "PreCondition changeStopDate";
 		
 		if (stopDate != null) {
 			stopDate.add(Calendar.WEEK_OF_YEAR, weeks);
@@ -369,8 +367,6 @@ public class Project {
 			stopDate = stopDatePast;
 			throw new IllegalArgumentException("The stopdate cannot be before the creationdate");
 		}
-		
-		assert stopDate.equals(getStopDate()) : "PostCondition changeStopDate";
 	}
 
 	/**
@@ -449,6 +445,7 @@ public class Project {
 
 		this.creationDate = creationCal;
 	}
+	
 	List<Activity> getActivityList() {
 		return this.activityList;
 	}
