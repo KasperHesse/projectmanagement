@@ -71,7 +71,5 @@ public class Utils {
 		}
 		return token;
 	}
-	
-	
 
 }

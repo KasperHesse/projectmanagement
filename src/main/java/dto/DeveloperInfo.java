@@ -37,7 +37,7 @@ public class DeveloperInfo implements DTOinterface {
 		return this.initials;
 	}
 	
-	public boolean getAssistFlag() {
+	public boolean getAvailableFlag() {
 		return this.canAssist;
 	}
 	

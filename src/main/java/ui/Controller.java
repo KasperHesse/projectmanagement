@@ -3,6 +3,8 @@ package ui;
 import schedulingapp.*;
 import static ui.ControllerState.*;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.beans.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -35,6 +37,7 @@ public class Controller implements PropertyChangeListener {
 	
 	private final String[] MAINOPTIONS = new String[] {"Logout", 
 			"Show projects", 
+			"New project",
 			"View free developers"
 	};
 	
@@ -45,7 +48,8 @@ public class Controller implements PropertyChangeListener {
 	private final String[] MANAGEPROJECTOPTIONS = new String[] {"Add developer (PM)",
 			"Remove developer (PM)",
 			"Change/assign project manager",
-			"Get time report (PM)"
+			"Get time report (PM)",
+			"Add new activity (PM)"
 	};
 	
 	private final String[] ACTIVITYOPTIONS = new String[] {"Register time", 
@@ -99,10 +103,22 @@ public class Controller implements PropertyChangeListener {
 	 */
 	private void mainLoop() throws Exception {
 		Scanner consoleParser = new Scanner(System.in);
+		Pattern regex = Pattern.compile("(?:[^\\s,\"]+|\"[^\"]*\")+"); //Split at commas + spaces not in quotations. From https://stackoverflow.com/questions/16261635/
+		Matcher matcher = regex.matcher("");
+		ArrayList<String> matches = new ArrayList<>();
 		while(true) {
 			System.out.print("> ");
-			String[] tokens = consoleParser.nextLine().split(" ");
 			
+			String line = consoleParser.nextLine();
+//			matcher = regex.matcher(line);
+			matcher.reset(line);
+			matches.clear();
+
+			while(matcher.find()) {
+				matches.add(matcher.group());
+			}
+			String[] tokens = matches.toArray(new String[0]);
+						
 			if(state == sLOGIN) { //Must run before the if-statement below
 				processInputLogin(tokens);
 				continue;
@@ -124,6 +140,7 @@ public class Controller implements PropertyChangeListener {
 			case sMAIN: processInputMain(tokens); break;
 			case sSELECTPROJECT: processInputSelectProject(tokens); break;
 			case sPROJECT: processInputProject(tokens); break;
+			case sNEWPROJECT: processInputNewProject(tokens); break;
 			case sSELECTACTIVITY: processInputSelectActivity(tokens); break;
 			case sACTIVITY: processInputActivity(tokens); break;
 			case sREGISTERTIME: processInputRegisterTime(tokens); break;
@@ -136,11 +153,12 @@ public class Controller implements PropertyChangeListener {
 			case sREMOVEDEVPROJ: processInputRemoveDevProject(tokens); break;
 			case sMANAGEPROJECT: processInputManageProject(tokens); break;
 			case sCHANGEPROJMAN: processInputChangeProjMan(tokens); break;
+			case sNEWACTIVITY: processInputNewActivity(tokens); break;
 			case sADDDEVACT: processInputAddDevActivity(tokens); break;
 			case sREMOVEDEVACT: processInputRemoveDevActivity(tokens); break;
 			case sCHANGESTARTWEEK: processInputChangeStartWeek(tokens); break;
 			case sCHANGESTOPWEEK: processInputChangeStopWeek(tokens); break;
-			default: throw new Exception("An unknown error occured");
+			default: consoleParser.close(); throw new Exception("An unknown error occured");
 			}
 		}
 	}
@@ -175,15 +193,20 @@ public class Controller implements PropertyChangeListener {
 			view.showOptions(projectList);
 			break;
 		case sPROJECT:
+			view.showMessage(activeProject.getInfoString());
 			view.showOptions(PROJECTOPTIONS);
 			break;
 		case sMANAGEPROJECT:
 			view.showOptions(MANAGEPROJECTOPTIONS);
 			break;
+		case sNEWPROJECT:
+			view.showMessage(I_NEW_PROJECT);
+			break;
 		case sSELECTACTIVITY:
 			view.showOptions(activityList);
 			break;
 		case sACTIVITY:
+			view.showMessage(activeActivity.getInfoString());
 			view.showOptions(ACTIVITYOPTIONS);
 			break;
 		case sREGISTERTIME:
@@ -233,6 +256,9 @@ public class Controller implements PropertyChangeListener {
 			}
 			view.showMessage(I_REMOVE_DEV_ACT);
 			view.showOptions(developerList);
+			break;
+		case sNEWACTIVITY:
+			view.showMessage(I_NEW_ACTIVITY);
 			break;
 		case sCHANGESTARTWEEK:
 			view.showMessage(I_CHANGE_START_WEEK);
@@ -313,6 +339,9 @@ public class Controller implements PropertyChangeListener {
 			setState(sSELECTPROJECT);
 			break;
 		case 2:
+			setState(sNEWPROJECT);
+			break;
+		case 3:
 			setState(sVIEWDEVS);
 			break;
 
@@ -344,12 +373,107 @@ public class Controller implements PropertyChangeListener {
 		int token = validateInteger(tokens, PROJECTOPTIONS.length - 1);
 		switch(token) {
 		case 0:
+			if(activityList.size() == 0) {
+				view.showError(E_NO_ACTIVITIES);
+				break;
+			}
 			setState(sSELECTACTIVITY);
 			break;
 		case 1:
 			setState(sMANAGEPROJECT);
 			break;
 		}
+	}
+	
+	/**
+	 * Processes input when the ADDPROJECT state is active
+	 * @param tokens The input tokens obtained from the command line.
+	 */
+	private void processInputNewProject(String[] tokens) {
+		//Parse string for tokens, find the token after "=" and use as the key
+		String name = "";
+		String start = "";
+		String stop = "";
+		String pm = "";
+		for(String token : tokens) {
+			try {
+				if(token.contains("name") && name.equals("")) {
+					name = findValueAfterKey(token, "name");
+				}
+				if(token.contains("start") && start.equals("")) {
+					start = findValueAfterKey(token, "start");
+				}
+				if(token.contains("stop") && stop.equals("")) {
+					stop = findValueAfterKey(token, "stop");
+				}
+				if(token.contains("pm") && pm.equals("")) {
+					pm = findValueAfterKey(token, "pm");
+				}
+			} catch (IllegalArgumentException e) { //One of the token strings did not match the required format
+				view.showError("Error on '" + token + "'. " + E_KEYVAL_BADFORMAT);
+				return;
+			} catch (NoSuchElementException e) { //Key was not present in the string
+				view.showError("Error on '" + token + "'. " + E_KEY_NOT_PRESENT);
+			}
+		}
+		
+		if(name.equals("")) {
+			view.showError(E_NEW_PROJ_MUST_HAVE_NAME);
+			return;
+		}
+		
+		//Check if the PM (if given) is valid
+		DeveloperInfo projMan = null;
+		if(!pm.equals("")) {
+			projMan = model.getDeveloperWithInitials(pm);
+			if(projMan == null || !projMan.getAvailableFlag())  {
+				view.showError(E_DEV_MAX_PROJECTS);
+				return;
+			}
+		}
+		
+		//Check if start/stop dates are valid
+		Calendar startDate = null;
+		Calendar stopDate = null;
+		if(!start.equals("")) {
+			startDate = Utils.validateDate(start);
+			if(startDate == null) {
+				view.showError("Error on start date. " + E_INVALID_DATE);
+			}
+		}
+		if(!stop.equals("")) {
+			stopDate = Utils.validateDate(stop);
+			if(stopDate == null) {
+				view.showError("Error on stop date. " + E_INVALID_DATE);
+			}
+		}
+		if(startDate != null && stopDate != null && !startDate.before(stopDate)) {
+			view.showError(E_DATES_INVALID);
+			return;
+		}
+		try {
+			model.addNewProject(name, startDate, stopDate, projMan);
+			goBack();
+		} catch (Exception e) {
+			view.showError(e.getMessage());
+		}
+	}
+	
+	/**
+	 * Searches a string of the type {@code <key>=<value>} for a given key, and returns the value following that key
+	 * @param str The string to search in
+	 * @param key The key to search for in the string
+	 * @return The value found after that key, if the key was present
+	 * @throws IllegalArgumentException If the string is not of the type {@code <key>=<value>}
+	 */
+	private String findValueAfterKey(String str, String key) throws NoSuchElementException, IllegalArgumentException {
+		String str2 = str.replace("\"", "");
+		String matchString = String.format("%s=.+", key);
+		if(!str2.matches(matchString)) { //key, followed by =, followed by anything
+			throw new IllegalArgumentException("Input string '" + str + "' was not parseable");
+		}
+		String valueStr = str2.substring(str2.indexOf("=")+1);
+		return valueStr;	
 	}
 	
 	/**
@@ -444,7 +568,11 @@ public class Controller implements PropertyChangeListener {
 			view.showError(ControllerMessages.E_INVALID_HOURS);
 			return;
 		}
-		model.registerTimeOnActivity(date, hours);
+		try {
+			model.registerTimeOnActivity(date, hours);
+		} catch (Exception e) {
+			view.showError(e.getMessage());
+		}
 	}
 	
 	/**
@@ -632,6 +760,11 @@ public class Controller implements PropertyChangeListener {
 			view.showError("Not yet implemented");
 			goBack();
 			break;
+		case 4:
+			if(!ensureUserIsPM()) {
+				break;
+			}
+			setState(sNEWACTIVITY);
 		}
 	}
 	
@@ -678,6 +811,76 @@ public class Controller implements PropertyChangeListener {
 		}
 	}
 	
+	private void processInputNewActivity(String[] tokens) {
+		//Parse string for tokens, find the token after "=" and use as the key
+		String name = "";
+		String start = "";
+		String stop = "";
+		String hours = "";
+		for(String token : tokens) {
+			try {
+				if(token.contains("name") && name.equals("")) {
+					name = findValueAfterKey(token, "name");
+				}
+				if(token.contains("start") && start.equals("")) {
+					start = findValueAfterKey(token, "start");
+				}
+				if(token.contains("stop") && stop.equals("")) {
+					stop = findValueAfterKey(token, "stop");
+				}
+				if(token.contains("hours") && hours.equals("")) {
+					hours = findValueAfterKey(token, "hours");
+				}
+			} catch (IllegalArgumentException e) { //One of the token strings did not match the required format
+				view.showError("Error on '" + token + "'. " + E_KEYVAL_BADFORMAT);
+				return;
+			} catch (NoSuchElementException e) { //Key was not present in the string
+				view.showError("Error on '" + token + "'. " + E_KEY_NOT_PRESENT);
+			}
+		}
+		
+		if(name.equals("")) {
+			view.showError(E_NEW_PROJ_MUST_HAVE_NAME);
+			return;
+		}
+		
+		//Check if the PM (if given) is valid
+		Integer hoursToBudget = null;
+		if(!hours.equals("")) {
+			hoursToBudget = Utils.validateInteger(hours, Integer.MAX_VALUE);
+			if(hoursToBudget == Integer.MIN_VALUE)  {
+				view.showError(E_INVALID_BUDGET);
+				return;
+			}
+		}
+		
+		//Check if start/stop dates are valid
+		Calendar startDate = null;
+		Calendar stopDate = null;
+		if(!start.equals("")) {
+			startDate = Utils.validateDate(start);
+			if(startDate == null) {
+				view.showError("Error on start date. " + E_INVALID_DATE);
+			}
+		}
+		if(!stop.equals("")) {
+			stopDate = Utils.validateDate(stop);
+			if(stopDate == null) {
+				view.showError("Error on stop date. " + E_INVALID_DATE);
+			}
+		}
+		if(startDate != null && stopDate != null && !startDate.before(stopDate)) {
+			view.showError(E_DATES_INVALID);
+			return;
+		}
+		try {
+			model.addNewActivity(name, startDate, stopDate, hoursToBudget);
+			goBack();
+		} catch (Exception e) {
+			view.showError(e.getMessage());
+		}
+	}
+	
 	private void processInputGetTimeReport(String[] tokens) {
 		
 	}
@@ -702,7 +905,6 @@ public class Controller implements PropertyChangeListener {
 	private boolean projectHasPM() {
 		return model.getProjectManager() != null;
 	}
-	
 	
 	
 	/**
@@ -763,6 +965,7 @@ public class Controller implements PropertyChangeListener {
 		
 		} else if (evt.getPropertyName().equals("budget")) { //Hours budgetted
 			view.showMessage(String.format("This activity now has %d hours budgetted", (int) evt.getNewValue()));
+			activeActivity = model.getActiveActivity();
 			
 		} else if (evt.getPropertyName().equals("devlist")) { //Developer list changed
 			if(evt.getNewValue() != null) {
@@ -774,6 +977,7 @@ public class Controller implements PropertyChangeListener {
 			
 		} else if (evt.getPropertyName().equals("projman")) { //Project manager changed
 			view.showMessage(String.format("The new project manager of this project is %s", ((DeveloperInfo) evt.getNewValue()).getName()));
+			activeProject = model.getActiveProject();
 		
 		} else if (evt.getPropertyName().equals("startdate")) { //Activity start date changed
 			DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
@@ -781,11 +985,20 @@ public class Controller implements PropertyChangeListener {
 			String date = formatter.format(((Calendar) evt.getNewValue()).getTime());
 			view.showMessage(String.format("Activity start date has been changed to %s", date));
 			activityList = model.getActiveProjectActivities();
+			activeActivity = model.getActiveActivity();
 		} else if (evt.getPropertyName().equals("stopdate")) { //Activity stop date changed
 			DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 			formatter.setLenient(false);
 			String date = formatter.format(((Calendar) evt.getNewValue()).getTime());
 			view.showMessage(String.format("Activity stop date has been changed to %s", date));
+			activityList = model.getActiveProjectActivities();
+			activeActivity = model.getActiveActivity();
+		
+		} else if (evt.getPropertyName().equals("projlist")) { //Project list has been updated / new project
+			view.showMessage(String.format("Project '%s' was added to the system", (ProjectInfo) evt.getNewValue()));
+			
+		} else if (evt.getPropertyName().equals("actlist")) { //Activity was added under current project
+			view.showMessage(String.format("Activity '%s' was added under the current project", ((ActivityInfo) evt.getNewValue()).getName()));
 			activityList = model.getActiveProjectActivities();
 		}
 	}

@@ -222,7 +222,7 @@ public class Project {
 	 */
 	public void createActivity(String name, Calendar startDate, Calendar stopDate) {
 		if(this.hasActivityNamed(name)) {
-			throw new IllegalArgumentException("Activities must have a unique name");
+			throw new IllegalArgumentException("An activity with this name already exists. Activities must have a unique name");
 		} else if(this.projectManager == null) {
 			throw new IllegalArgumentException("Developers cannot create new activities");
 		} else if(!schedulingApp.getCurrentUser().equals(this.projectManager)) {
@@ -297,16 +297,24 @@ public class Project {
 
 
 	/**
-	 * Returns a *copy* of the start date for this activity. Modifications on that copy will not modify the start date of the activity
+	 * Returns a *copy* of the start date for this activity. Modifications on that copy will not modify the start date of the activity.
+	 * If no start date is set, returns null
 	 */
 	public Calendar getStartDate() {
+		if(this.startDate == null) {
+			return null;
+		}
 		return (Calendar) this.startDate.clone();
 	}
 
-		/**
-	 * Returns a *copy* of the end date for this activity. Modifications on that copy will not modify the end date of the activity
+	/**
+	 * Returns a *copy* of the end date for this activity. Modifications on that copy will not modify the end date of the activity.
+	 * If no start date is set, returns null
 	 */
 	public Calendar getStopDate() {
+		if(this.stopDate == null) {
+			return null;
+		}
 		return (Calendar) this.stopDate.clone();
 	}
 	

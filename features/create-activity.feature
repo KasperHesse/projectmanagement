@@ -10,7 +10,7 @@ Scenario: User successfully creates an activity
 Scenario: A user cannot create an activity without a project to place it under
    Given that the user with initials "abcd" is the project manager of project "xyz"
    When they create an activity named "research" under the project "zyx"
-   Then the error message "This project does not exist" is shown
+   Then the error message "No project exists with the given name" is shown
 
 Scenario: User creates an activity with predefined start/stop date
    Given that the user with initials "abcd" is the project manager of project "xyz"
@@ -21,7 +21,8 @@ Scenario: User cannot create activities with duplicate names
    Given that the user with initials "abcd" is the project manager of project "xyz"
    And that an activity named "research" exists under the current project
    When they create an activity named "research" under the current project
-   Then the error message "Activities must have a unique name" is shown
+   Then the error message "An activity with this name already exists. Activities must have a unique name" is shown
+# and this one
 
 Scenario: A developer cannot create new activities
 	Given that the user with initials "abcd" is a developer of project "xyz"
