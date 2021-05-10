@@ -32,9 +32,6 @@ public class MainState implements ControllerState {
 		case 3:
 			controller.setState(VIEWDEVS);
 			break;
-		default:
-			view.showError(ControllerMessages.E_INVALID_INPUT);
-			break;
 		}
 	}
 

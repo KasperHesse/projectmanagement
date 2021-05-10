@@ -76,8 +76,12 @@ public class Controller implements PropertyChangeListener {
 		while(true) {
 			System.out.print("> ");
 			String line = consoleParser.nextLine();
+			if(line.equals("")) {
+				continue;
+			}
 			matcher.reset(line);
 			matches.clear();
+			
 
 			while(matcher.find()) {
 				matches.add(matcher.group());

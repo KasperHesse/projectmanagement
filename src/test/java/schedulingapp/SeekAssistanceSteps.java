@@ -98,7 +98,7 @@ public class SeekAssistanceSteps {
 		
 		proj.addDeveloper(dev2);
 		
-		for (int i = 0; i < 11; i++) {
+		for (int i = 0; i < 13; i++) {
 			actHelper.getActivity(proj, "" + i).addDeveloper(dev2);
 		}
 		

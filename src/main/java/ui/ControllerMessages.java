@@ -88,5 +88,7 @@ public class ControllerMessages {
 	public static final String I_NEW_ACTIVITY = "To create a new activity, enter any of the following\n"
 			+ "name=<Project Name> start=<Start Date> stop=<Stop Date hours=<Hours to be budgeted>. Only the activity name is mandatory";
 	
+	public static final String I_VIEW_DEVS_NOOPT = "You cannot do anything in this window. To return, type \"back\" or \"home\"";
+	
 
 }

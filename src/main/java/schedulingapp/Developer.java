@@ -37,14 +37,12 @@ public class Developer {
 	}
 	
 	/**
-	 * Checks if the developer is available, defined as working on less than 10 projects
+	 * Checks if the developer is available, defined as working on less than 10 activites
 	 * @return true, if developer is available
 	 * @author Emil Pontoppidan, s204441
 	 */
 	public boolean isAvailable() {
-
-		if (activityList.size() <= 10) {
-
+		if (activityList.size() <= 12) { //12 since they are always associated with two activities from vacation and courses
 			return true;
 		}
 		return false;
