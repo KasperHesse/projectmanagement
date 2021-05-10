@@ -1,6 +1,9 @@
 package schedulingapp;
 
 import java.text.ParseException;
+
+import static dto.EventTypes.*;
+
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.text.SimpleDateFormat;
@@ -260,13 +263,13 @@ public class SchedulingApp implements ControllerInterface {
 	@Override
 	public void setActiveProject(ProjectInfo projInfo) throws NoSuchElementException {
 		activeProject = getProjectByNumber(projInfo.getProjectNumber());
-		support.firePropertyChange("project", null, projInfo);
+		support.firePropertyChange(PROJECT, null, projInfo);
 	}
 	
 	@Override
 	public void setActiveActivity(ActivityInfo actInfo) throws NoSuchElementException {
 		this.activeActivity = activeProject.getActivityByName(actInfo.getName());
-		support.firePropertyChange("activity", null, actInfo);
+		support.firePropertyChange(ACTIVITY, null, actInfo);
 	}
 	
 	@Override
@@ -276,13 +279,13 @@ public class SchedulingApp implements ControllerInterface {
 			return false;
 		}
 		this.setCurrentUser(dev);
-		support.firePropertyChange("user", null, new DeveloperInfo(currentUser));
+		support.firePropertyChange(USER, null, new DeveloperInfo(currentUser));
 		return true;
 	}
 	
 	@Override
 	public void logout() {
-		support.firePropertyChange("user", currentUser, null);
+		support.firePropertyChange(USER, currentUser, null);
 		this.setCurrentUser(null);
 	}
 
@@ -312,14 +315,7 @@ public class SchedulingApp implements ControllerInterface {
 	public void createProject(String name) {
 		createProject(name, null);
 	}
-	
-//	@Override
-//	public void setProjectManager(ProjectInfo projInfo, DeveloperInfo devInfo) {
-//		Project p = getProjectByName(projInfo.getName());
-//		Developer d = getDeveloperByInitials(devInfo.getInitials());
-//		p.setProjectManager(d);
-//	}
-	
+		
 	@Override 
 	public ActivityInfo createActivity(ProjectInfo projInfo, String name) {
 		Project p = getProjectByNumber(projInfo.getProjectNumber());
@@ -341,14 +337,14 @@ public class SchedulingApp implements ControllerInterface {
 	@Override
 	public void registerTimeOnActivity(Calendar date, double hours) {
 		activeActivity.registerTime(currentUser, (int) hours, date);
-		support.firePropertyChange("time", null, hours);
+		support.firePropertyChange(TIME, null, hours);
 	}
 	
 	@Override
 	public void editTimeOnActivity(Calendar date, double hours) {
 		double oldHours = activeActivity.viewTime(date, currentUser);
 		activeActivity.editTime(currentUser, hours, date);
-		support.firePropertyChange("time", oldHours, hours + oldHours);
+		support.firePropertyChange(TIME, oldHours, hours + oldHours);
 	}
 	
 	@Override
@@ -377,7 +373,7 @@ public class SchedulingApp implements ControllerInterface {
 	public void addAssistantDeveloper(DeveloperInfo devInfo) {
 		Developer dev = getDeveloperByInitials(devInfo.getInitials());
 		activeActivity.askForHelp(dev);
-		support.firePropertyChange("asstdev", null, devInfo);
+		support.firePropertyChange(ASSTDEV, null, devInfo);
 	}
 
 	@Override
@@ -394,7 +390,7 @@ public class SchedulingApp implements ControllerInterface {
 	public void removeAssistantDeveloper(DeveloperInfo devInfo) {
 		Developer dev = getDeveloperByInitials(devInfo.getInitials());
 		activeActivity.removeAssistingDeveloper(dev);
-		support.firePropertyChange("asstdev", devInfo, null);
+		support.firePropertyChange(ASSTDEV, devInfo, null);
 	}
 
 	@Override
@@ -417,7 +413,7 @@ public class SchedulingApp implements ControllerInterface {
 	@Override
 	public void setActivityTimeBudget(int hours) {
 		activeActivity.setHoursBudgeted(hours);
-		support.firePropertyChange("budget", null, hours);
+		support.firePropertyChange(BUDGET, null, hours);
 	}
 
 	@Override
@@ -429,14 +425,14 @@ public class SchedulingApp implements ControllerInterface {
 	public void addDeveloperToProject(DeveloperInfo devInfo) {
 		Developer dev = getDeveloperByInitials(devInfo.getInitials());
 		activeProject.addDeveloper(dev);
-		support.firePropertyChange("devlist", null, devInfo);
+		support.firePropertyChange(DEVLIST, null, devInfo);
 	}
 
 	@Override
 	public void removeDeveloperFromProject(DeveloperInfo devInfo) {
 		Developer dev = getDeveloperByInitials(devInfo.getInitials());
 		activeProject.removeDeveloper(dev);
-		support.firePropertyChange("devlist", devInfo, null);
+		support.firePropertyChange(DEVLIST, devInfo, null);
 	}
 
 	@Override
@@ -444,7 +440,7 @@ public class SchedulingApp implements ControllerInterface {
 		Developer dev = getDeveloperByInitials(devInfo.getInitials());
 		DeveloperInfo oldPM = new DeveloperInfo(activeProject.getProjectManager());
 		activeProject.setProjectManager(dev);
-		support.firePropertyChange("projman", oldPM, devInfo);
+		support.firePropertyChange(PROJMAN, oldPM, devInfo);
 	}
 
 	@Override
@@ -465,7 +461,7 @@ public class SchedulingApp implements ControllerInterface {
 	public void addDeveloperToActivity(DeveloperInfo devInfo) {
 		Developer dev = getDeveloperByInitials(devInfo.getInitials());
 		activeActivity.addDeveloper(dev);
-		support.firePropertyChange("devlist", null, devInfo);
+		support.firePropertyChange(DEVLIST, null, devInfo);
 		
 	}
 
@@ -473,7 +469,7 @@ public class SchedulingApp implements ControllerInterface {
 	public void removeDeveloperFromActivity(DeveloperInfo devInfo) {
 		Developer dev = getDeveloperByInitials(devInfo.getInitials());
 		activeActivity.removeDeveloper(dev);
-		support.firePropertyChange("devlist", devInfo, null);
+		support.firePropertyChange(DEVLIST, devInfo, null);
 	}
 	
 	@Override
@@ -484,13 +480,13 @@ public class SchedulingApp implements ControllerInterface {
 	@Override
 	public void setActivityStartDate(Calendar date) {
 		activeActivity.setStartDate(date);
-		support.firePropertyChange("startdate", null, date);
+		support.firePropertyChange(STARTDATE, null, date);
 	}
 	
 	@Override
 	public void setActivityStopDate(Calendar date) {
 		activeActivity.setStopDate(date);
-		support.firePropertyChange("stopdate", null, date);
+		support.firePropertyChange(STOPDATE, null, date);
 		
 	}
 
@@ -501,7 +497,7 @@ public class SchedulingApp implements ControllerInterface {
 			pm = getDeveloperByInitials(projMan.getInitials());
 		}
 		Project p = createProject(name, startDate, stopDate, pm);
-		support.firePropertyChange("projlist", null, new ProjectInfo(p));
+		support.firePropertyChange(PROJECTLIST, null, new ProjectInfo(p));
 	}
 
 	@Override
@@ -509,7 +505,7 @@ public class SchedulingApp implements ControllerInterface {
 		activeProject.createActivity(name, startDate, stopDate);
 		Activity a = activeProject.getActivityByName(name);
 		a.setHoursBudgeted(hoursToBudget);
-		support.firePropertyChange("actlist", null, new ActivityInfo(a));
+		support.firePropertyChange(ACTIVITYLIST, null, new ActivityInfo(a));
 	}
 
 	@Override

@@ -7,6 +7,8 @@ import java.util.regex.Pattern;
 import java.beans.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+
+import static dto.EventTypes.*;
 import static ui.ControllerMessages.*;
 import static ui.StateListing.*;
 
@@ -53,8 +55,6 @@ public class Controller implements PropertyChangeListener {
 	public static void main(String[] args) {
 		new Controller();
 	}
-	
-	//Move this to the scheduling app for easier data management
 	/**
 	 * Performs the initial setup of the system, such as generating developers and projects
 	 */
@@ -167,35 +167,35 @@ public class Controller implements PropertyChangeListener {
 	
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
-		if(evt.getPropertyName().equals("user")) { //User has changed
+		if(evt.getPropertyName().equals(USER)) { //User has changed
 			userChangedEvent(evt);
 			
-		} else if (evt.getPropertyName().equals("project")) { //Active project has changed
+		} else if (evt.getPropertyName().equals(EventTypes.PROJECT)) { //Active project has changed
 			projectChangedEvent(evt);
 			
-		} else if(evt.getPropertyName().equals("activity")) { //Active activity has changed
+		} else if(evt.getPropertyName().equals(EventTypes.ACTIVITY)) { //Active activity has changed
 			activeActivity = (ActivityInfo) evt.getNewValue();
 			view.showMessage(String.format("Selected activity \"%s\"", activeActivity.getName()));
 			
-		} else if(evt.getPropertyName().equals("time")) { //Time registration changed
+		} else if(evt.getPropertyName().equals(TIME)) { //Time registration changed
 			if((Double) evt.getOldValue() == null) {
 				view.showMessage(String.format("Registered %.1f hours on \"%s\"", (Double) evt.getNewValue(), activeActivity));
 			} else {
 				view.showMessage(String.format("Edited hours on \"%s\". Previous registration was %.1f, new registration is %.1f", activeActivity, (Double) evt.getOldValue(), (Double) evt.getNewValue()));
 			}
 	
-		} else if(evt.getPropertyName().equals("asstdev")) { //Assistant developer changed
+		} else if(evt.getPropertyName().equals(ASSTDEV)) { //Assistant developer changed
 			if(evt.getNewValue() != null) {
 				view.showMessage(String.format("%s was added to the activity as an assistant developer", ((DeveloperInfo) evt.getNewValue()).getName()));
 			} else {
 				view.showMessage(String.format("%s was removed as an assistant developer", ((DeveloperInfo) evt.getOldValue()).getName()));
 			}
 		
-		} else if (evt.getPropertyName().equals("budget")) { //Hours budgetted
+		} else if (evt.getPropertyName().equals(BUDGET)) { //Hours budgetted
 			view.showMessage(String.format("This activity now has %d hours budgetted", (int) evt.getNewValue()));
 			activeActivity = model.getActiveActivity();
 			
-		} else if (evt.getPropertyName().equals("devlist")) { //Developer list changed
+		} else if (evt.getPropertyName().equals(DEVLIST)) { //Developer list changed
 			if(evt.getNewValue() != null) {
 				view.showMessage(String.format("%s has been added as a developer", ((DeveloperInfo) evt.getNewValue()).getName()));
 			} else {
@@ -203,18 +203,19 @@ public class Controller implements PropertyChangeListener {
 			}
 			developerList = model.getProjectDeveloperList();
 			
-		} else if (evt.getPropertyName().equals("projman")) { //Project manager changed
+		} else if (evt.getPropertyName().equals(PROJMAN)) { //Project manager changed
 			view.showMessage(String.format("The new project manager of this project is %s", ((DeveloperInfo) evt.getNewValue()).getName()));
 			activeProject = model.getActiveProject();
 		
-		} else if (evt.getPropertyName().equals("startdate")) { //Activity start date changed
+		} else if (evt.getPropertyName().equals(STARTDATE)) { //Activity start date changed
 			DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 			formatter.setLenient(false);
 			String date = formatter.format(((Calendar) evt.getNewValue()).getTime());
 			view.showMessage(String.format("Activity start date has been changed to %s", date));
 			activityList = model.getActiveProjectActivities();
 			activeActivity = model.getActiveActivity();
-		} else if (evt.getPropertyName().equals("stopdate")) { //Activity stop date changed
+			
+		} else if (evt.getPropertyName().equals(STOPDATE)) { //Activity stop date changed
 			DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 			formatter.setLenient(false);
 			String date = formatter.format(((Calendar) evt.getNewValue()).getTime());
@@ -222,10 +223,10 @@ public class Controller implements PropertyChangeListener {
 			activityList = model.getActiveProjectActivities();
 			activeActivity = model.getActiveActivity();
 		
-		} else if (evt.getPropertyName().equals("projlist")) { //Project list has been updated / new project
+		} else if (evt.getPropertyName().equals(PROJECTLIST)) { //Project list has been updated / new project
 			view.showMessage(String.format("Project '%s' was added to the system", (ProjectInfo) evt.getNewValue()));
 			
-		} else if (evt.getPropertyName().equals("actlist")) { //Activity was added under current project
+		} else if (evt.getPropertyName().equals(ACTIVITYLIST)) { //Activity was added under current project
 			view.showMessage(String.format("Activity '%s' was added under the current project", ((ActivityInfo) evt.getNewValue()).getName()));
 			activityList = model.getActiveProjectActivities();
 		}
