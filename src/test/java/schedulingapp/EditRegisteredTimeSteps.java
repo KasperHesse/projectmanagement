@@ -19,6 +19,11 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.hamcrest.CoreMatchers.*;
 
+/**
+ * 
+ * @author Peter Ejlev, s183718
+ *
+ */
 public class EditRegisteredTimeSteps {
 
 	SchedulingApp schedulingApp;
@@ -82,7 +87,6 @@ public class EditRegisteredTimeSteps {
 		Calendar timeRegisterDate = Calendar.getInstance();
 		timeRegisterDate.setTime(formatter.parse(date));
 		
-//		act.registerTime(dev, hours, timeRegisterDate);
 		schedulingApp.setCurrentUser(dev);
 		try {
 			act.editTime(dev, hours, timeRegisterDate);
@@ -108,13 +112,6 @@ public class EditRegisteredTimeSteps {
 		
 		assertEquals(int1+hours, int2, 0.1);	
 	}
-	
-//	@Given("{string} user is not associated with the activity he wants to edit time usage on")
-//	public void user_is_not_associated_with_the_activity_he_wants_to_edit_time_usage_on(String initials) {
-//		Project proj = projHelper.getProject("project");
-//		Activity act = actHelper.getActivity(proj,"activity");
-//		assertFalse(act.hasDeveloperWithInitials(initials));
-//	}
 	
 	@Given("the end date is set to {string} afterwards")
 	public void the_end_date_is_set_to_afterwards(String endDate) throws ParseException {
@@ -148,8 +145,7 @@ public class EditRegisteredTimeSteps {
 		
 		Calendar timeRegisterDate = Calendar.getInstance();
 		timeRegisterDate.setTime(formatter.parse(date));
-		
-//		act.registerTime(dev, hours, timeRegisterDate);
+
 		schedulingApp.setCurrentUser(loggedUser);
 		try {
 			act.editTime(dev, hours, timeRegisterDate);

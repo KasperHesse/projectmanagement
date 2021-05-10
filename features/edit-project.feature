@@ -46,13 +46,6 @@ Scenario: User removes a developer from the project
 	When the user removes the developer "EPR" from the current project
 	Then the developer "EPR" is removed from the current project
 
-
-#Scenario: User changes hours budgeted for the project
-#	Given that the user with initials "abcd" is the project manager of project "xyz"
-#	When the user changes hours budgeted by 100000 for the current project
-#	Then the hours budgeted is changed by 100000 for the current project
-
-
 Scenario: User changes start time which is null
 	Given that the user with initials "abcd" is the project manager of project "xyz"
 	Given the project "xyz" has no startdate 

@@ -12,6 +12,11 @@ import java.util.NoSuchElementException;
 
 import io.cucumber.java.en.*;
 
+/**
+ * 
+ * @author Kasper Hesse, s183735
+ *
+ */
 public class CreateActivitySteps {
 	
 	SchedulingApp schedulingApp;

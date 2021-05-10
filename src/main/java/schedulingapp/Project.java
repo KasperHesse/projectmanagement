@@ -27,6 +27,7 @@ public class Project {
 	 * @param stopDate the stop date of the project, as Calendar object
 	 * @param projectManager the developer who is to be project manager of the project
 	 * @param schedulingApp the SchedulingApp to manage this project in
+	 * @author Emil Mortensen, s204483
 	 */
 	public Project(String projectName, Calendar startDate, Calendar stopDate, Developer projectManager, SchedulingApp schedulingApp) {
 		this.projectName = projectName;
@@ -50,30 +51,11 @@ public class Project {
 
 	}
 	
-//	/**
-//	 * Creates a new Project with a given name. startDate, stopDate and projectManager are set to null
-//	 * @param projectName the name of the project
-//	 * @param schedulingApp the SchedulingApp to manage this project in
-//	 */
-//	public Project(String projectName, SchedulingApp schedulingApp) {
-//		this(projectName, null, null, null, schedulingApp);
-//	}
-//	
-//
-//	
-//	/**
-//	 * Creates a new Project with a given name and projectManager. startDate and stopDate are set to null
-//	 * @param projectName the name of the project
-//	 * @param projectManager the developer who is to be manager of the project
-//	 * @param schedulingApp the SchedulingApp to manage this project in
-//	 */
-//	public Project(String projectName, Developer projectManager, SchedulingApp schedulingApp) {
-//		this(projectName, null, null, projectManager, schedulingApp);
-//	}
 		
 	/**
 	 * Adds a developer to this project
 	 * @param dev the developer that is added to the project
+	 * @author Emil Mortensen, s204483
 	 */
 	public void addDeveloper(Developer dev) {
 		if(developerList.contains(dev)) {
@@ -93,6 +75,7 @@ public class Project {
 	/**
 	 * Generates a project number for a newly created project. The project number must be unique
 	 * @return projectNumber a unique auto-generated number, based on the date and amount of current projects
+	 * @author Emil Mortensen, s204483
 	 */
 	private String generateProjectNumber() {
 		int year = creationDate.get(Calendar.YEAR);
@@ -107,6 +90,7 @@ public class Project {
 	/**
 	 * Removes an activity from the project
 	 * @param name the name of the activity to be removed
+	 * @author Jonathan Michelsen, s204437
 	 */
 	public void removeActivity(String name) {
 		if (hasActivityNamed(name)) {
@@ -114,28 +98,16 @@ public class Project {
 		} else {
 			throw new IllegalArgumentException("No activity with this name exists in this project");
 		}
-	}
-	
-//	/**
-//	 * Returns the TimeSheet for this project
-//	 */
-//	public TimeSheet getTimeReport() {
-//		return null;
-//	}
-	
+	}	
 	
 	/**
 	 * Returns a distinct list of all developers on this project. 
 	 * The list is a concatenation of the developers on all the activites of the project and the developers only assigned to the project
 	 * @return a list of all developers associated with the project
+	 * @author Emil Mortensen, s204483
 	 */
 	public List<Developer> getDevelopers() {
 		List<Developer> allDevs = developerList;
-		
-//		for (Activity activity : activityList) {
-//			allDevs.addAll(activity.getDevelopers());
-//		}
-		
 		return allDevs.stream().distinct().collect(Collectors.toList());
 		
 	}
@@ -145,16 +117,17 @@ public class Project {
 	 * Checks if the current developer exists in the project
 	 * @param dev The developer in question
 	 * @return True if this developer is a part of the current project, false otherwise
+	 * @author Jonathan Michelsen, s204437
 	 */
 	public boolean developerExistsInProject(Developer dev){
 		return developerList.stream().anyMatch(d -> d.equals(dev));
 	}
 	
-//	activityList.stream().anyMatch(a -> a.getDevelopers().contains(dev));
 	/**
 	 * Checks whether the given developer is the project manager of this project
 	 * @param dev The developer in question
 	 * @return True if this developer is the project manager of this project, false otherwise
+	 * @author Kasper Hesse, s183735
 	 */
 	public boolean isProjectManager(Developer dev) {
 		return dev.equals(this.projectManager);
@@ -164,6 +137,7 @@ public class Project {
 	 * Checks whether this project has an activity with the given name (case sensitive)
 	 * @param name The name of the activity being checked against
 	 * @return True if such an activity exists, false otherwise
+	 * @author Kasper Hesse, s183735
 	 */
 	public boolean hasActivityNamed(String name) {
 		return activityList.stream().anyMatch(a -> a.getName().equals(name));
@@ -172,6 +146,7 @@ public class Project {
 	/**
 	 * Checks whether this project has a project manager
 	 * @return True/False Returns true if a project manager exists for the current project and returns false if no project manager exists for the current project.
+	 * @author Jonathan Michelsen, s204437
 	 */
 	public boolean hasProjectManager() {
 		if (projectManager != null) {
@@ -183,6 +158,7 @@ public class Project {
 	
 	/**
 	 * Returns the ProjectManager of the current project.
+	 * @author Peter Ejlev, s183718
 	 */
 	public Developer getProjectManager() {
 		return this.projectManager;
@@ -190,6 +166,7 @@ public class Project {
 
 	/**
 	 * Returns the name of this project
+	 * @author Peter Ejlev, s183718
 	 */
 	public String getName() {
 		return this.projectName;
@@ -198,6 +175,7 @@ public class Project {
 	/**
 	 * Sets the project manager of the project to the developer passed as parameter
 	 * @param dev The new project manager of the project
+	 * @author Jonathan Michelsen, s204437
 	 */
 	public void setProjectManager(Developer dev) {
 		if(schedulingApp.getCurrentUser() != this.projectManager && this.projectManager != null) {
@@ -219,6 +197,7 @@ public class Project {
 	 * @param name The name of the activity
 	 * @param start The start date of the activity 
 	 * @param end The end date of the activity
+	 * @author Kasper Hesse, s183735
 	 */
 	public void createActivity(String name, Calendar startDate, Calendar stopDate) {
 		if(this.hasActivityNamed(name)) {
@@ -235,6 +214,7 @@ public class Project {
 	 * Creates an activity under the current project with a given name
 	 * @param name The name of the activity to be created
 	 * @throws IllegalArgumentException if an activity with the same name already exists
+	 * @author Kasper Hesse, s183735
 	 */
 	public void createActivity(String name) throws IllegalArgumentException {
 		Calendar cal = null;
@@ -247,9 +227,9 @@ public class Project {
 	 * @param startDate The start date of the activity formatted as "yyyy-MM-dd" (eg. 2021-02-28)
 	 * @param stopDate The end date of the activity formatted as "yyyy-MM-dd" (eg. 2021-02-28)
 	 * @throws ParseException If any of the provided dates could not be parsed properly
+	 * @author Kasper Hesse, s183735
 	 */
 	public void createActivity(String name, String startDate, String stopDate) throws ParseException {
-		//TODO Catch this exception
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 	
 		Calendar startCal = Calendar.getInstance();
@@ -264,6 +244,7 @@ public class Project {
 	 * @param name The name of the activity to be retrieved
 	 * @return A handle to the activity with the given name
 	 * @throws NoSuchElementException if no activity with that name was found
+	 * @author Kasper Hesse, s183735
 	 */
 	public Activity getActivityByName(String name) {
 		List<Activity> matches = activityList.stream().filter(a -> a.getName().equals(name)).collect(Collectors.toList());
@@ -273,32 +254,28 @@ public class Project {
 			throw new NoSuchElementException("No activity with that name exists");
 		}
 	}
-
-//	/**
-//	 * Sets a link between this project and the scheduling app
-//	 * @param schedulingApp The scheduling application to which this project belongs
-//	 */
-//	public void setApp(SchedulingApp schedulingApp) {
-//		this.schedulingApp = schedulingApp;
-//	}
 	
 	/**
 	 * Returns a handle to the current user of the system
+	 * @author Emil Mortensen, s204483
 	 */
 	public Developer getCurrentUser() {
 		return this.schedulingApp.getCurrentUser();
 	}
 
-	
+	/**
+	 * 
+	 * @author Peter Ejlev, s183718
+	 */
 	public SchedulingApp getSchedulingApp() {
 		return schedulingApp;
 	}
 
 
-
 	/**
 	 * Returns a *copy* of the start date for this activity. Modifications on that copy will not modify the start date of the activity.
 	 * If no start date is set, returns null
+	 * @author Kasper Hesse, s183735
 	 */
 	public Calendar getStartDate() {
 		if(this.startDate == null) {
@@ -310,6 +287,7 @@ public class Project {
 	/**
 	 * Returns a *copy* of the end date for this activity. Modifications on that copy will not modify the end date of the activity.
 	 * If no start date is set, returns null
+	 * @author Kasper Hesse, s183735
 	 */
 	public Calendar getStopDate() {
 		if(this.stopDate == null) {
@@ -322,6 +300,7 @@ public class Project {
 	 * changing number of weeks to start date of the current project.
 	 * 
 	 * @param weeks number of weeks being changed
+	 * @author Jonathan Michelsen, s204437
 	 */
 	public void changeStartDate(int weeks) {
 		startDatePast = startDate;
@@ -353,6 +332,7 @@ public class Project {
 	/**
 	 * changing number of weeks to stop date of the current project.
 	 * @param weeks number of weeks being changed
+	 * @author Jonathan Michelsen, s204437
 	 */
 	public void changeStopDate(int weeks) {
 		stopDatePast = stopDate;
@@ -380,6 +360,7 @@ public class Project {
 	/**
 	 * Removes a developer from the project
 	 * @param dev the developer to be removed
+	 * @author Kasper Hesse, s183735
 	 */
 	public void removeDeveloper(Developer dev) {
 		if(dev == this.projectManager) {
@@ -395,6 +376,7 @@ public class Project {
 
 	/**
 	 * @return the date of creation for the project
+	 * @author Jonathan Michelsen, s204437
 	 */
 	public Calendar getCreationDate() {
 		return this.creationDate;
@@ -402,6 +384,7 @@ public class Project {
 
 	/**
 	 * @return the project number of the project
+	 * @author Emil Mortensen, s204483
 	 */
 	public String getProjectNumber() {
 		return this.projectNumber;
@@ -411,6 +394,7 @@ public class Project {
 	 * Set the start date of a project
 	 * @param startDate the new start date of the project
 	 * @throws ParseException
+	 * @author Jonathan Michelsen, s204437
 	 */
 	public void setStartDate(String startDate) throws ParseException {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
@@ -427,6 +411,7 @@ public class Project {
 	 * Set the stop date of the project
 	 * @param stopDate the new stop date
 	 * @throws ParseException
+	 * @author Jonathan Michelsen, s204437
 	 */
 	public void setStopDate(String stopDate) throws ParseException {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
@@ -443,6 +428,7 @@ public class Project {
 	 * Sets the creation date of the project. Only used for creating specific tests
 	 * @param creationDate the new creation date
 	 * @throws ParseException
+	 * @author Jonathan Michelsen, s204437
 	 */
 	public void setCreationDate(String creationDate) throws ParseException {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
@@ -454,6 +440,10 @@ public class Project {
 		this.creationDate = creationCal;
 	}
 	
+	/**
+	 * 
+	 * @author Peter Ejlev, s183718
+	 */
 	List<Activity> getActivityList() {
 		return this.activityList;
 	}
@@ -461,6 +451,7 @@ public class Project {
 	/**
 	 * Checks whether two projects are the same. This is true if they represent the same object in memory OR
 	 * if they have the same project number
+	 * @author Kasper Hesse, s183735
 	 */
 	@Override
 	public boolean equals(Object obj) {

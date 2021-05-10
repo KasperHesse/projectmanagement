@@ -22,21 +22,24 @@ import schedulingapp.ProjectHelper;
 import schedulingapp.SchedulingApp;
 import schedulingapp.TimeSheet;
 
+/**
+ * 
+ * @author Emil Pontoppidan, s204441
+ *
+ */
 public class RegisterTimeSteps {
 	SchedulingApp schedulingApp;
 	ProjectHelper projHelper;
 	ActivityHelper actHelper;
 	DeveloperHelper devHelper;
 	ErrorMessageHolder errorMessageHolder;
-	TimeSheet timeSheet;
 	
-	public RegisterTimeSteps (TimeSheet timesheet, SchedulingApp schedulingApp, ProjectHelper projHelper, DeveloperHelper devHelper, ActivityHelper actHelper, ErrorMessageHolder errorMessageHolder) {
+	public RegisterTimeSteps (SchedulingApp schedulingApp, ProjectHelper projHelper, DeveloperHelper devHelper, ActivityHelper actHelper, ErrorMessageHolder errorMessageHolder) {
 		this.schedulingApp = schedulingApp;
 		this.projHelper = projHelper;
 		this.devHelper = devHelper; 
 		this.actHelper = actHelper;
 		this.errorMessageHolder = errorMessageHolder;
-		this.timeSheet = timeSheet; 
 	}
 	
 	@Given("A user with the name {string} is logged in")

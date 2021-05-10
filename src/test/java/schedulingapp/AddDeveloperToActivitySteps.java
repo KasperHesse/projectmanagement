@@ -6,7 +6,11 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.CoreMatchers.*;
 import io.cucumber.java.en.*;
 
-
+/**
+ * 
+ * @author Kasper Hesse, s183735
+ *
+ */
 public class AddDeveloperToActivitySteps {
 	
 	DeveloperHelper devHelper;

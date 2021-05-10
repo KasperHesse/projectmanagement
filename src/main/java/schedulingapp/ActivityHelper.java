@@ -2,7 +2,7 @@ package schedulingapp;
 
 /**¨
  * This class is intended to make Projects more easily manageable (in testers)
- * @author kaspe
+ * @author Kasper Hesse, s183735
  *
  */
 public class ActivityHelper {

@@ -3,6 +3,11 @@ package ui;
 import java.text.*;
 import java.util.Calendar;
 
+/**
+ * 
+ * @author Kasper Hesse, s183735
+ *
+ */
 public class Utils {
 	
 	/**

@@ -20,14 +20,17 @@ import schedulingapp.Project;
 import schedulingapp.ProjectHelper;
 import schedulingapp.SchedulingApp;
 
+/**
+ * 
+ * @author Jonathan Michelsen, s204437
+ *
+ */
 public class EditActivitySteps {
 	SchedulingApp schedulingApp;
 	ProjectHelper projHelper;
 	DeveloperHelper devHelper;
 	ErrorMessageHolder errorMessageHolder;
 	ActivityHelper actHelper;
-	private Calendar initialStartDate;
-	private Calendar initialStopDate;
 
 	public EditActivitySteps(SchedulingApp schedulingApp, ProjectHelper projHelper, DeveloperHelper devHelper,
 			ErrorMessageHolder errorMessageHolder, ActivityHelper actHelper, ActivityHelper actHelper1) {
@@ -45,7 +48,6 @@ public class EditActivitySteps {
 
 		Activity activity = actHelper.getActivity(project, name);
 		activity.setStartDate(startDate);
-		initialStartDate = activity.getStartDate();
 
 	}
 
@@ -79,7 +81,6 @@ public class EditActivitySteps {
 
 		Activity activity = actHelper.getActivity(project, name);
 		activity.setStopDate(stopDate);
-		initialStopDate = activity.getStopDate();
 	}
 
 	@When("the user moves the end time by {int} weeks for the activity the {string}")

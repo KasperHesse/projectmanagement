@@ -6,18 +6,14 @@ import java.util.Map;
 
 public class TimeSheet {
 	private Map<Calendar, Map<Developer, Double>> dateTimeUsage = new HashMap<Calendar, Map<Developer, Double>>();
-	//private Map<Developer, Integer> personTimeUsage = new HashMap<Developer, Integer>();
 	Developer developer;
-
-	
-	public TimeSheet() {
-	}
 	
 	/**
 	 * registers time on the given TimeSheet
 	 * @param The developer to register time on
 	 * @param How much time to register
 	 * @param The date to register time on
+	 * @author Emil Pontoppidan, s204441
 	 */
 	public void registerTime(Developer dev, double hours, Calendar date) {
 		if(tooManyHours(hours)) {
@@ -38,6 +34,7 @@ public class TimeSheet {
 	 * @param The developer that wants to edit their registered time
 	 * @param How many hours to add to the registered time
 	 * @param On what date he wants to register said hours
+	 * @author Peter Ejlev, s183718
 	 */
 	public void editTime(Developer dev, Calendar date, double change) {
 		Map<Developer, Double> var = dateTimeUsage.get(date);
@@ -60,6 +57,7 @@ public class TimeSheet {
 	 * Boolean to detect if person is registering more than 24 hours on one day
 	 * @param The amount of hours you want to check
 	 * @return
+	 * @author Emil Pontoppidan, s204441
 	 */
 	public boolean tooManyHours(double hours) {
 		if(hours > 24) {
@@ -68,6 +66,12 @@ public class TimeSheet {
 		return false; 
 	}
 	
+	/**
+	 * Boolean to detect if person is registering less than 0 hours on one day
+	 * @param The amount of hours you want to check
+	 * @return
+	 * @author Peter Ejlev, s183718
+	 */
 	boolean tooFewHours(double hours) {
 		if(hours < 0) {
 			return true;
@@ -81,6 +85,7 @@ public class TimeSheet {
 	 * @param date The date for get the hours on
 	 * @param dev The developer to get the hours for
 	 * @return The number of hours registered
+	 * @author Peter Ejlev, s183718
 	 */
 	public double viewTime(Calendar date, Developer dev) {
 		Map<Developer, Double> tu = dateTimeUsage.get(date);

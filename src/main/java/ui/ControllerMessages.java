@@ -3,7 +3,7 @@ package ui;
 /**
  * Messages that the controller may pass to the view for display to the end user.
  * All messages prefixed with "E" are error messages, messages prefixed with "I" are info messages
- * @author kaspe
+ * @author Kasper Hesse, s183735
  *
  */
 public class ControllerMessages {

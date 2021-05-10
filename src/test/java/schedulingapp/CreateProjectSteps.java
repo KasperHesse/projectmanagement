@@ -12,6 +12,11 @@ import java.util.GregorianCalendar;
 import io.cucumber.java.en.*;
 import schedulingapp.*;
 
+/**
+ * 
+ * @author Emil Mortensen, s204483
+ *
+ */
 public class CreateProjectSteps {
 	DeveloperHelper devHelper;
 	ProjectHelper projHelper;

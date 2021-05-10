@@ -1,5 +1,10 @@
 package dto;
 
+/**
+ * 
+ * @author Kasper Hesse, s183735
+ *
+ */
 public interface DTOinterface {
 	
 	/**

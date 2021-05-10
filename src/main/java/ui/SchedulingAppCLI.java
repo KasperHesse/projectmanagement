@@ -6,7 +6,11 @@ import java.util.stream.Collectors;
 import dto.DTOinterface;
 import schedulingapp.*;
 
-
+/**
+ * 
+ * @author Kasper Hesse, s183735
+ *
+ */
 public class SchedulingAppCLI {
 	
 	public SchedulingAppCLI() {

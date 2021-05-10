@@ -18,6 +18,10 @@ public class Activity {
 	private Calendar startDatePast;
 	private Calendar stopDatePast;
 	
+	/**
+	 * 
+	 * @author Kasper Hesse, s183735
+	 */
 	public static String cal2string(Calendar date) {
 		DateFormat formatter = new SimpleDateFormat("yyyy 'W'w");
 		if(date == null) {
@@ -34,6 +38,7 @@ public class Activity {
 	 * @param startDate the start date of the activity, as a Calendar object
 	 * @param stopDate the stop date of the activity, as a Calendar object
 	 * @param project the associated project
+	 * @author Kasper Hesse, s183735
 	 */
 	public Activity(String activityName, int hoursBudgetted, Calendar startDate, Calendar stopDate, Project project) {
 		this.activityName = activityName;
@@ -49,6 +54,7 @@ public class Activity {
 	/**
 	 * Adds a developer to the activity
 	 * @param dev the developer to be added to the activity
+	 * @author Kasper Hesse, s183735
 	 */
 	public void addDeveloper(Developer dev) {
 		if(this.hasDeveloperWithInitials(dev.getInitials())) {
@@ -68,6 +74,7 @@ public class Activity {
 	 * Checks whether a developer with the given initials is already working on this activity
 	 * @param initials The initials to check against
 	 * @return True if a developer has this set of initials, false otherwise
+	 * @author Kasper Hesse, s183735
 	 */
 	public boolean hasDeveloperWithInitials(String initials) {
 		return developerList.stream().anyMatch(d -> d.getInitials().equals(initials));
@@ -76,6 +83,7 @@ public class Activity {
 	/**
 	 * Removes a given developer from the activity
 	 * @param dev the developer to be removed from the activity
+	 * @author Jonathan Michelsen, s204437
 	 */
 	public void removeDeveloper(Developer dev) {
 		if (developerList.contains(dev)) {
@@ -86,6 +94,10 @@ public class Activity {
 		}
 	}
 	
+	/**
+	 * 
+	 * @author Kasper Hesse, s183735
+	 */
 	public void removeAssistingDeveloper(Developer dev) {
 		if(assistingDeveloperList.contains(dev)) {
 			assistingDeveloperList.remove(dev);
@@ -100,6 +112,7 @@ public class Activity {
 	 * Determines if the given developer is working on this activity
 	 * @param dev the developer to investigate
 	 * @return true if the developer is working on the activity
+	 * @author Emil Pontoppidan, s204441
 	 */
 	public boolean isDeveloper(Developer dev) {
 		return developerList.contains(dev);
@@ -109,6 +122,7 @@ public class Activity {
 	 * Checks if the developer is Assisting developer on the given activity
 	 * @param the developer in question
 	 * @return Boolean, true if developer in question is assisting developer
+	 * @author Emil Pontoppidan, s204441
 	 */
 	public boolean isAssistingDeveloper(Developer dev) {
 		return assistingDeveloperList.contains(dev);
@@ -118,6 +132,7 @@ public class Activity {
 	 * Adds the given helper the given activity's assistingDeveloperlist if allowed. 
 	 * @param Who you'd like to ask for help
 	 * @param On what activity you need help for
+	 * @author Emil Pontoppidan, 204441
 	 */
 	public void askForHelp(Developer helper) {
 		if(!helper.isAvailable()) {
@@ -132,7 +147,6 @@ public class Activity {
 			throw new IllegalArgumentException("The requested developer is not in the system");
 		}
 		
-		
 		assistingDeveloperList.add(helper);
 		helper.addActivity(this);
 		helper.addProject(this.project);
@@ -143,6 +157,7 @@ public class Activity {
 	 * @param The developer registering time
 	 * @param How many hours to register
 	 * @param On what date he wants to register said hours
+	 * @author Emil Pontoppidan, s204441
 	 */
 	public void registerTime(Developer dev, double hours, Calendar date) {	
 		//precondition
@@ -170,6 +185,7 @@ public class Activity {
 	 * @param The developer that wants to edit their registered time
 	 * @param How many hours to add to the registered time
 	 * @param On what date he wants to register said hours
+	 * @author Peter Ejlev, s183718
 	 */
 	public void editTime(Developer dev, double hours, Calendar date) {
 		assert dev != null && date != null;
@@ -199,6 +215,7 @@ public class Activity {
 	 * @param which date you want to check
 	 * @param what developer you want to check
 	 * @return the registered amount of hours
+	 * @author Peter Ejlev, s183718
 	 */
 	public double viewTime(Calendar date, Developer dev) {
 		if(!isDeveloper(dev) && !isAssistingDeveloper(dev)) {                                                                                 
@@ -209,6 +226,7 @@ public class Activity {
 
 	/**
 	 * Returns the name of this activity
+	 * @author Jonathan Michelsen, s204437
 	 */
 	public String getName() {
 		return this.activityName;
@@ -216,6 +234,7 @@ public class Activity {
 
 	/**
 	 * Returns a *copy* of the start date for this activity. Modifications on that copy will not modify the start date of the activity
+	 * @author Jonathan Michelsen, s204437
 	 */
 	public Calendar getStartDate() {
 		if(this.startDate == null) {
@@ -226,6 +245,7 @@ public class Activity {
 
 		/**
 	 * Returns a *copy* of the end date for this activity. Modifications on that copy will not modify the end date of the activity
+	 * @author Jonathan Michelsen, s204437
 	 */
 	public Calendar getStopDate() {
 		if(this.stopDate == null) {
@@ -237,6 +257,7 @@ public class Activity {
 	/**
 	 * Sets the startdate of an activity
 	 * @param The settet date
+	 * @author Jonathan Michelsen, s204437
 	 */
 	public void setStartDate(Calendar startDate) {
 		if(this.stopDate != null && startDate.after(this.stopDate)) {
@@ -248,6 +269,7 @@ public class Activity {
 	/**
 	 * Sets the stopdate of an activity
 	 * @param the settet date
+	 * @author Jonathan Michelsen, s204437
 	 */
 	public void setStopDate(Calendar stopDate) {
 		if(this.startDate != null && stopDate.before(this.startDate)) {
@@ -259,16 +281,16 @@ public class Activity {
 	/**
 	 * Returns a list of developers working on this activity. Any modifications to that list will not affect the activity.
 	 * @return
+	 * @author Kasper Hesse, s183735 
 	 */
 	public List<Developer> getDevelopers() {
 		return List.copyOf(this.developerList);
 	}
 
-//	public void registerTime(Developer currentUser, Double hours, String date) {
-//		// TODO Auto-generated method stub
-//		
-//	}
-	
+	/**
+	 * 
+	 * @author Emil Pontoppidan, s204441
+	 */
 	public Project getProject() {
 		return project;
 	}
@@ -276,6 +298,7 @@ public class Activity {
 	/**
 	 * Adds number of weeks to the start date for the current activity
 	 * @param weeks The amount of weeks
+	 * @author Jonathan Michelsen, s204437
 	 */
 	public void changeStartDate(int weeks) {
 		startDatePast = startDate;	
@@ -301,9 +324,10 @@ public class Activity {
 		
 	}
 	
-	/*
+	/**
 	 * Adds number of weeks to the start date for the current activity
 	 * @param weeks The amount of weeks
+	 * @author Jonathan Michelsen, s204437
 	 */
 	public void changeStopDate(int weeks) {
 		stopDatePast = stopDate;
@@ -332,6 +356,7 @@ public class Activity {
 	 * Sets the start date of the activity
 	 * @param startDate the new start date of the activity
 	 * @throws ParseException
+	 * @author Jonathan Michelsen, s204437
 	 */
 	public void setStartDate(String startDate) throws ParseException {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
@@ -348,6 +373,7 @@ public class Activity {
 	 * Sets the stop date of the activity
 	 * @param stopDate the new stop date of the activity
 	 * @throws ParseException
+	 * @author Jonathan Michelsen, s204437
 	 */
 	public void setStopDate(String stopDate) throws ParseException {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
@@ -360,14 +386,26 @@ public class Activity {
 		
 	}
 
+	/**
+	 * 
+	 * @author Emil Pontoppidan, s204441
+	 */
 	public List<Developer> getAssistingDeveloperList() {
 		return this.assistingDeveloperList;
 	}
 	
+	/**
+	 * 
+	 * @author Jonathan Michelsen, s204437
+	 */
 	public int getHoursBudgeted() {
 		return this.hoursBudgetted;
 	}
 
+	/**
+	 * 
+	 * @author Jonathan Michelsen, s204437
+	 */
 	public void setHoursBudgeted(int hoursBudgetted) {
 		this.hoursBudgetted = hoursBudgetted;
 		
@@ -376,6 +414,7 @@ public class Activity {
 	/**
 	 * Moves a developer from the assisting developer list to the ordinary developer list
 	 * @param developer The developer to move from assistant to ordinary developer
+	 * @author Kasper Hesse, s183735
 	 */
 	void migrateDeveloper(Developer developer) {
 		this.assistingDeveloperList.remove(developer);
@@ -389,6 +428,7 @@ public class Activity {
 	 * Verifies whether the activity has an assistant developer with the given initials working on the activity
 	 * @param initials The initials to check against
 	 * @return True if the developer with those initials is assisting on this activity, false otherwise
+	 * @author Kasper Hesse, s183735
 	 */
 	public boolean hasAssistantDeveloperWithInitials(String initials) {
 		return assistingDeveloperList.stream().anyMatch(d -> d.getInitials().equals(initials));

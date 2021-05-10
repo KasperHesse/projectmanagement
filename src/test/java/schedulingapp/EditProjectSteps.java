@@ -23,6 +23,11 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+/**
+ * 
+ * @author Jonathan Michelsen, s204437
+ *
+ */
 public class EditProjectSteps {
 	SchedulingApp schedulingApp;
 	ProjectHelper projHelper;

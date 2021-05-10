@@ -3,6 +3,11 @@ import java.text.*;
 import java.util.*;
 import schedulingapp.Activity;
 
+/**
+ * 
+ * @author Kasper Hesse, s183735
+ *
+ */
 public class ActivityInfo implements DTOinterface {
 	private String name;
 	private String startDate;

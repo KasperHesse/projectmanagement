@@ -6,6 +6,11 @@ import schedulingapp.Project;
 import java.util.*;
 import java.util.stream.*;
 
+/**
+ * 
+ * @author Kasper Hesse, s183735
+ *
+ */
 public class ProjectInfo implements DTOinterface {
 	private String projectName;
 	private String projectNumber;
