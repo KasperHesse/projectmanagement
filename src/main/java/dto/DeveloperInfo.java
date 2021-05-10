@@ -3,7 +3,6 @@ package dto;
 import java.util.ArrayList;
 import java.util.List;
 
-import schedulingapp.Activity;
 import schedulingapp.Developer;
 
 public class DeveloperInfo implements DTOinterface {

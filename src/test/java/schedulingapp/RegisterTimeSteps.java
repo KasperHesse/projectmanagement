@@ -1,7 +1,5 @@
 package schedulingapp;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -13,14 +11,6 @@ import java.util.Calendar;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import schedulingapp.Activity;
-import schedulingapp.ActivityHelper;
-import schedulingapp.Developer;
-import schedulingapp.DeveloperHelper;
-import schedulingapp.Project;
-import schedulingapp.ProjectHelper;
-import schedulingapp.SchedulingApp;
-import schedulingapp.TimeSheet;
 
 public class RegisterTimeSteps {
 	SchedulingApp schedulingApp;
@@ -88,7 +78,6 @@ public class RegisterTimeSteps {
 	
 	@Given("{string} user is not associated with the activity he wants to register time usage on")
 	public void user_is_not_associated_with_the_activity_he_wants_to_register_time_usage_on(String initials) {
-		Developer dev1 = devHelper.getDeveloper(initials);
 		Project proj = projHelper.getProject("project");
 		Activity act = actHelper.getActivity(proj,"activity");
 		assertFalse(act.hasDeveloperWithInitials(initials));

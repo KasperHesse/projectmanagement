@@ -1,14 +1,13 @@
 package ui;
 
-import static ui.ControllerStateEnum.sLOGIN;
-import static ui.ControllerStateEnum.sNEWPROJECT;
-import static ui.ControllerStateEnum.sSELECTPROJECT;
-import static ui.ControllerStateEnum.sVIEWDEVS;
 import static ui.OptionsListing.*;
-import static ui.StateList.*;
+import static ui.StateListing.*;
 
 import schedulingapp.SchedulingApp;
-
+/**
+ * @author Kasper Hesse, s183735
+ *
+ */
 public class MainState implements ControllerState {
 
 	@Override

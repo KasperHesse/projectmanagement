@@ -1,5 +1,9 @@
 package ui;
 
+/**
+ * @author Kasper Hesse, s183735
+ *
+ */
 public class OptionsListing {
 
 	static final String[] MAINOPTIONS = new String[] {"Logout", 

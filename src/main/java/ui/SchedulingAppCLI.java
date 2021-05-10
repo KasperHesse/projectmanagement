@@ -4,9 +4,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import dto.DTOinterface;
-import schedulingapp.*;
-
-
+/**
+ * The view in the MVC-based user interface
+ * @author Kasper Hesse, s183735
+ *
+ */
 public class SchedulingAppCLI {
 	
 	public SchedulingAppCLI() {

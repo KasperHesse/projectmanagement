@@ -1,16 +1,16 @@
 package ui;
 
+import schedulingapp.SchedulingApp;
 import static ui.ControllerMessages.*;
 
-import java.util.*;
+import java.util.Calendar;
+import java.util.NoSuchElementException;
 
-import dto.*;
-import schedulingapp.SchedulingApp;
 /**
  * @author Kasper Hesse, s183735
  *
  */
-public class NewProjectState implements ControllerState {
+public class NewActivityState implements ControllerState {
 
 	@Override
 	public void processInput(SchedulingApp model, Controller controller, SchedulingAppCLI view, String[] tokens) {
@@ -18,7 +18,7 @@ public class NewProjectState implements ControllerState {
 		String name = "";
 		String start = "";
 		String stop = "";
-		String pm = "";
+		String hours = "";
 		for(String token : tokens) {
 			try {
 				if(token.contains("name") && name.equals("")) {
@@ -30,8 +30,8 @@ public class NewProjectState implements ControllerState {
 				if(token.contains("stop") && stop.equals("")) {
 					stop = Utils.findValueAfterKey(token, "stop");
 				}
-				if(token.contains("pm") && pm.equals("")) {
-					pm = Utils.findValueAfterKey(token, "pm");
+				if(token.contains("hours") && hours.equals("")) {
+					hours = Utils.findValueAfterKey(token, "hours");
 				}
 			} catch (IllegalArgumentException e) { //One of the token strings did not match the required format
 				view.showError("Error on '" + token + "'. " + E_KEYVAL_BADFORMAT);
@@ -47,11 +47,11 @@ public class NewProjectState implements ControllerState {
 		}
 		
 		//Check if the PM (if given) is valid
-		DeveloperInfo projMan = null;
-		if(!pm.equals("")) {
-			projMan = model.getDeveloperWithInitials(pm);
-			if(projMan == null || !projMan.getAvailableFlag())  {
-				view.showError(E_DEV_MAX_PROJECTS);
+		Integer hoursToBudget = null;
+		if(!hours.equals("")) {
+			hoursToBudget = Utils.validateInteger(hours, Integer.MAX_VALUE);
+			if(hoursToBudget == Integer.MIN_VALUE)  {
+				view.showError(E_INVALID_BUDGET);
 				return;
 			}
 		}
@@ -76,7 +76,7 @@ public class NewProjectState implements ControllerState {
 			return;
 		}
 		try {
-			model.addNewProject(name, startDate, stopDate, projMan);
+			model.addNewActivity(name, startDate, stopDate, hoursToBudget);
 			controller.goBack();
 		} catch (Exception e) {
 			view.showError(e.getMessage());
@@ -85,7 +85,7 @@ public class NewProjectState implements ControllerState {
 
 	@Override
 	public void enterState(SchedulingApp model, Controller controller, SchedulingAppCLI view) {
-		view.showMessage(I_NEW_PROJECT);
+		view.showMessage(I_NEW_ACTIVITY);
 	}
 
 }

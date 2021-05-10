@@ -1,11 +1,12 @@
 package ui;
 
-import static ui.ControllerMessages.*;
-import static ui.OptionsListing.*;
-import static ui.StateList.*;
+import static ui.StateListing.*;
 
 import schedulingapp.SchedulingApp;
-
+/**
+ * @author Kasper Hesse, s183735
+ *
+ */
 public class SelectProjectState implements ControllerState {
 
 	@Override

@@ -3,7 +3,10 @@ package ui;
 import java.text.*;
 import java.util.Calendar;
 import java.util.NoSuchElementException;
-
+/**
+ * @author Kasper Hesse, s183735
+ *
+ */
 public class Utils {
 	
 	/**
@@ -89,5 +92,6 @@ public class Utils {
 		String valueStr = str2.substring(str2.indexOf("=")+1);
 		return valueStr;	
 	}
+	
 
 }

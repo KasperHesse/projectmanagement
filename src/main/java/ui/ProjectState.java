@@ -2,10 +2,13 @@ package ui;
 
 import static ui.ControllerMessages.*;
 import static ui.OptionsListing.*;
-import static ui.StateList.*;
+import static ui.StateListing.*;
 
 import schedulingapp.SchedulingApp;
-
+/**
+ * @author Kasper Hesse, s183735
+ *
+ */
 public class ProjectState implements ControllerState {
 
 	@Override
@@ -31,8 +34,8 @@ public class ProjectState implements ControllerState {
 
 	@Override
 	public void enterState(SchedulingApp model, Controller controller, SchedulingAppCLI view) {
-		// TODO Auto-generated method stub
-
+		view.showMessage(controller.activeProject.getInfoString());
+		view.showOptions(PROJECTOPTIONS);
 	}
 
 }

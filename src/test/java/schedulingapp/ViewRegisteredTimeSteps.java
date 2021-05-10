@@ -4,18 +4,8 @@ import io.cucumber.java.en.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import schedulingapp.ActivityHelper;
-import schedulingapp.Developer;
-import schedulingapp.DeveloperHelper;
-import schedulingapp.Project;
-import schedulingapp.ProjectHelper;
-import schedulingapp.SchedulingApp;
-import schedulingapp.Activity;
-import schedulingapp.TimeSheet;
-import static org.hamcrest.MatcherAssert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.hamcrest.CoreMatchers.*;
 
 public class ViewRegisteredTimeSteps {
 

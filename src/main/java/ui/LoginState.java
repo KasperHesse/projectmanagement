@@ -1,11 +1,14 @@
 package ui;
 
 import static ui.ControllerMessages.*;
-import static ui.StateList.*;
+import static ui.StateListing.*;
 //import static ui.ControllerStateEnum.sMAIN;
 
 import schedulingapp.SchedulingApp;
-
+/**
+ * @author Kasper Hesse, s183735
+ *
+ */
 public class LoginState implements ControllerState {
 
 	@Override

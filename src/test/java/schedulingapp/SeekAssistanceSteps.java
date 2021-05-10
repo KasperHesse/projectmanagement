@@ -5,30 +5,11 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.util.NoSuchElementException;
-
-import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import schedulingapp.Activity;
-import schedulingapp.ActivityHelper;
-import schedulingapp.Developer;
-import schedulingapp.DeveloperHelper;
-import schedulingapp.Project;
-import schedulingapp.ProjectHelper;
-import schedulingapp.SchedulingApp;
 
-import io.cucumber.java.en.And;
-import io.cucumber.java.en.Given;
-import io.cucumber.java.en.Then;
-import io.cucumber.java.en.When;
-import schedulingapp.Activity;
-import schedulingapp.ActivityHelper;
-import schedulingapp.Developer;
-import schedulingapp.DeveloperHelper;
-import schedulingapp.ProjectHelper;
-import schedulingapp.SchedulingApp;
+
 
 public class SeekAssistanceSteps {
 	SchedulingApp schedulingApp;
@@ -55,12 +36,12 @@ public class SeekAssistanceSteps {
 
 	@Given("{string} exists in the system")
 	public void exists_in_the_system(String initials) {
-		Developer dev2 = devHelper.getDeveloper(initials);
+		devHelper.getDeveloper(initials);
 	}
 
 	@Given("{string} is not associated with the activity")
 	public void is_not_associated_with_the_activity(String initials) {
-		Developer dev2 = devHelper.getDeveloper(initials);
+		devHelper.getDeveloper(initials);
 		Project proj = projHelper.getProject("project");
 		Activity act = actHelper.getActivity(proj,"activity");
 		assertFalse(act.hasDeveloperWithInitials(initials));

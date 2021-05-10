@@ -498,6 +498,7 @@ public class SchedulingApp implements ControllerInterface {
 	public void addNewActivity(String name, Calendar startDate, Calendar stopDate, Integer hoursToBudget) {
 		activeProject.createActivity(name, startDate, stopDate);
 		Activity a = activeProject.getActivityByName(name);
+		a.setHoursBudgeted(hoursToBudget);
 		support.firePropertyChange("actlist", null, new ActivityInfo(a));
 	}
 

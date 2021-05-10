@@ -4,13 +4,11 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 import io.cucumber.java.en.*;
-import schedulingapp.*;
 
 public class CreateProjectSteps {
 	DeveloperHelper devHelper;

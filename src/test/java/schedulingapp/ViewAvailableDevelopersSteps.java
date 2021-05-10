@@ -5,15 +5,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
+
 import java.util.List;
-import java.util.NoSuchElementException;
 
 import io.cucumber.java.en.*;
-import schedulingapp.*;
 
 
 public class ViewAvailableDevelopersSteps {

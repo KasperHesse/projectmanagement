@@ -1,16 +1,17 @@
 package ui;
 
 import static ui.ControllerMessages.*;
-import static ui.OptionsListing.*;
-import static ui.StateList.*;
 
 import schedulingapp.SchedulingApp;
-
-public class ViewDevsState implements ControllerState {
+/**
+ * @author Kasper Hesse, s183735
+ *
+ */
+public class ViewAvailableDevelopersState implements ControllerState {
 
 	@Override
 	public void processInput(SchedulingApp model, Controller controller, SchedulingAppCLI view, String[] tokens) {
-		// TODO Auto-generated method stub
+		//No input is processed in this state
 
 	}
 

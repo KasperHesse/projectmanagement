@@ -1,16 +1,13 @@
 package ui;
 
 import schedulingapp.SchedulingApp;
-import static ui.ControllerMessages.*;
-import static ui.ControllerStateEnum.sADDDEVPROJ;
-import static ui.ControllerStateEnum.sCHANGEPROJMAN;
-import static ui.ControllerStateEnum.sGETTIMEREPORT;
-import static ui.ControllerStateEnum.sNEWACTIVITY;
-import static ui.ControllerStateEnum.sREMOVEDEVPROJ;
 import static ui.OptionsListing.*;
-import static ui.StateList.*;
+import static ui.StateListing.*;
 
-
+/**
+ * @author Kasper Hesse, s183735
+ *
+ */
 public class ManageProjectState implements ControllerState {
 
 	@Override
@@ -30,29 +27,27 @@ public class ManageProjectState implements ControllerState {
 			if(!controller.ensureUserIsPM()) {
 				break;
 			}
-			setState(REMOVEDEVPROJ);
+			controller.setState(REMOVEDEVPROJ);
 			break;
 		case 2:
 			if(controller.projectHasPM() && !controller.ensureUserIsPM()) {
 				break;
 			}
-			setState(CHANGEPROJMAN);
+			controller.setState(CHANGEPROJMAN);
 			break;
 		case 3:
 			if(!controller.ensureUserIsPM()) {
 				break;
 			}
-			setState(GETTIMEREPORT);
 			view.showError("Not yet implemented");
-			controller.goBack();
+			view.showOptions(MANAGEPROJECTOPTIONS);
 			break;
 		case 4:
 			if(!controller.ensureUserIsPM()) {
 				break;
 			}
-			setState(NEWACTIVITY);
+			controller.setState(NEWACTIVITY);
 		}
-
 	}
 
 	@Override

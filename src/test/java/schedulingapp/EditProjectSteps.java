@@ -3,23 +3,13 @@ package schedulingapp;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import schedulingapp.Activity;
-import schedulingapp.ActivityHelper;
-import schedulingapp.Developer;
-import schedulingapp.DeveloperHelper;
-import schedulingapp.Project;
-import schedulingapp.ProjectHelper;
-import schedulingapp.SchedulingApp;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.hamcrest.CoreMatchers.*;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.text.*;
+import java.util.*;
 
 public class EditProjectSteps {
 	SchedulingApp schedulingApp;

@@ -1,10 +1,10 @@
 package ui;
 
-import static ui.ControllerMessages.*;
-import static ui.OptionsListing.*;
-import static ui.StateList.*;
-
 import schedulingapp.SchedulingApp;
+/**
+ * @author Kasper Hesse, s183735
+ *
+ */
 public interface ControllerState {
 	
 	/**
