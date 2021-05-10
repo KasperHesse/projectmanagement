@@ -295,8 +295,10 @@ public class Project {
 	 */
 	public void changeStartDate(int weeks) {
 		startDatePast = startDate;
-				
+			
+		assert weeks != null;
 		assert weeks == (int)weeks : "PreCondition changeStartDate";
+		
 		
 		if (startDate != null) {
 			startDate.add(Calendar.WEEK_OF_YEAR, weeks);
