@@ -45,10 +45,6 @@ public class SchedulingAppCLI {
 	 */
 	public void showOptions(String[] options) {
 		showOptions(options, "Please select one of the below options:");
-//		System.out.println("Please select one of the below options: ");
-//		for(int i=0; i<options.length; i++) {
-//			System.out.printf("[%d] %s\n", i, options[i]);
-//		}
 	}
 	
 	/**
@@ -60,9 +56,27 @@ public class SchedulingAppCLI {
 		if(!header.equals("")) {
 			System.out.println(header);
 		}
-		for(int i=0; i<options.length; i++) {
-			System.out.printf("[%d] %s\n", i, options[i]);
+		for(int i=0; i<options.length; i+= 30) {
+			showOptionsGridBased(options, i);
 		}
+//		showOptionsGridBased(options, );
+	}
+	
+	private void showOptionsGridBased(String[] options, int startIndex) {
+		//If less than 10, just go to that length. Else, go to 10
+		String fmtString = "%-30.30s %-30.30s %-30.30s\n";
+		int iterMax = options.length-startIndex > 10 ? 10 : options.length-startIndex;
+		for(int i=startIndex; i<startIndex + iterMax; i++) {
+			String str1 = createOptionString(options, i);
+			String str2 = createOptionString(options, i+10);
+			String str3 = createOptionString(options, i+20);
+			System.out.printf(fmtString, str1, str2, str3);
+		}
+		System.out.println();
+	}
+	
+	private String createOptionString(String[] options, int index) {
+		return index > options.length-1 ? "" : String.format("[%d] %s", index, options[index]);
 	}
 
 	/**

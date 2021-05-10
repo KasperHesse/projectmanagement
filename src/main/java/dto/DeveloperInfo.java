@@ -25,7 +25,7 @@ public class DeveloperInfo implements DTOinterface {
 
 	@Override
 	public String toPrint() {
-		return this.toString();
+		return String.format("%s (%s)", this.initials, this.name);
 	}
 	
 	@Override

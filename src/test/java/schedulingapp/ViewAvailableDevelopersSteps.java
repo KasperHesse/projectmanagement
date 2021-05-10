@@ -89,7 +89,7 @@ public class ViewAvailableDevelopersSteps {
 		Project proj = projHelper.getProject();
 		proj.addDeveloper(dev1);
 		
-		for (int i = 0; i < 11; i++) {
+		for (int i = 0; i < 13; i++) {
 			actHelper.getActivity(proj, "" + i).addDeveloper(dev1);
 		}
 		

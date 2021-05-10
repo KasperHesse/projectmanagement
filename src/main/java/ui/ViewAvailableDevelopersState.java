@@ -11,8 +11,7 @@ public class ViewAvailableDevelopersState implements ControllerState {
 
 	@Override
 	public void processInput(SchedulingApp model, Controller controller, SchedulingAppCLI view, String[] tokens) {
-		//No input is processed in this state
-
+		view.showMessage(I_VIEW_DEVS_NOOPT);
 	}
 
 	@Override
@@ -20,7 +19,7 @@ public class ViewAvailableDevelopersState implements ControllerState {
 		view.showMessage(I_VIEW_DEVS);
 		controller.developerList = model.getAvailableDevelopers();
 		view.showOptions(controller.developerList, "");
-		controller.goBack();
+//		controller.goBack();
 	}
 
 }

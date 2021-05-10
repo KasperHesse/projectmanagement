@@ -20,6 +20,8 @@ public class SchedulingApp implements ControllerInterface {
 	
 	private Project activeProject;
 	private Activity activeActivity;
+	
+	private Project internal;
 
 	/**
 	 * Constructor of SchedulingApp. Initializes developerList and projectList
@@ -164,6 +166,10 @@ public class SchedulingApp implements ControllerInterface {
 	 */
 	void addDeveloper(Developer developer) {
 		developerList.add(developer);
+		
+		if(internal != null) {//Also add them to the default vacation and course activities when not testing
+			internal.getActivityList().stream().forEach(a -> a.addDeveloper(developer));
+		}
 	}
 
 	/**
@@ -234,6 +240,26 @@ public class SchedulingApp implements ControllerInterface {
 	 * Applies a pre-made config to the system, including a number of users, projects and activities
 	 */
 	public void presentationSetup() {
+		
+		createDeveloper("Administrator", "admi");
+		login("admi");
+		try {
+			createProject("Vacation & Internal", "2020-01-01", "2030-01-01");
+		} catch (ParseException e) {
+			createProject("Vacation & Internal");
+		}
+		internal = getProjectByName("Vacation & Internal");
+		internal.setProjectManager(currentUser);
+		
+		try {
+			internal.createActivity("Vacation", "2020-01-01", "2030-01-01");
+			internal.createActivity("Internal courses", "2020-01-01", "2030-01-01");
+		} catch (ParseException e) {
+			internal.createActivity("Vacation");
+			internal.createActivity("Internal courses");
+		}
+		
+		login("admi");
 		createDeveloper("Kasper Hesse", "kahe");
 		createDeveloper("Peter Ejlev", "pete");
 		createDeveloper("Emil Pontoppidan", "emil");
@@ -241,6 +267,20 @@ public class SchedulingApp implements ControllerInterface {
 		Developer kahe = getDeveloperByInitials("kahe");
 		Developer pete = getDeveloperByInitials("pete");
 		Developer emil = getDeveloperByInitials("emil");
+		
+		//Create a lot more developers
+		createDeveloper("Anders Andersen", "ande");
+		createDeveloper("Bjarke Bjarkesen", "bjar");
+		createDeveloper("Christian Christiansen", "chri");
+		createDeveloper("Dennis Dennissen", "denn");
+		createDeveloper("Erik Eriksen", "erik");
+		createDeveloper("Finn Finnsen", "finn");
+		createDeveloper("Georg Gearløs", "geog");
+		createDeveloper("Hubert Baumeister", "huba");
+		for(int i=0; i<30; i++) {
+			createDeveloper("Dummy developer", String.format("du%02d", i));
+		}
+		logout();
 
 		
 		login("kahe");
@@ -248,7 +288,6 @@ public class SchedulingApp implements ControllerInterface {
 		createProject("My first project");
 		createProject("My second project");
 		Project p1 = getProjectByName("My first project");
-		Project p2 = getProjectByName("My second project");
 		p1.setProjectManager(kahe);
 		p1.addDeveloper(emil);
 		p1.createActivity("My first activity");
@@ -512,7 +551,4 @@ public class SchedulingApp implements ControllerInterface {
 	public ProjectInfo getActiveProject() {
 		return new ProjectInfo(this.activeProject);
 	}
-
-
-
 }

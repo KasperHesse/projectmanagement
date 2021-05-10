@@ -62,7 +62,7 @@ public class Activity {
 	 */
 	public void addDeveloper(Developer dev) {
 		assert dev != null;
-		List<Developer> previousList = new ArrayList(this.developerList);
+		List<Developer> previousList = new ArrayList<>(this.developerList);
 		
 		if(this.hasDeveloperWithInitials(dev.getInitials())) {
 			throw new IllegalArgumentException("This developer is already working on this activity"); //1
@@ -70,7 +70,7 @@ public class Activity {
 			throw new IllegalArgumentException("Developers cannot add other developers to activities"); //2
 		}
 		this.developerList.add(dev);
-		dev.addProject(project);
+		dev.addProject(this.project);
 		dev.addActivity(this);
 		if(!project.developerExistsInProject(dev)) {
 			project.addDeveloper(dev); //3
