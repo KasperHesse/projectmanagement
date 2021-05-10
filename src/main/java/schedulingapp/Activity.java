@@ -144,19 +144,19 @@ public class Activity {
 	 * @param How many hours to register
 	 * @param On what date he wants to register said hours
 	 */
-	public void registerTime(Developer dev, double hours, Calendar date) {
+	public void registerTime(Developer dev, double hours, Calendar date) {	
 		//precondition
 		assert dev != null && date != null && hours > 0;
 		
 		if(startDate != null && stopDate != null) {                                                             //1
 			
-			if(date.before(startDate) || date.after(stopDate)) {
-				throw new IllegalArgumentException("You cannot register time outside the active status dates"); //2
+			if(date.before(startDate) || date.after(stopDate)) {												//2
+				throw new IllegalArgumentException("You cannot register time outside the active status dates"); 
 			}
 		}
 		
-		if(!isDeveloper(dev) && !isAssistingDeveloper(dev)) {                                                                                 //3
-			throw new IllegalArgumentException("You are not associated with chosen activity");
+		if(!isDeveloper(dev) && !isAssistingDeveloper(dev)) {                                                   //3                              
+			throw new IllegalArgumentException("You are not associated with chosen activity");					
 		}
 		
 		timeSheet.registerTime(dev, hours, date);
