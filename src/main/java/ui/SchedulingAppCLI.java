@@ -59,12 +59,11 @@ public class SchedulingAppCLI {
 		for(int i=0; i<options.length; i+= 30) {
 			showOptionsGridBased(options, i);
 		}
-//		showOptionsGridBased(options, );
 	}
 	
 	private void showOptionsGridBased(String[] options, int startIndex) {
 		//If less than 10, just go to that length. Else, go to 10
-		String fmtString = "%-30.30s %-30.30s %-30.30s\n";
+		String fmtString = "%-50.50s %-50.50s %-50.50s\n";
 		int iterMax = options.length-startIndex > 10 ? 10 : options.length-startIndex;
 		for(int i=startIndex; i<startIndex + iterMax; i++) {
 			String str1 = createOptionString(options, i);

@@ -51,7 +51,7 @@ public class NewProjectState implements ControllerState {
 		if(!pm.equals("")) {
 			projMan = model.getDeveloperWithInitials(pm);
 			if(projMan == null || !projMan.getAvailableFlag())  {
-				view.showError(E_DEV_MAX_PROJECTS);
+				view.showError(E_INVALID_INITIALS);
 				return;
 			}
 		}
