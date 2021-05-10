@@ -41,3 +41,16 @@ Scenario: User cannot edit time for another developer
 	And "JONA" has registered 4 hours on the date "2020-01-13"
 	When the user "PETE" changes registered time of "JONA" on the activity "Research" with 2 hours on the date "2020-01-13"
 	Then the error message "You can't edit other developers registered time" is shown
+	
+Scenario: User tries to edit time but edited time is below 0
+	Given A user with the initials "PETE" is logged in
+	And the user "PETE" is a developer under the activity "Research" under the project "Test"
+	And "PETE" has registered 4 hours on the date "2020-01-13"
+	When the user "PETE" changes their registered time on the activity "Research" with -22 hours on the date "2020-01-13"
+	Then the error message "You can't register less than 0 hours in one day" is shown
+	
+Scenario: User tries to edit time but there is no time registered on that day
+	Given A user with the initials "PETE" is logged in
+	And the user "PETE" is a developer under the activity "Research" under the project "Test"
+	When the user "PETE" changes their registered time on the activity "Research" with 2 hours on the date "2020-01-13"
+	Then the error message "You can't edit time if none is registered" is shown

@@ -172,7 +172,7 @@ public class Activity {
 	 * @param On what date he wants to register said hours
 	 */
 	public void editTime(Developer dev, double hours, Calendar date) {
-		assert dev != null && date != null && hours > 0;
+		assert dev != null && date != null;
 		
 		if(dev != this.getProject().getSchedulingApp().getCurrentUser()) {               																	//1                                                                  
 			throw new IllegalArgumentException("You can't edit other developers registered time");
