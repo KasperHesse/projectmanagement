@@ -5,6 +5,11 @@ import java.util.List;
 
 import schedulingapp.Developer;
 
+/**
+ * 
+ * @author Kasper Hesse, s183735
+ *
+ */
 public class DeveloperInfo implements DTOinterface {
 	private String name;
 	private String initials;

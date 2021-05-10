@@ -6,8 +6,14 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+/**
+ * 
+ * @author Peter Ejlev, s183718
+ *
+ */
 public class EditRegisteredTimeSteps {
 
 	SchedulingApp schedulingApp;
@@ -48,6 +54,19 @@ public class EditRegisteredTimeSteps {
 	   
 	}
 
+	@Given("{string} has registered {int} hours on the date {string}")
+	public void has_registered_hours_on_the_date(String initials, Integer hours, String date) throws ParseException {
+		Developer dev = devHelper.getDeveloper(initials);
+		Project proj = projHelper.getProject("project");
+		Activity act = actHelper.getActivity(proj,"activity");
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+		Calendar timeRegisterDate = Calendar.getInstance();
+		
+		schedulingApp.setCurrentUser(dev);
+		timeRegisterDate.setTime(formatter.parse(date));
+		act.registerTime(dev, hours, timeRegisterDate);
+	}
+	
 	@When("the user {string} changes their registered time on the activity {string} with {int} hours on the date {string}")
 	public void the_user_changes_their_registered_time_with_hours(String initials, String activityName, Integer hours, String date) throws ParseException {
 		Developer dev = devHelper.getDeveloper(initials);
@@ -57,7 +76,7 @@ public class EditRegisteredTimeSteps {
 		
 		Calendar timeRegisterDate = Calendar.getInstance();
 		timeRegisterDate.setTime(formatter.parse(date));
-		act.registerTime(dev, hours, timeRegisterDate);
+		
 		schedulingApp.setCurrentUser(dev);
 		try {
 			act.editTime(dev, hours, timeRegisterDate);
@@ -84,5 +103,45 @@ public class EditRegisteredTimeSteps {
 		assertEquals(int1+hours, int2, 0.1);	
 	}
 	
+	@Given("the end date is set to {string} afterwards")
+	public void the_end_date_is_set_to_afterwards(String endDate) throws ParseException {
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+		Calendar endCal = Calendar.getInstance();
+		endCal.setTime(formatter.parse(endDate));
+		
+		Project project = projHelper.getProject();
+		Activity activity = actHelper.getActivity(project, "activity");
+		activity.setStopDate(endCal);
+		
+	}
+	
+	@Given("{string} is afterwards removed from the activity {string}")
+	public void is_afterwards_removed_from_the_activity(String initials, String actName) {
+		Project proj = projHelper.getProject("project");
+		Activity act = actHelper.getActivity(proj, "activity");
+		Developer dev = devHelper.getDeveloper(initials);
+		act.removeDeveloper(dev);
+		
+		assertFalse(act.hasDeveloperWithInitials(initials));
+	}
+	
+	@When("the user {string} changes registered time of {string} on the activity {string} with {int} hours on the date {string}")
+	public void the_user_changes_registered_time_of_on_the_activity_with_hours_on_the_date(String initials1, String initials2, String actName, Integer hours, String date) throws ParseException {
+		Developer loggedUser = devHelper.getDeveloper(initials1);
+		Developer dev = devHelper.getDeveloper(initials2);
+		Project proj = projHelper.getProject("project");
+		Activity act = actHelper.getActivity(proj,"activity");
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+		
+		Calendar timeRegisterDate = Calendar.getInstance();
+		timeRegisterDate.setTime(formatter.parse(date));
+
+		schedulingApp.setCurrentUser(loggedUser);
+		try {
+			act.editTime(dev, hours, timeRegisterDate);
+		} catch (IllegalArgumentException e) {
+			errorMessageHolder.setErrorMessage(e.getMessage());
+		}
+	}
 	
 }

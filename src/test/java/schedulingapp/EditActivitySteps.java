@@ -13,14 +13,17 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
+/**
+ * 
+ * @author Jonathan Michelsen, s204437
+ *
+ */
 public class EditActivitySteps {
 	SchedulingApp schedulingApp;
 	ProjectHelper projHelper;
 	DeveloperHelper devHelper;
 	ErrorMessageHolder errorMessageHolder;
 	ActivityHelper actHelper;
-	private Calendar initialStartDate;
-	private Calendar initialStopDate;
 
 	public EditActivitySteps(SchedulingApp schedulingApp, ProjectHelper projHelper, DeveloperHelper devHelper,
 			ErrorMessageHolder errorMessageHolder, ActivityHelper actHelper, ActivityHelper actHelper1) {
@@ -38,7 +41,6 @@ public class EditActivitySteps {
 
 		Activity activity = actHelper.getActivity(project, name);
 		activity.setStartDate(startDate);
-		initialStartDate = activity.getStartDate();
 
 	}
 
@@ -72,7 +74,6 @@ public class EditActivitySteps {
 
 		Activity activity = actHelper.getActivity(project, name);
 		activity.setStopDate(stopDate);
-		initialStopDate = activity.getStopDate();
 	}
 
 	@When("the user moves the end time by {int} weeks for the activity the {string}")
@@ -115,14 +116,52 @@ public class EditActivitySteps {
 		assertThat(dList.stream().anyMatch(d -> d.getInitials().equals(initials)), is(false));
 	}
 
-	@When("the user changes hours budgeted by {int} for the current activity")
-	public void the_user_changes_hours_budgeted_by_for_the_current_activity(Integer hours) {
-		actHelper.getActivity().addHours(hours);
+	@Given("the hours budgetted is {int} for the current activity")
+	public void the_hours_budgetted_is_for_the_current_activity(Integer hoursBudgetted) {
+		actHelper.getActivity().setHoursBudgeted(hoursBudgetted);
 	}
 
-	@Then("the hours budgeted is changed by {int} for the current activity")
-	public void the_hours_budgeted_is_changed_by_for_the_current_activity(Integer hours) {
-		assertThat(actHelper.getActivity().hoursHasChanged(hours), is(true));
+	@When("the user changes hours budgeted to {int} for the current activity")
+	public void the_user_changes_hours_budgeted_to_for_the_current_activity(Integer newHours) {
+		actHelper.getActivity().setHoursBudgeted(newHours);
 	}
+
+	@Then("the hours budgeted is {int} for the current activity")
+	public void the_hours_budgeted_is_for_the_current_activity(Integer hoursBudgetted) {
+		assertThat(actHelper.getActivity().getHoursBudgeted() == hoursBudgetted, is(true));
+	}
+	
+	@When("the user changes startdate for the activity {string} to {string}")
+	public void the_user_changes_startdate_for_the_activity_to(String name, String startDate) throws ParseException {
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+		Calendar startCal = Calendar.getInstance();
+		startCal.setTime(formatter.parse(startDate));
+		
+		Project project = projHelper.getProject();
+		Activity activity = actHelper.getActivity(project, name);
+		
+		try {			
+			activity.setStartDate(startCal);
+		} catch (Exception e) {
+			errorMessageHolder.setErrorMessage(e.getMessage());
+		}
+	}
+	
+	@When("the user changes stopdate for the activity {string} to {string}")
+	public void the_user_changes_stopdate_for_the_activity_to(String name, String stopDate) throws ParseException {
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+		Calendar stopCal = Calendar.getInstance();
+		stopCal.setTime(formatter.parse(stopDate));
+		
+		Project project = projHelper.getProject();
+		Activity activity = actHelper.getActivity(project, name);
+		
+		try {			
+			activity.setStopDate(stopCal);
+		} catch (Exception e) {
+			errorMessageHolder.setErrorMessage(e.getMessage());
+		}
+	}
+	
 
 }

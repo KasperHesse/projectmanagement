@@ -11,7 +11,6 @@ public class Activity {
 	private Calendar startDate;
 	private Calendar stopDate;
 	private int hoursBudgetted;
-	private int hoursBudgettedPast;
 	private List<Developer> developerList;
 	private List<Developer> assistingDeveloperList;
 	private TimeSheet timeSheet = new TimeSheet();
@@ -21,6 +20,10 @@ public class Activity {
 	private Calendar startDatePast;
 	private Calendar stopDatePast;
 	
+	/**
+	 * 
+	 * @author Kasper Hesse, s183735
+	 */
 	public static String cal2string(Calendar date) {
 		DateFormat formatter = new SimpleDateFormat("yyyy 'W'w");
 		if(date == null) {
@@ -37,6 +40,7 @@ public class Activity {
 	 * @param startDate the start date of the activity, as a Calendar object
 	 * @param stopDate the stop date of the activity, as a Calendar object
 	 * @param project the associated project
+	 * @author Kasper Hesse, s183735
 	 */
 	public Activity(String activityName, int hoursBudgetted, Calendar startDate, Calendar stopDate, Project project) {
 		this.activityName = activityName;
@@ -52,6 +56,7 @@ public class Activity {
 	/**
 	 * Adds a developer to this activity. 
 	 * @param dev the developer to be added to the activity
+	 * @author Kasper Hesse, s183735
 	 * @throws IllegalArgumentException if this developer is already associated with the activity or if they are not the project manager
 	 * on the project that this activity exists under.
 	 */
@@ -82,6 +87,7 @@ public class Activity {
 	 * Checks whether a developer with the given initials is already working on this activity
 	 * @param initials The initials to check against
 	 * @return True if a developer has this set of initials, false otherwise
+	 * @author Kasper Hesse, s183735
 	 */
 	public boolean hasDeveloperWithInitials(String initials) {
 		return developerList.stream().anyMatch(d -> d.getInitials().equals(initials));
@@ -90,6 +96,7 @@ public class Activity {
 	/**
 	 * Removes a given developer from the activity
 	 * @param dev the developer to be removed from the activity
+	 * @author Jonathan Michelsen, s204437
 	 */
 	public void removeDeveloper(Developer dev) {
 		if (developerList.contains(dev)) {
@@ -100,6 +107,10 @@ public class Activity {
 		}
 	}
 	
+	/**
+	 * 
+	 * @author Kasper Hesse, s183735
+	 */
 	public void removeAssistingDeveloper(Developer dev) {
 		if(assistingDeveloperList.contains(dev)) {
 			assistingDeveloperList.remove(dev);
@@ -114,6 +125,7 @@ public class Activity {
 	 * Determines if the given developer is working on this activity
 	 * @param dev the developer to investigate
 	 * @return true if the developer is working on the activity
+	 * @author Emil Pontoppidan, s204441
 	 */
 	public boolean isDeveloper(Developer dev) {
 		return developerList.contains(dev);
@@ -123,6 +135,7 @@ public class Activity {
 	 * Checks if the developer is Assisting developer on the given activity
 	 * @param the developer in question
 	 * @return Boolean, true if developer in question is assisting developer
+	 * @author Emil Pontoppidan, s204441
 	 */
 	public boolean isAssistingDeveloper(Developer dev) {
 		return assistingDeveloperList.contains(dev);
@@ -132,6 +145,7 @@ public class Activity {
 	 * Adds the given helper the given activity's assistingDeveloperlist if allowed. 
 	 * @param Who you'd like to ask for help
 	 * @param On what activity you need help for
+	 * @author Emil Pontoppidan, 204441
 	 */
 	public void askForHelp(Developer helper) {
 		if(!helper.isAvailable()) {
@@ -156,15 +170,16 @@ public class Activity {
 	 * @param The developer registering time
 	 * @param How many hours to register
 	 * @param On what date he wants to register said hours
+	 * @author Emil Pontoppidan, s204441
 	 */
-	public void registerTime(Developer dev, double hours, Calendar date) {
+	public void registerTime(Developer dev, double hours, Calendar date) {	
 		//precondition
 		assert dev != null && date != null && hours > 0;
 		
 		if(startDate != null && stopDate != null) {                                                             //1
 			
-			if(startDate.before(date) || stopDate.after(date)) {
-				throw new IllegalArgumentException("You cannot register time outside the active status dates"); //2
+			if(date.before(startDate) || date.after(stopDate)) {												//2
+				throw new IllegalArgumentException("You cannot register time outside the active status dates"); 
 			}
 		}
 		
@@ -183,9 +198,10 @@ public class Activity {
 	 * @param The developer that wants to edit their registered time
 	 * @param How many hours to add to the registered time
 	 * @param On what date he wants to register said hours
+	 * @author Peter Ejlev, s183718
 	 */
 	public void editTime(Developer dev, double hours, Calendar date) {
-		assert dev != null && date != null && hours > 0;
+		assert dev != null && date != null;
 		
 		if(dev != this.getProject().getSchedulingApp().getCurrentUser()) {               																	//1                                                                  
 			throw new IllegalArgumentException("You can't edit other developers registered time");
@@ -200,7 +216,11 @@ public class Activity {
 			throw new IllegalArgumentException("You are not associated with chosen activity");
 		}
 		
+		double preEditTime = viewTime(date, dev);
+		
 		timeSheet.editTime(dev, date, hours);
+		
+		assert viewTime(date, dev) == preEditTime + hours;
 	}
 	
 	/**
@@ -208,6 +228,7 @@ public class Activity {
 	 * @param which date you want to check
 	 * @param what developer you want to check
 	 * @return the registered amount of hours
+	 * @author Peter Ejlev, s183718
 	 */
 	public double viewTime(Calendar date, Developer dev) {
 		if(!isDeveloper(dev) && !isAssistingDeveloper(dev)) {                                                                                 
@@ -218,6 +239,7 @@ public class Activity {
 
 	/**
 	 * Returns the name of this activity
+	 * @author Jonathan Michelsen, s204437
 	 */
 	public String getName() {
 		return this.activityName;
@@ -225,6 +247,7 @@ public class Activity {
 
 	/**
 	 * Returns a *copy* of the start date for this activity. Modifications on that copy will not modify the start date of the activity
+	 * @author Jonathan Michelsen, s204437
 	 */
 	public Calendar getStartDate() {
 		if(this.startDate == null) {
@@ -235,6 +258,7 @@ public class Activity {
 
 		/**
 	 * Returns a *copy* of the end date for this activity. Modifications on that copy will not modify the end date of the activity
+	 * @author Jonathan Michelsen, s204437
 	 */
 	public Calendar getStopDate() {
 		if(this.stopDate == null) {
@@ -246,6 +270,7 @@ public class Activity {
 	/**
 	 * Sets the startdate of an activity
 	 * @param The settet date
+	 * @author Jonathan Michelsen, s204437
 	 */
 	public void setStartDate(Calendar startDate) {
 		if(this.stopDate != null && startDate.after(this.stopDate)) {
@@ -257,6 +282,7 @@ public class Activity {
 	/**
 	 * Sets the stopdate of an activity
 	 * @param the settet date
+	 * @author Jonathan Michelsen, s204437
 	 */
 	public void setStopDate(Calendar stopDate) {
 		if(this.startDate != null && stopDate.before(this.startDate)) {
@@ -268,16 +294,16 @@ public class Activity {
 	/**
 	 * Returns a list of developers working on this activity. Any modifications to that list will not affect the activity.
 	 * @return
+	 * @author Kasper Hesse, s183735 
 	 */
 	public List<Developer> getDevelopers() {
 		return List.copyOf(this.developerList);
 	}
 
-	public void registerTime(Developer currentUser, Double hours, String date) {
-		// TODO Auto-generated method stub
-		
-	}
-	
+	/**
+	 * 
+	 * @author Emil Pontoppidan, s204441
+	 */
 	public Project getProject() {
 		return project;
 	}
@@ -285,11 +311,10 @@ public class Activity {
 	/**
 	 * Adds number of weeks to the start date for the current activity
 	 * @param weeks The amount of weeks
+	 * @author Jonathan Michelsen, s204437
 	 */
 	public void changeStartDate(int weeks) {
-		startDatePast = startDate;
-				
-		assert weeks == (int)weeks : "PreCondition changeStartDate";
+		startDatePast = startDate;	
 		
 		if (startDate != null) {
 			startDate.add(Calendar.WEEK_OF_YEAR, weeks);
@@ -310,17 +335,15 @@ public class Activity {
 			throw new IllegalArgumentException("The startdate cannot be before the creationdate");
 		}
 		
-		assert startDate.equals(getStartDate()) : "PostCondition changeStartDate";
 	}
 	
-	/*
+	/**
 	 * Adds number of weeks to the start date for the current activity
 	 * @param weeks The amount of weeks
+	 * @author Jonathan Michelsen, s204437
 	 */
 	public void changeStopDate(int weeks) {
 		stopDatePast = stopDate;
-				
-		assert weeks == (int)weeks : "PreCondition changeStopDate";
 		
 		if (stopDate != null) {
 			stopDate.add(Calendar.WEEK_OF_YEAR, weeks);
@@ -340,37 +363,13 @@ public class Activity {
 			stopDate = stopDatePast;
 			throw new IllegalArgumentException("The stopdate cannot be before the creationdate");
 		}
-		
-		assert stopDate.equals(getStopDate()) : "PostCondition changeStopDate";
-	}
-	
-	/**
-	 * Adds number hours to the hours budgeted for the activity
-	 * @param hours the amount of hours
-	 */
-	public void addHours(Integer hours) {
-		this.hoursBudgettedPast = this.hoursBudgetted;
-		this.hoursBudgetted += hours;
-		
-	}
-	
-	/**
-	 * Checks whether the budgeted hours for the activity has been changed
-	 * @param hours the amount of hours
-	 * @return Returns true if budgeted hours has been changed false otherwise
-	 */
-	public boolean hoursHasChanged(Integer hours) {
-		if(this.hoursBudgettedPast == this.hoursBudgetted-hours) {
-			return true;
-		} else {
-			return false;
-		}
 	}
 
 	/**
 	 * Sets the start date of the activity
 	 * @param startDate the new start date of the activity
 	 * @throws ParseException
+	 * @author Jonathan Michelsen, s204437
 	 */
 	public void setStartDate(String startDate) throws ParseException {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
@@ -387,6 +386,7 @@ public class Activity {
 	 * Sets the stop date of the activity
 	 * @param stopDate the new stop date of the activity
 	 * @throws ParseException
+	 * @author Jonathan Michelsen, s204437
 	 */
 	public void setStopDate(String stopDate) throws ParseException {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
@@ -399,26 +399,41 @@ public class Activity {
 		
 	}
 
+	/**
+	 * 
+	 * @author Emil Pontoppidan, s204441
+	 */
 	public List<Developer> getAssistingDeveloperList() {
 		return this.assistingDeveloperList;
 	}
 	
+	/**
+	 * 
+	 * @author Jonathan Michelsen, s204437
+	 */
 	public int getHoursBudgeted() {
 		return this.hoursBudgetted;
 	}
 
+	/**
+	 * 
+	 * @author Jonathan Michelsen, s204437
+	 */
 	public void setHoursBudgeted(int hoursBudgetted) {
 		this.hoursBudgetted = hoursBudgetted;
 		
 	}
-
+	
 	/**
 	 * Moves a developer from the assisting developer list to the ordinary developer list
 	 * @param developer The developer to move from assistant to ordinary developer
+	 * @author Kasper Hesse, s183735
 	 */
 	void migrateDeveloper(Developer developer) {
 		this.assistingDeveloperList.remove(developer);
-		this.developerList.add(developer);	
+		if (!developerList.contains(developer)) {
+			this.developerList.add(developer);	
+		}
 	}
 
 
@@ -426,8 +441,10 @@ public class Activity {
 	 * Verifies whether the activity has an assistant developer with the given initials working on the activity
 	 * @param initials The initials to check against
 	 * @return True if the developer with those initials is assisting on this activity, false otherwise
+	 * @author Kasper Hesse, s183735
 	 */
 	public boolean hasAssistantDeveloperWithInitials(String initials) {
 		return assistingDeveloperList.stream().anyMatch(d -> d.getInitials().equals(initials));
 	}
+
 }

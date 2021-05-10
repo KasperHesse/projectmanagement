@@ -1,5 +1,10 @@
 package schedulingapp;
 
+/**
+ * 
+ * @author Kasper Hesse, s183735
+ *
+ */
 public class ErrorMessageHolder {
 	private String errorMessage = "";
 

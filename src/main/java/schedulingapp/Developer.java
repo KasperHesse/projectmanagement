@@ -13,10 +13,11 @@ public class Developer {
 	private String initials;
 	
 	/**
-	 * Creates a new developer with the given data. And adds the person to the activitys "holiday" and "course" under the project "misc"
+	 * Creates a new developer with the given data.
 	 * @param initials The initials of the developer
 	 * @param name The full name of the developer
 	 * @note The initials *must* be a string exactly 4 characters long.
+	 * @author Peter Ejlev, s183718
 	 */
 	public Developer(String initials, String name) {
 		this.name = name;
@@ -29,6 +30,7 @@ public class Developer {
 	/**
 	 * Checks whether the developer is project manager on any project
 	 * @return true, if developer is project manager of a project
+	 * @author Emil Mortensen, s204483
 	 */
 	public boolean isProjectManager() {
 		return projectList.stream().anyMatch(p -> p.isProjectManager(this));
@@ -37,6 +39,7 @@ public class Developer {
 	/**
 	 * Checks if the developer is available, defined as working on less than 10 projects
 	 * @return true, if developer is available
+	 * @author Emil Pontoppidan, s204441
 	 */
 	public boolean isAvailable() {
 
@@ -50,6 +53,7 @@ public class Developer {
 
 	/**
 	 * @return initials of the developer
+	 * @author Peter Ejlev, s183718
 	 */
 	public String getInitials() {
 		return this.initials;
@@ -59,6 +63,7 @@ public class Developer {
 	 * Compares this Developer to another Developer, and returns true if they represent the same object OR
 	 * if they have the same set of initials
 	 * @return true if these Developers are the same, false otherwise
+	 * @author Kasper Hesse, s183735
 	 */
 	@Override
 	public boolean equals(Object obj) {
@@ -69,17 +74,11 @@ public class Developer {
 			return otherDev.getInitials().equals(this.initials);
 		}
 	}
-
-	/**
-	 * @return activityList the list of activities the developer is working on
-	 */
-	public List<Activity> getActivtyList() {
-		return activityList; 
-	}
 	
 	/**
 	 * Adds the developer to the given activity
 	 * @param activity the activity to add the developer to
+	 * @author Jonathan Michelsen, s204437
 	 */
 	public void addActivity(Activity activity) {
 		if(!activityList.contains(activity)) {
@@ -91,6 +90,7 @@ public class Developer {
 	/**
 	 * Adds a project to the developers list of projects
 	 * @param project The project to be added to the project list
+	 * @author Jonathan Michelsen, s204437
 	 */
 	public void addProject(Project project) {
 		if(!projectList.contains(project)) {
@@ -98,6 +98,10 @@ public class Developer {
 		}
 	}
 
+	/**
+	 * 
+	 * @author Peter Ejlev, s183718
+	 */
 	public String getName() {
 		return this.name;
 	}
@@ -105,6 +109,7 @@ public class Developer {
 	/**
 	 * Removes an activity from the developers list of activities
 	 * @param activity
+	 * @author Jonathan Michelsen, s204437
 	 */
 	public void removeActivity(Activity activity) {
 		this.activityList.remove(activity);
@@ -113,6 +118,7 @@ public class Developer {
 	/**
 	 * Returns a list of all the projects that this user is working under
 	 * @return
+	 * @author Peter Ejlev, s183718
 	 */
 	public List<Project> getProjects() {
 		return this.projectList;
@@ -122,6 +128,7 @@ public class Developer {
 	 * Removes a given project from this developer's list of projects.
 	 * Also removes the developer from all activities associated with that project
 	 * @param project
+	 * @author Kasper Hesse, s183735 
 	 */
 	public void removeProject(Project project) {
 		this.projectList.remove(project);
@@ -138,6 +145,7 @@ public class Developer {
 	 * This will cause the developer to be removed from the assistant developer list on all activities under the given project,
 	 * adding them instead to the normal developer list
 	 * @param project The project which the developer was added to
+	 * @author Kapser Hesse, s183735
 	 */
 	public void promoteFromAssistant(Project project) {
 		this.activityList.stream().filter(a -> a.getProject().equals(project)).forEach(a -> a.migrateDeveloper(this));

@@ -10,6 +10,11 @@ import java.util.GregorianCalendar;
 
 import io.cucumber.java.en.*;
 
+/**
+ * 
+ * @author Emil Mortensen, s204483
+ *
+ */
 public class CreateProjectSteps {
 	DeveloperHelper devHelper;
 	ProjectHelper projHelper;
@@ -65,6 +70,7 @@ public class CreateProjectSteps {
 		Developer testDev = schedulingApp.getDeveloperByInitials(initials);
 		Project testProject = schedulingApp.getProjectByName(projectName);
 		assertTrue(testProject.isProjectManager(testDev));
+		assertTrue(testDev.equals(testProject.getProjectManager()));
 	}
 	
 	@When("the user creates a project with name {string}, start date {string} and stop date {string}")

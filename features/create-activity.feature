@@ -28,3 +28,9 @@ Scenario: A developer cannot create new activities
 	Given that the user with initials "abcd" is a developer of project "xyz"
 	When they create an activity named "research" under the current project
 	Then the error message "Developers cannot create new activities" is shown
+
+Scenario: A developer cannot create new activities (with project manager set)
+	Given that the user with initials "abcd" is the project manager of project "xyz"
+	And that the user with initials "efgh" is a developer of project "xyz"
+	When they create an activity named "research" under the current project
+	Then the error message "Developers cannot create new activities" is shown

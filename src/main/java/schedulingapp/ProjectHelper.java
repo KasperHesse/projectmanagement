@@ -2,7 +2,7 @@ package schedulingapp;
 
 /**¨
  * This class is intended to make Projects more easily manageable (in testers)
- * @author kaspe
+ * @author Kasper Hesse, s183735
  *
  */
 public class ProjectHelper {
@@ -33,7 +33,7 @@ public class ProjectHelper {
 	 */
 	public Project getProject() {
 		if(mostRecent == null) {
-			mostRecent = new Project("Sample project", schedulingApp);
+			mostRecent = getProject("Sample Projcet");
 		}
 		return mostRecent;
 	}

@@ -10,7 +10,11 @@ import java.util.List;
 
 import io.cucumber.java.en.*;
 
-
+/**
+ * 
+ * @author Emil Mortensen, s204483
+ *
+ */
 public class ViewAvailableDevelopersSteps {
 	DeveloperHelper devHelper;
 	ProjectHelper projHelper;

@@ -6,11 +6,18 @@ import io.cucumber.java.en.When;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.hamcrest.CoreMatchers.*;
 
 import java.text.*;
 import java.util.*;
 
+/**
+ * 
+ * @author Jonathan Michelsen, s204437
+ *
+ */
 public class EditProjectSteps {
 	SchedulingApp schedulingApp;
 	ProjectHelper projHelper;
@@ -19,9 +26,6 @@ public class EditProjectSteps {
 	ActivityHelper actHelper;
 	Calendar oldstartDate;
 	Calendar oldstopDate;
-	private Calendar initialStartDate;
-	private Calendar initialStopDate;
-	private Calendar initialCreationDate;
 
 	public EditProjectSteps(SchedulingApp schedulingApp, ProjectHelper projHelper, DeveloperHelper devHelper,
 			ErrorMessageHolder errorMessageHolder, ActivityHelper actHelper, ActivityHelper actHelper1) {
@@ -33,22 +37,19 @@ public class EditProjectSteps {
 
 	}
 
-	// User adds themselves as project manager to a project with no project manager
-	@Given("that a project exists with project number {string}")
-	public void that_a_project_exists_with_project_number(String projectName) {
-		Project project = projHelper.getProject(projectName);
-		
-		assertThat(schedulingApp.hasProjectNamed(projectName), is(true));
-
+	
+	@Given("that a project exists with an auto-generated project number")
+	public void that_a_project_exists_with_an_auto_generated_project_number() {
+	    Project project = projHelper.getProject();
+	    String projectNumber = project.getProjectNumber();
+	    assertTrue(project.equals(schedulingApp.getProjectByNumber(projectNumber)));
+	    
 	}
 	
 	@Given("the project {string} has a startdate {string}")
 	public void the_project_has_a_startdate(String projectName, String startDate) throws ParseException {
 		Project project = projHelper.getProject(projectName);
 		project.setStartDate(startDate);
-		initialStartDate = project.getStartDate();
-		
-		
 		
 	}
 	
@@ -85,7 +86,13 @@ public class EditProjectSteps {
 	@When("the user {string} adds themselves as project manager to the project")
 	public void the_user_adds_themselves_as_project_manager_to_the_project(String initials) {
 		Developer dev = devHelper.getDeveloper(initials);
-		projHelper.getProject().setProjectManager(dev);
+		schedulingApp.setCurrentUser(dev);
+		try {
+			projHelper.getProject().setProjectManager(dev);
+		} catch (IllegalArgumentException e) {
+			errorMessageHolder.setErrorMessage(e.getMessage());
+		}
+		
 
 	}
 
@@ -130,6 +137,7 @@ public class EditProjectSteps {
 	@Then("the activity named {string} is removed from the project {string}")
 	public void the_activity_named_is_removed_from_the_project(String projectName, String name) {
 		assertThat(projHelper.getProject(projectName).hasActivityNamed(name), is(false));
+		assertFalse(projHelper.getProject(projectName).getActivityList().stream().anyMatch(a -> a.getName().equals(name)));
 	}
 
 	@Given("a developer {string} exists")
@@ -165,21 +173,22 @@ public class EditProjectSteps {
 	@Given("a developer {string} is bound to the current project")
 	public void a_developer_is_bound_to_the_current_project(String initials) {
 		Developer dev = devHelper.getDeveloper(initials);
+		Project project = projHelper.getProject();
+		project.addDeveloper(dev);
+		Activity act = actHelper.getActivity(project, "act name");
+		act.addDeveloper(dev);
+		
+		assertThat(projHelper.getProject().developerExistsInProject(dev), is(true));
 
-		try {
-			assertThat(projHelper.getProject().developerExistsInProject(dev), is(true));
-
-		} catch (AssertionError e) {
-			errorMessageHolder.setErrorMessage("That developer does not exist in the current project.");
-		}
 	}
 
 	@When("the user removes the developer {string} from the current project")
 	public void the_user_removes_the_developer_from_the_current_project(String initials) {
 		Developer dev = devHelper.getDeveloper(initials);
-
+		Project project = projHelper.getProject();
+		
 		try {
-			projHelper.getProject().removeDeveloper(dev);
+			project.removeDeveloper(dev);
 		} catch (Exception e) {
 			errorMessageHolder.setErrorMessage(e.getMessage());
 		}
@@ -197,7 +206,7 @@ public class EditProjectSteps {
 	public void the_project_has_a_enddate(String projectName, String stopDate) throws ParseException {
 		Project project = projHelper.getProject(projectName);
 		project.setStopDate(stopDate);
-		initialStopDate = project.getStopDate();
+
 		
 	}
 
@@ -231,6 +240,13 @@ public class EditProjectSteps {
 		
 	}
 	
+	@Given("the project {string} has a stopdate {string} and the creationDate is {string}")
+	public void the_project_has_a_stopdate_and_the_creation_date_is(String projectName, String stopDate, String creationDate) throws ParseException {
+		Project project = projHelper.getProject(projectName);
+		project.setStopDate(stopDate);
+		project.setCreationDate(creationDate);
+	}
+	
 	@Given("the project {string} has a startdate {string} and the creationDate is {string}")
 	public void the_project_has_a_startdate_and_the_creation_date_is(String projectName, String startDate, String creationDate) throws ParseException {
 		Project project = projHelper.getProject(projectName);
@@ -243,7 +259,6 @@ public class EditProjectSteps {
 		Project project = projHelper.getProject(projectName);
 		project.setStartDate(startDate);
 		project.setStopDate(stopDate);
-		initialStartDate = project.getStartDate();
-		initialStopDate = project.getStopDate();
 	}	
+	
 }

@@ -2,7 +2,7 @@ package schedulingapp;
 
 /**
  * This class is intended to make Developers more manageable when writing tests
- * @author kaspe
+ * @author Kasper Hesse, s183735
  *
  */
 public class DeveloperHelper {

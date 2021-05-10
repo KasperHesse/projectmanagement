@@ -11,6 +11,11 @@ import io.cucumber.java.en.When;
 
 
 
+/**
+ * 
+ * @author Emil Pontoppidan, s204441
+ *
+ */
 public class SeekAssistanceSteps {
 	SchedulingApp schedulingApp;
 	ProjectHelper projHelper;
@@ -57,7 +62,6 @@ public class SeekAssistanceSteps {
 	@When("{string} seeks assistance from {string}")
 	public void seeks_assistance_from(String initials1, String initials2) {
 		Developer dev1 = devHelper.getDeveloper(initials1);
-//		schedulingApp.setCurrentUser(dev1);
 		Developer dev2 = devHelper.getDeveloper(initials2);
 		Project proj = projHelper.getProject();
 		proj.setProjectManager(dev1);
@@ -69,19 +73,16 @@ public class SeekAssistanceSteps {
 		}
 	}
 	
-//	@When("{string} seeks assistance from {string}, who doesnt exist")
-//	public void seeks_assistance_from_who_doesnt_exist(String initials1, String initials2) {
-//		Developer dev1 = devHelper.getDeveloper(initials1);
-//		Developer dev2 = new Developer("JONA","Jonthan");
-//		Project proj = projHelper.getProject();
-//		proj.setProjectManager(dev1);
-//		Activity act = actHelper.getActivity();	
-//		try {
-//			act.askForHelp(dev2, act);
-//		} catch (IllegalArgumentException e) {
-//			errorMessageHolder.setErrorMessage(e.getMessage());
-//		}
-//	}
+	@When("{string} seeks assistance on activity {string} from {string} , who doesnt exist")
+	public void seeks_assistance_on_activity_from_who_doesnt_exist(String initials1, String initials2, String actName) {
+		Activity act = actHelper.getActivity(projHelper.getProject(), actName);		
+		try {
+			act.askForHelp(new Developer(initials2, "name"));
+		} catch (IllegalArgumentException e) {
+			errorMessageHolder.setErrorMessage(e.getMessage());
+		}
+	}
+	
 	
 	@Then("{string} is now associated with activty")
 	public void is_now_associated_with_activty(String initials) {
@@ -93,42 +94,13 @@ public class SeekAssistanceSteps {
 	@Given("{string} is not available")
 	public void is_not_available_new(String initials) {
 		Developer dev2 = devHelper.getDeveloper(initials);
-		Project proj = projHelper.getProject("project");
-		Activity act1 = actHelper.getActivity(proj,"activity1");
-		Activity act2 = actHelper.getActivity(proj,"activity2");
-		Activity act3 = actHelper.getActivity(proj,"activity3");
-		Activity act4 = actHelper.getActivity(proj,"activity4");
-		Activity act5 = actHelper.getActivity(proj,"activity5");
-		Activity act6 = actHelper.getActivity(proj,"activity6");
-		Activity act7 = actHelper.getActivity(proj,"activity7");
-		Activity act8 = actHelper.getActivity(proj,"activity8");
-		Activity act9 = actHelper.getActivity(proj,"activity9");
-		Activity act10 = actHelper.getActivity(proj,"activity10");
-		Activity act11 = actHelper.getActivity(proj,"activity11");
-
-//		act1.addDeveloper(dev2);
-//		act2.addDeveloper(dev2);
-//		act3.addDeveloper(dev2);
-//		act4.addDeveloper(dev2);
-//		act5.addDeveloper(dev2);
-//		act6.addDeveloper(dev2);
-//		act7.addDeveloper(dev2);
-//		act8.addDeveloper(dev2);
-//		act9.addDeveloper(dev2);
-//		act10.addDeveloper(dev2);
-//		act11.addDeveloper(dev2);
-
-		dev2.addActivity(act1);
-		dev2.addActivity(act2);
-		dev2.addActivity(act3);
-		dev2.addActivity(act4);
-		dev2.addActivity(act5);
-		dev2.addActivity(act6);
-		dev2.addActivity(act7);
-		dev2.addActivity(act8);
-		dev2.addActivity(act9);
-		dev2.addActivity(act10);
-		dev2.addActivity(act11);
+		Project proj = projHelper.getProject();
+		
+		proj.addDeveloper(dev2);
+		
+		for (int i = 0; i < 11; i++) {
+			actHelper.getActivity(proj, "" + i).addDeveloper(dev2);
+		}
 		
 		assertFalse(dev2.isAvailable());
 	}
@@ -147,11 +119,38 @@ public class SeekAssistanceSteps {
 		assertTrue(act.hasDeveloperWithInitials(initials));
 	}
 	
-//	@Given("{string} doesn’t exist in the system")
-//	public void doesn_t_exist_in_the_system(String initials) {
-//		Developer dev2 = new Developer(initials,"Jonathan");
-//		//No need to create an object that does'nt exist
-//	}
+	
+	@Given("{string} is assisting developer on activity {string}")
+	public void is_assisting_developer_on_activity(String initials, String actName) {
+		Developer dev = devHelper.getDeveloper(initials);
+		Activity act = actHelper.getActivity(projHelper.getProject(), actName);
+		act.askForHelp(dev);
+		assertTrue(act.isAssistingDeveloper(dev));
+	}
+
+	@When("{string} removes {string} as assisting developer from activity {string}")
+	public void removes_as_assisting_developer_from_activity(String initials1, String initials2, String actName) {
+		Activity act = actHelper.getActivity(projHelper.getProject(), actName);
+	    Developer dev2 = devHelper.getDeveloper(initials2);
+	    
+	    try {
+	    	act.removeAssistingDeveloper(dev2);
+		} catch (Exception e) {
+			errorMessageHolder.setErrorMessage(e.getMessage());
+		}
+	}
+	
+
+	@Then("{string} is no longer associated with activity {string}")
+	public void is_no_longer_associated_with_activity(String initials, String actName) {
+		Developer dev = devHelper.getDeveloper(initials);
+		Activity act = actHelper.getActivity(projHelper.getProject(),actName);
+		
+		assertFalse(act.getAssistingDeveloperList().stream().anyMatch(d -> d.equals(dev)));
+	}
+	
+	
+	
 }
 
 

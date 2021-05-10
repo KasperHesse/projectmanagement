@@ -20,6 +20,7 @@ public class SchedulingApp implements ControllerInterface {
 
 	/**
 	 * Constructor of SchedulingApp. Initializes developerList and projectList
+	 * @author Emil Mortensen, s204483
 	 */
 	public SchedulingApp() {
 		this.developerList = new ArrayList<Developer>();
@@ -30,6 +31,7 @@ public class SchedulingApp implements ControllerInterface {
 	/**
 	 * Sets the current user of the schedulingApp
 	 * @param currentUser The user currently logged in to the application
+	 * @author Emil Mortensen, s204483
 	 */
 	void setCurrentUser(Developer currentUser) {
 		this.currentUser = currentUser;
@@ -41,6 +43,7 @@ public class SchedulingApp implements ControllerInterface {
 	 * @param startDate The given date the project is expected to begin, as Calendar object
 	 * @param stopDate The given date the project is expected to end, as Calendar object
 	 * @param projectManager The developer who is to manage the project
+	 * @author Emil Mortensen, s204483
 	 */
 	Project createProject(String projectName, Calendar startDate, Calendar stopDate, Developer projectManager) {
 		Project p = new Project(projectName, startDate, stopDate, projectManager, this);
@@ -51,22 +54,12 @@ public class SchedulingApp implements ControllerInterface {
 	/**
 	 * Creates a project with the following information
 	 * @param projectName The name of the project
-	 * @param startDate The given date the project is expected to begin, as Calendar object
-	 * @param stopDate The given date the project is expected to end, as Calendar object
-	 */
-	void createProject(String projectName, Calendar startDate, Calendar stopDate) {
-		createProject(projectName, startDate, stopDate, null);
-	}
-	
-	/**
-	 * Creates a project with the following information
-	 * @param projectName The name of the project
 	 * @param startDate The given date the project is expected to begin, as a String formatted as "yyyy-MM-dd"
 	 * @param stopDate The given date the project is expected to end, as a String formatted as "yyyy-MM-dd"
 	 * @throws ParseException If the date-Strings are not correctly formatted
+	 * @author Emil Mortensen, s204483
 	 */
 	void createProject(String projectName, String startDate, String stopDate) throws ParseException {
-		//TODO Catch this exception
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 	
 		Calendar startCal = Calendar.getInstance();
@@ -80,6 +73,7 @@ public class SchedulingApp implements ControllerInterface {
 	 * Creates a project with the following information
 	 * @param projectName The name of the project
 	 * @param projectManager The developer who is to manage the project
+	 * @author Emil Mortensen, s204483
 	 */
 	void createProject(String projectName, Developer projectManager) {
 		createProject(projectName, null, null, projectManager);
@@ -88,6 +82,7 @@ public class SchedulingApp implements ControllerInterface {
 	/**
 	 * Retrieves the list of developers
 	 * @return developerList
+	 * @author Peter Ejlev, s183718
 	 */
 	List<Developer> getDevelopers() {
 		return this.developerList;
@@ -97,6 +92,7 @@ public class SchedulingApp implements ControllerInterface {
 	 * Checks whether the scheduling app contains any project with the given name.
 	 * @param name The name of the project being checked against
 	 * @return True if a project with exactly name {@code name} exists, otherwise false
+	 * @author Kasper Hesse, s183735
 	 */
 	boolean hasProjectNamed(String name) {
 		return projectList.stream().anyMatch(p -> p.getName().equals(name));
@@ -106,6 +102,7 @@ public class SchedulingApp implements ControllerInterface {
 	 * Checks whether the scheduling app contains any project with the given project number.
 	 * @param projectNumber The project number of the project being checked against
 	 * @return True if a project with project number {@code projectNumber} exists, otherwise false
+	 * @author Emil Mortensen, s204483
 	 */
 	boolean hasProjectWithNumber(String projectNumber) {
 		return projectList.stream().anyMatch(p -> p.getProjectNumber().equals(projectNumber));
@@ -117,6 +114,7 @@ public class SchedulingApp implements ControllerInterface {
 	 * @param name The name of the project to be found
 	 * @return A handle to the project if it exists, otherwise throws an exception
 	 * @throws NoSuchElementException if the project was not found
+	 * @author Kasper Hesse, s183735
 	 */
 	Project getProjectByName(String name) throws NoSuchElementException {
 		List<Project> matches =  projectList.stream().filter(p -> p.getName().equals(name)).collect(Collectors.toList());
@@ -126,6 +124,13 @@ public class SchedulingApp implements ControllerInterface {
 		throw new NoSuchElementException("No project exists with the given name");
 	}
 	
+	/**
+	 * Returns the project with the given project number, if it exists.
+	 * @param projectNumber 
+	 * @return the project with the given project number.
+	 * @throws NoSuchElementException
+	 * @author Kasper Hesse, s183735
+	 */
 	Project getProjectByNumber(String projectNumber) throws NoSuchElementException {
 		List<Project> matches =  projectList.stream().filter(p -> p.getProjectNumber().equals(projectNumber)).collect(Collectors.toList());
 		if(matches.size() == 1) {
@@ -137,7 +142,8 @@ public class SchedulingApp implements ControllerInterface {
 	/**
 	 * Returns a handle to the developer with the given set of initials
 	 * @param initials The initials of the developer to be found
-	 * @return A handle to the developer if any developer with those initials exists, null otherwisee
+	 * @return A handle to the developer if any developer with those initials exists, null otherwise
+	 * @author Kasper Hesse, s183735
 	 */
 	Developer getDeveloperByInitials(String initials) {
 		List<Developer> matches = developerList.stream().filter(d -> d.getInitials().equals(initials)).collect(Collectors.toList());
@@ -151,6 +157,7 @@ public class SchedulingApp implements ControllerInterface {
 	/**
 	 * Adds a developer to the list of developers registered with the application
 	 * @param developer The developer to add
+	 * @author Kasper Hesse, s183735
 	 */
 	void addDeveloper(Developer developer) {
 		developerList.add(developer);
@@ -160,6 +167,7 @@ public class SchedulingApp implements ControllerInterface {
 	 * Checks whether a developer with the given set of initials exists.
 	 * @param initials The initials to be checked against
 	 * @return True if a developer exists, false otherwise
+	 * @author Jonathan Michelsen, s204437
 	 */
 	boolean hasDevWithInitials(String initials) {
 		return developerList.stream().anyMatch(d -> d.getInitials().equals(initials));
@@ -167,6 +175,7 @@ public class SchedulingApp implements ControllerInterface {
 
 	/**
 	 * Returns a handle to the developer/user currently logged into the system
+	 * @author Emil Mortensen, s204483
 	 */
 	Developer getCurrentUser() {
 		return this.currentUser;
@@ -204,6 +213,10 @@ public class SchedulingApp implements ControllerInterface {
 		return availableDevelopers;
 	}
 	
+	/*
+	 * ------ CONTROLLER INTERFACE METHODS START HERE ------
+	 * @author Kasper Hesse, s183735
+	 */
 
 	/**
 	 * Returns a list of all projects which currently do not have a project manager associated
@@ -243,9 +256,6 @@ public class SchedulingApp implements ControllerInterface {
 		logout();
 	}
 	
-	/*
-	 * ------ CONTROLLER INTERFACE METHODS START HERE ------
-	 */
 	
 	@Override
 	public void setActiveProject(ProjectInfo projInfo) throws NoSuchElementException {

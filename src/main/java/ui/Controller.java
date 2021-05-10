@@ -15,7 +15,7 @@ import dto.*;
 
 /**
  * The controller in the MVC-based user interface.
- * @author Kasper Hesse, 183735
+ * @author Kasper Hesse, s183735
  *
  */
 public class Controller implements PropertyChangeListener {

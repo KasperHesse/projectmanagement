@@ -7,9 +7,12 @@ import java.util.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+/**
+ * 
+ * @author Peter Ejlev, s183718
+ *
+ */
 public class ViewRegisteredTimeSteps {
-
-
 	SchedulingApp schedulingApp;
 	Activity activity;
 	Project project;
