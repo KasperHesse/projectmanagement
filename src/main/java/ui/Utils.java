@@ -2,6 +2,7 @@ package ui;
 
 import java.text.*;
 import java.util.Calendar;
+import java.util.NoSuchElementException;
 
 public class Utils {
 	
@@ -70,6 +71,23 @@ public class Utils {
 			token = (double) Integer.MIN_VALUE;
 		}
 		return token;
+	}
+	
+	/**
+	 * Searches a string of the type {@code <key>=<value>} for a given key, and returns the value following that key
+	 * @param str The string to search in
+	 * @param key The key to search for in the string
+	 * @return The value found after that key, if the key was present
+	 * @throws IllegalArgumentException If the string is not of the type {@code <key>=<value>}
+	 */
+	public static String findValueAfterKey(String str, String key) throws NoSuchElementException, IllegalArgumentException {
+		String str2 = str.replace("\"", "");
+		String matchString = String.format("%s=.+", key);
+		if(!str2.matches(matchString)) { //key, followed by =, followed by anything
+			throw new IllegalArgumentException("Input string '" + str + "' was not parseable");
+		}
+		String valueStr = str2.substring(str2.indexOf("=")+1);
+		return valueStr;	
 	}
 
 }

@@ -4,6 +4,8 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Activity {
 	private Calendar startDate;
@@ -48,22 +50,33 @@ public class Activity {
 	}
 	
 	/**
-	 * Adds a developer to the activity
+	 * Adds a developer to this activity. 
 	 * @param dev the developer to be added to the activity
+	 * @throws IllegalArgumentException if this developer is already associated with the activity or if they are not the project manager
+	 * on the project that this activity exists under.
 	 */
 	public void addDeveloper(Developer dev) {
+		assert dev != null;
+		List<Developer> previousList = new ArrayList(this.developerList);
+		
 		if(this.hasDeveloperWithInitials(dev.getInitials())) {
-			throw new IllegalArgumentException("This developer is already working on this activity");
+			throw new IllegalArgumentException("This developer is already working on this activity"); //1
 		} else if(!this.project.isProjectManager(this.project.getCurrentUser())) {
-			throw new IllegalArgumentException("Developers cannot add other developers to activities");
+			throw new IllegalArgumentException("Developers cannot add other developers to activities"); //2
 		}
 		this.developerList.add(dev);
 		dev.addProject(project);
 		dev.addActivity(this);
 		if(!project.developerExistsInProject(dev)) {
-			project.addDeveloper(dev);
+			project.addDeveloper(dev); //3
 		}
-	}
+		
+		assert this.developerList.equals(
+				Stream.concat(
+						previousList.stream(), 
+						new ArrayList<Developer>(Arrays.asList(dev)).stream())
+				.collect(Collectors.toList()));
+	} //4
 	
 	/**
 	 * Checks whether a developer with the given initials is already working on this activity
@@ -155,7 +168,7 @@ public class Activity {
 			}
 		}
 		
-		if(!isDeveloper(dev) && !isAssistingDeveloper(dev)) {                                                                                 //3
+		if(!isDeveloper(dev) && !isAssistingDeveloper(dev)) {                                                   //3
 			throw new IllegalArgumentException("You are not associated with chosen activity");
 		}
 		
